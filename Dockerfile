@@ -28,6 +28,13 @@ RUN echo 'gem: --no-rdoc --no-ri' >> /.gemrc
 
 RUN gem install bundler
 
+# Copy the Gemfile and Gemfile.lock into the image
+# This is seperate from the rest of the application files to make
+# docker cache the bundle install step if the Gemfile is unchanged
+ONBUILD WORKDIR /tmp
+ONBUILD ADD Gemfile /tmp/Gemfile
+ONBUILD ADD Gemfile.lock /tmp/Gemfile.lock
+ONBUILD RUN [ ! -e /tmp/Gemfile ] || bundle install --system
+
 ONBUILD ADD . /usr/src/app
 ONBUILD WORKDIR /usr/src/app
-ONBUILD RUN [ ! -e Gemfile ] || bundle install --system
