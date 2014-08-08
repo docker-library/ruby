@@ -3,12 +3,12 @@ FROM buildpack-deps
 RUN useradd -g users user
 
 RUN apt-get update && apt-get install -y bison procps \
-  && apt-get clean && rm -rf /var/lib/apt/lists/
+  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # some of ruby's build scripts are written in ruby
 # we purge this later to make sure our final image uses what we just built
 RUN apt-get update && apt-get install -y ruby \
-  && apt-get clean && rm -rf /var/lib/apt/lists/
+  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ADD . /usr/src/ruby
 WORKDIR /usr/src/ruby
