@@ -1,7 +1,7 @@
-FROM buildpack-deps
+FROM buildpack-deps:wheezy
 
-ENV RUBY_MAJOR 2.1
-ENV RUBY_VERSION 2.1.2
+ENV RUBY_MAJOR 1.9
+ENV RUBY_VERSION 1.9.3-p547
 
 # some of ruby's build scripts are written in ruby
 # we purge this later to make sure our final image uses what we just built
@@ -13,7 +13,7 @@ RUN apt-get update \
 	&& cd /usr/src/ruby \
 	&& autoconf \
 	&& ./configure --disable-install-doc \
-	&& make -j"${nproc}" \
+	&& make \
 	&& apt-get purge -y bison ruby procps \
 	&& apt-get autoremove -y \
 	&& make install \
