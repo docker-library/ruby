@@ -23,3 +23,5 @@ RUN apt-get update \
 RUN echo 'gem: --no-rdoc --no-ri' >> /.gemrc
 
 RUN gem install bundler
+
+CMD [ "irb" ]
