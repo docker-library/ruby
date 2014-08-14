@@ -7,6 +7,7 @@ ENV RUBY_VERSION 2.1.2
 # we purge this later to make sure our final image uses what we just built
 RUN apt-get update \
 	&& apt-get install -y bison curl ruby procps \
+	&& rm -rf /var/lib/apt/lists/* \
 	&& mkdir -p /usr/src/ruby \
 	&& curl -SL "http://cache.ruby-lang.org/pub/ruby/$RUBY_MAJOR/ruby-$RUBY_VERSION.tar.bz2" \
 		| tar -xjC /usr/src/ruby --strip-components=1 \
