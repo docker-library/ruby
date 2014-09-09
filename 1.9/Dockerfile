@@ -15,8 +15,7 @@ RUN apt-get update \
 	&& autoconf \
 	&& ./configure --disable-install-doc \
 	&& make \
-	&& apt-get purge -y bison ruby procps \
-	&& apt-get autoremove -y \
+	&& apt-get purge -y --auto-remove bison ruby procps \
 	&& make install \
 	&& rm -r /usr/src/ruby
 
