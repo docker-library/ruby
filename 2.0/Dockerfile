@@ -1,12 +1,14 @@
 FROM buildpack-deps:jessie
 
+RUN apt-get update && apt-get install -y curl procps && rm -rf /var/lib/apt/lists/*
+
 ENV RUBY_MAJOR 2.0
-ENV RUBY_VERSION 2.0.0-p481
+ENV RUBY_VERSION 2.0.0-p576
 
 # some of ruby's build scripts are written in ruby
 # we purge this later to make sure our final image uses what we just built
 RUN apt-get update \
-	&& apt-get install -y bison curl ruby procps \
+	&& apt-get install -y bison ruby \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& mkdir -p /usr/src/ruby \
 	&& curl -SL "http://cache.ruby-lang.org/pub/ruby/$RUBY_MAJOR/ruby-$RUBY_VERSION.tar.bz2" \
@@ -15,7 +17,7 @@ RUN apt-get update \
 	&& autoconf \
 	&& ./configure --disable-install-doc \
 	&& make -j"$(nproc)" \
-	&& apt-get purge -y --auto-remove bison ruby procps \
+	&& apt-get purge -y --auto-remove bison ruby \
 	&& make install \
 	&& rm -r /usr/src/ruby
 
