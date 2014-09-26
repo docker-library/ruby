@@ -1,6 +1,6 @@
 FROM buildpack-deps:jessie
 
-RUN apt-get update && apt-get install -y curl procps && rm -rf /var/lib/apt/lists/*
+RUN rm -rf /var/lib/apt/lists/* && apt-get update && apt-get install -y curl procps 
 
 ENV RUBY_MAJOR 2.1
 ENV RUBY_VERSION 2.1.3
