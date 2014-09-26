@@ -7,8 +7,7 @@ ENV RUBY_VERSION 2.1.3
 
 # some of ruby's build scripts are written in ruby
 # we purge this later to make sure our final image uses what we just built
-RUN apt-get update \
-	&& apt-get install -y bison ruby \
+RUN apt-get install -y bison ruby \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& mkdir -p /usr/src/ruby \
 	&& curl -SL "http://cache.ruby-lang.org/pub/ruby/$RUBY_MAJOR/ruby-$RUBY_VERSION.tar.bz2" \
