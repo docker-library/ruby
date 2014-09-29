@@ -10,7 +10,7 @@ fi
 versions=( "${versions[@]%/}" )
 
 for version in "${versions[@]}"; do
-	fullVersion="$(curl -sSL "http://cache.ruby-lang.org/pub/ruby/$version/" \
+	fullVersion="$(curl -sSL --compressed "http://cache.ruby-lang.org/pub/ruby/$version/" \
 		| grep -E '<a href="ruby-'"$version"'.[^"]+\.tar\.bz2' \
 		| grep -vE 'preview|rc' \
 		| sed -r 's!.*<a href="ruby-([^"]+)\.tar\.bz2.*!\1!' \
