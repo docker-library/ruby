@@ -3,7 +3,7 @@ FROM buildpack-deps:wheezy
 RUN apt-get update && apt-get install -y curl procps && rm -rf /var/lib/apt/lists/*
 
 ENV RUBY_MAJOR 1.9
-ENV RUBY_VERSION 1.9.3-p547
+ENV RUBY_VERSION 1.9.3-p550
 
 # some of ruby's build scripts are written in ruby
 # we purge this later to make sure our final image uses what we just built
