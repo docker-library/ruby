@@ -16,7 +16,7 @@ url='git://github.com/docker-library/ruby'
 echo '# maintainer: InfoSiftr <github@infosiftr.com> (@infosiftr)'
 
 for version in "${versions[@]}"; do
-	commit="$(git log -1 --format='format:%H' "$version")"
+	commit="$(git log -1 --format='format:%H' -- "$version")"
 	fullVersion="$(grep -m1 'ENV RUBY_VERSION ' "$version/Dockerfile" | cut -d' ' -f3)"
 	
 	versionAliases=()
