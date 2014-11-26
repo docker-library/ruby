@@ -32,7 +32,7 @@ for version in "${versions[@]}"; do
 	done
 	
 	for variant in onbuild; do
-		commit="$(git log -1 --format='format:%H' "$version/$variant")"
+		commit="$(git log -1 --format='format:%H' -- "$version/$variant")"
 		echo
 		for va in "${versionAliases[@]}"; do
 			if [ "$va" = 'latest' ]; then
