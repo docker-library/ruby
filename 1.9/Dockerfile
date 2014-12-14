@@ -1,4 +1,4 @@
-FROM buildpack-deps:wheezy
+FROM buildpack-deps:jessie
 
 RUN apt-get update && apt-get install -y curl procps && rm -rf /var/lib/apt/lists/*
 
