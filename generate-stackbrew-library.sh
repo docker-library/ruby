@@ -31,7 +31,7 @@ for version in "${versions[@]}"; do
 		echo "$va: ${url}@${commit} $version"
 	done
 	
-	for variant in onbuild; do
+	for variant in onbuild wheezy; do
 		commit="$(git log -1 --format='format:%H' -- "$version/$variant")"
 		echo
 		for va in "${versionAliases[@]}"; do
