@@ -1,4 +1,4 @@
-FROM ruby:2.2.0-rc1
+FROM ruby:2.2.0
 
 # throw errors if Gemfile has been modified since Gemfile.lock
 RUN bundle config --global frozen 1
