@@ -17,8 +17,8 @@ for version in "${versions[@]}"; do
 		| sort -V | tail -1)"
 	(
 		set -x
-		sed -ri 's/^(ENV RUBY_MAJOR) .*/\1 '"$version"'/' "$version/"{,wheezy/}Dockerfile
-		sed -ri 's/^(ENV RUBY_VERSION) .*/\1 '"$fullVersion"'/' "$version/"{,wheezy/}Dockerfile
+		sed -ri 's/^(ENV RUBY_MAJOR) .*/\1 '"$version"'/' "$version/"{,wheezy/,slim/}Dockerfile
+		sed -ri 's/^(ENV RUBY_VERSION) .*/\1 '"$fullVersion"'/' "$version/"{,wheezy/,slim/}Dockerfile
 		sed -ri 's/^(FROM ruby):.*/\1:'"$fullVersion"'/' "$version/"*"/Dockerfile"
 	)
 done
