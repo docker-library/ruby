@@ -26,3 +26,5 @@ for version in "${versions[@]}"; do
 		sed -ri 's/^(FROM ruby):.*/\1:'"$fullVersion"'/' "$version/"*"/Dockerfile"
 	)
 done
+
+rm shafile.html
