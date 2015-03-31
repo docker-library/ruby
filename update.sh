@@ -8,8 +8,10 @@ if [ ${#versions[@]} -eq 0 ]; then
 	versions=( */ )
 fi
 versions=( "${versions[@]%/}" )
+shaPage=$(curl -s 'https://www.ruby-lang.org/en/downloads/')
 
 for version in "${versions[@]}"; do
+	shaVal="$(echo $shaPage | grep -A 3 "Ruby ${fullVersion}" | sed -r "s/.*sha256: ([^<]+).*/\1/")"
 	fullVersion="$(curl -sSL --compressed "http://cache.ruby-lang.org/pub/ruby/$version/" \
 		| grep -E '<a href="ruby-'"$version"'.[^"]+\.tar\.bz2' \
 		| grep -vE 'preview|rc' \
@@ -19,6 +21,7 @@ for version in "${versions[@]}"; do
 		set -x
 		sed -ri 's/^(ENV RUBY_MAJOR) .*/\1 '"$version"'/' "$version/"{,wheezy/,slim/}Dockerfile
 		sed -ri 's/^(ENV RUBY_VERSION) .*/\1 '"$fullVersion"'/' "$version/"{,wheezy/,slim/}Dockerfile
+		sed -ri 's/^(ENV RUBY_DOWNLOAD_SHA256) .*/\1 '"$shaVal"'/' "$version/"{,wheezy/,slim/}Dockerfile
 		sed -ri 's/^(FROM ruby):.*/\1:'"$fullVersion"'/' "$version/"*"/Dockerfile"
 	)
 done
