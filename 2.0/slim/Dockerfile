@@ -31,8 +31,8 @@ RUN buildDeps=' \
 		libxslt-dev \
 		make \
 		ruby \
-	'; \
-	set -x \
+	' \
+	&& set -x \
 	&& apt-get update \
 	&& apt-get install -y --no-install-recommends $buildDeps \
 	&& rm -rf /var/lib/apt/lists/* \
