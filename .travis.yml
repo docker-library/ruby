@@ -1,0 +1,31 @@
+language: bash
+
+# for secret experimental features ;)
+dist: trusty
+
+env:
+  - VERSION=2.2 VARIANT=
+  - VERSION=2.2 VARIANT=slim
+  - VERSION=2.2 VARIANT=wheezy
+  - VERSION=2.1 VARIANT=
+  - VERSION=2.1 VARIANT=slim
+  - VERSION=2.1 VARIANT=wheezy
+  - VERSION=2.0 VARIANT=
+  - VERSION=2.0 VARIANT=slim
+  - VERSION=2.0 VARIANT=wheezy
+
+install:
+  - git clone https://github.com/docker-library/official-images.git ~/official-images
+
+before_script:
+  - env | sort
+  - cd "$VERSION"
+  - image="$(awk '$1 == "FROM" { print $2; exit }' onbuild/Dockerfile)${VARIANT:+-$VARIANT}"
+
+script:
+  - docker build -t "$image" "${VARIANT:-.}"
+  - ~/official-images/test/run.sh "$image"
+# the "onbuild" variant has to happen with the base variant because it's FROM it
+  - true && [ "$VARIANT" ] || docker build -t "${image}-onbuild" onbuild
+
+# vim:set et ts=2 sw=2:
