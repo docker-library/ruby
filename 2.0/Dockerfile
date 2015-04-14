@@ -1,8 +1,8 @@
 FROM buildpack-deps:jessie
 
 ENV RUBY_MAJOR 2.0
-ENV RUBY_VERSION 2.0.0-p643
-ENV RUBY_DOWNLOAD_SHA256 4bd267a4187e4bc25c1db08f9f9bdc0ce595a705569cac460d98c4f5b02e614e
+ENV RUBY_VERSION 2.0.0-p645
+ENV RUBY_DOWNLOAD_SHA256 5e9f8effffe97cba5ef0015feec6e1e5f3bacf6ace78cd1cdf72708cd71cf4ab
 
 # some of ruby's build scripts are written in ruby
 # we purge this later to make sure our final image uses what we just built

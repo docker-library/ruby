@@ -1,7 +1,7 @@
 FROM buildpack-deps:wheezy
 
 ENV RUBY_MAJOR 2.2
-ENV RUBY_VERSION 2.2.1
+ENV RUBY_VERSION 2.2.2
 
 # some of ruby's build scripts are written in ruby
 # we purge this later to make sure our final image uses what we just built
