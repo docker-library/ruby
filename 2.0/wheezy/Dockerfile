@@ -25,7 +25,10 @@ RUN echo 'gem: --no-rdoc --no-ri' >> "$HOME/.gemrc"
 # install things globally, for great justice
 ENV GEM_HOME /usr/local/bundle
 ENV PATH $GEM_HOME/bin:$PATH
-RUN gem install bundler \
+
+ENV BUNDLER_VERSION 1.10.3
+
+RUN gem install bundler --version "$BUNDLER_VERSION" \
 	&& bundle config --global path "$GEM_HOME" \
 	&& bundle config --global bin "$GEM_HOME/bin"
 

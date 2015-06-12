@@ -48,8 +48,19 @@ RUN buildDeps=' \
 	&& apt-get purge -y --auto-remove $buildDeps
 
 # skip installing gem documentation
-RUN echo 'gem: --no-rdoc --no-ri' >> /.gemrc
+RUN echo 'gem: --no-rdoc --no-ri' >> "$HOME/.gemrc"
 
-RUN gem install bundler
+# install things globally, for great justice
+ENV GEM_HOME /usr/local/bundle
+ENV PATH $GEM_HOME/bin:$PATH
+
+ENV BUNDLER_VERSION 1.10.3
+
+RUN gem install bundler --version "$BUNDLER_VERSION" \
+	&& bundle config --global path "$GEM_HOME" \
+	&& bundle config --global bin "$GEM_HOME/bin"
+
+# don't create ".bundle" in all our apps
+ENV BUNDLE_APP_CONFIG $GEM_HOME
 
 CMD [ "irb" ]
