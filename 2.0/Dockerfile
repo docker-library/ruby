@@ -29,7 +29,7 @@ RUN echo 'gem: --no-rdoc --no-ri' >> "$HOME/.gemrc"
 ENV GEM_HOME /usr/local/bundle
 ENV PATH $GEM_HOME/bin:$PATH
 
-ENV BUNDLER_VERSION 1.10.4
+ENV BUNDLER_VERSION 1.10.5
 
 RUN gem install bundler --version "$BUNDLER_VERSION" \
 	&& bundle config --global path "$GEM_HOME" \
