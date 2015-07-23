@@ -26,7 +26,7 @@ for version in "${versions[@]}"; do
 			s/^(ENV RUBY_VERSION) .*/\1 '"$fullVersion"'/;
 			s/^(ENV RUBY_DOWNLOAD_SHA256) .*/\1 '"$shaVal"'/;
 			s/^(ENV BUNDLER_VERSION) .*/\1 '"$bundler"'/;
-		' "$version/"{,wheezy/,slim/}Dockerfile
+		' "$version/"{,slim/}Dockerfile
 		sed -ri 's/^(FROM ruby):.*/\1:'"$fullVersion"'/' "$version/"*"/Dockerfile"
 	)
 done
