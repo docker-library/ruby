@@ -6,13 +6,10 @@ sudo: 9000
 env:
   - VERSION=2.2 VARIANT=
   - VERSION=2.2 VARIANT=slim
-  - VERSION=2.2 VARIANT=wheezy
   - VERSION=2.1 VARIANT=
   - VERSION=2.1 VARIANT=slim
-  - VERSION=2.1 VARIANT=wheezy
   - VERSION=2.0 VARIANT=
   - VERSION=2.0 VARIANT=slim
-  - VERSION=2.0 VARIANT=wheezy
 
 install:
   - git clone https://github.com/docker-library/official-images.git ~/official-images
