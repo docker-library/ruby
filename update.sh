@@ -10,7 +10,12 @@ fi
 versions=( "${versions[@]%/}" )
 shaPage=$(curl -fsSL 'https://www.ruby-lang.org/en/downloads/')
 
-bundler="$(curl -sSL 'https://rubygems.org/api/v1/gems/bundler.json' | sed -r 's/^.*"version":"([^"]+)".*$/\1/')"
+latest_gem_version() {
+	curl -sSL "https://rubygems.org/api/v1/gems/$1.json" | sed -r 's/^.*"version":"([^"]+)".*$/\1/'
+}
+
+rubygems="$(latest_gem_version rubygems-update)"
+bundler="$(latest_gem_version bundler)"
 
 for version in "${versions[@]}"; do
 	fullVersion="$(curl -sSL --compressed "http://cache.ruby-lang.org/pub/ruby/$version/" \
@@ -26,6 +31,7 @@ for version in "${versions[@]}"; do
 			s/^(ENV RUBY_VERSION) .*/\1 '"$fullVersion"'/;
 			s/^(ENV RUBY_DOWNLOAD_SHA256) .*/\1 '"$shaVal"'/;
 			s/^(ENV BUNDLER_VERSION) .*/\1 '"$bundler"'/;
+			s/^(ENV RUBYGEMS_VERSION) .*/\1 '"$rubygems"'/;
 		' "$version/"{,slim/}Dockerfile
 		sed -ri 's/^(FROM ruby):.*/\1:'"$fullVersion"'/' "$version/"*"/Dockerfile"
 	)
