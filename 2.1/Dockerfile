@@ -25,7 +25,7 @@ RUN apt-get update \
 	&& rm -r /usr/src/ruby
 
 # skip installing gem documentation
-RUN echo 'gem: --no-document' >> "$HOME/.gemrc"
+RUN echo 'install: --no-document\nupdate: --no-document' >> "$HOME/.gemrc"
 
 # install things globally, for great justice
 ENV GEM_HOME /usr/local/bundle
