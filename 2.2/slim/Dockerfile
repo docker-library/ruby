@@ -50,7 +50,7 @@ RUN buildDeps=' \
 	&& apt-get purge -y --auto-remove $buildDeps
 
 # skip installing gem documentation
-RUN echo 'gem: --no-rdoc --no-ri' >> "$HOME/.gemrc"
+RUN echo 'gem: --no-document' >> "$HOME/.gemrc"
 
 # install things globally, for great justice
 ENV GEM_HOME /usr/local/bundle
