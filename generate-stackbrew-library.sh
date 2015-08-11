@@ -15,7 +15,7 @@ url='git://github.com/docker-library/ruby'
 echo '# maintainer: InfoSiftr <github@infosiftr.com> (@infosiftr)'
 
 for version in "${versions[@]}"; do
-	commit="$(git log -1 --format='format:%H' -- "$version")"
+	commit="$(cd "$version" && git log -1 --format='format:%H' -- Dockerfile $(awk 'toupper($1) == "COPY" { for (i = 2; i < NF; i++) { print $i } }' Dockerfile))"
 	fullVersion="$(grep -m1 'ENV RUBY_VERSION ' "$version/Dockerfile" | cut -d' ' -f3)"
 	
 	versionAliases=()
@@ -31,7 +31,7 @@ for version in "${versions[@]}"; do
 	done
 	
 	for variant in onbuild slim; do
-		commit="$(git log -1 --format='format:%H' -- "$version/$variant")"
+		commit="$(cd "$version/$variant" && git log -1 --format='format:%H' -- Dockerfile $(awk 'toupper($1) == "COPY" { for (i = 2; i < NF; i++) { print $i } }' Dockerfile))"
 		echo
 		for va in "${versionAliases[@]}"; do
 			if [ "$va" = 'latest' ]; then
