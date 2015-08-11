@@ -5,6 +5,9 @@ ENV RUBY_VERSION 2.0.0-p645
 ENV RUBY_DOWNLOAD_SHA256 5e9f8effffe97cba5ef0015feec6e1e5f3bacf6ace78cd1cdf72708cd71cf4ab
 ENV RUBYGEMS_VERSION 2.4.8
 
+# skip installing gem documentation
+RUN echo 'install: --no-document\nupdate: --no-document' > "$HOME/.gemrc"
+
 # some of ruby's build scripts are written in ruby
 # we purge this later to make sure our final image uses what we just built
 RUN apt-get update \
@@ -21,11 +24,8 @@ RUN apt-get update \
 	&& make -j"$(nproc)" \
 	&& make install \
 	&& apt-get purge -y --auto-remove bison libgdbm-dev ruby \
-	&& gem update --no-document --system $RUBYGEMS_VERSION \
+	&& gem update --system $RUBYGEMS_VERSION \
 	&& rm -r /usr/src/ruby
-
-# skip installing gem documentation
-RUN echo 'gem: --no-rdoc --no-ri' >> "$HOME/.gemrc"
 
 # install things globally, for great justice
 ENV GEM_HOME /usr/local/bundle
