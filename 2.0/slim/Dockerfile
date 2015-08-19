@@ -14,7 +14,7 @@ RUN apt-get update \
 	&& rm -rf /var/lib/apt/lists/*
 
 ENV RUBY_MAJOR 2.0
-ENV RUBY_VERSION 2.0.0-p645
+ENV RUBY_VERSION 2.0.0-p647
 ENV RUBYGEMS_VERSION 2.4.8
 
 # skip installing gem documentation
