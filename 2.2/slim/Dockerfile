@@ -15,6 +15,7 @@ RUN apt-get update \
 
 ENV RUBY_MAJOR 2.2
 ENV RUBY_VERSION 2.2.3
+ENV RUBY_DOWNLOAD_SHA256 df795f2f99860745a416092a4004b016ccf77e8b82dec956b120f18bdc71edce
 ENV RUBYGEMS_VERSION 2.4.8
 
 # skip installing gem documentation
@@ -41,8 +42,10 @@ RUN buildDeps=' \
 	&& apt-get install -y --no-install-recommends $buildDeps \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& mkdir -p /usr/src/ruby \
-	&& curl -SL "http://cache.ruby-lang.org/pub/ruby/$RUBY_MAJOR/ruby-$RUBY_VERSION.tar.bz2" \
-		| tar -xjC /usr/src/ruby --strip-components=1 \
+	&& curl -fSL -o ruby.tar.gz "http://cache.ruby-lang.org/pub/ruby/$RUBY_MAJOR/ruby-$RUBY_VERSION.tar.gz" \
+	&& echo "$RUBY_DOWNLOAD_SHA256 *ruby.tar.gz" | sha256sum -c - \
+	&& tar -xzf ruby.tar.gz -C /usr/src/ruby --strip-components=1 \
+	&& rm ruby.tar.gz \
 	&& cd /usr/src/ruby \
 	&& autoconf \
 	&& ./configure --disable-install-doc \
