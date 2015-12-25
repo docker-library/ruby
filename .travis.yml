@@ -2,6 +2,8 @@ language: bash
 services: docker
 
 env:
+  - VERSION=2.3 VARIANT=
+  - VERSION=2.3 VARIANT=slim
   - VERSION=2.2 VARIANT=
   - VERSION=2.2 VARIANT=slim
   - VERSION=2.1 VARIANT=
