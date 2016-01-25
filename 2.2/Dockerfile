@@ -36,7 +36,7 @@ ENV BUNDLER_VERSION 1.11.2
 RUN gem install bundler --version "$BUNDLER_VERSION" \
 	&& bundle config --global path "$GEM_HOME" \
 	&& bundle config --global bin "$GEM_HOME/bin" \
-  && bundle config --global silence_root_warning true
+	&& bundle config --global silence_root_warning true
 
 # don't create ".bundle" in all our apps
 ENV BUNDLE_APP_CONFIG $GEM_HOME
