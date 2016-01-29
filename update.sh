@@ -17,6 +17,7 @@ latest_gem_version() {
 rubygems="$(latest_gem_version rubygems-update)"
 bundler="$(latest_gem_version bundler)"
 
+travisEnv=
 for version in "${versions[@]}"; do
 	fullVersion="$(curl -sSL --compressed "http://cache.ruby-lang.org/pub/ruby/$version/" \
 		| grep -E '<a href="ruby-'"$version"'.[^"]+\.tar\.bz2' \
@@ -35,4 +36,12 @@ for version in "${versions[@]}"; do
 		' "$version"{/,/*/}Dockerfile
 		sed -ri 's/^(FROM ruby):.*/\1:'"$version"'/' "$version/"*"/Dockerfile"
 	)
+	for variant in alpine slim; do
+		[ -d "$version/$variant" ] || continue
+		travisEnv='\n  - VERSION='"$version VARIANT=$variant$travisEnv"
+	done
+	travisEnv='\n  - VERSION='"$version VARIANT=$travisEnv"
 done
+
+travis="$(awk -v 'RS=\n\n' '$1 == "env:" { $0 = "env:'"$travisEnv"'" } { printf "%s%s", $0, RS }' .travis.yml)"
+echo "$travis" > .travis.yml
