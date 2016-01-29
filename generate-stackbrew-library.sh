@@ -31,6 +31,7 @@ for version in "${versions[@]}"; do
 	done
 	
 	for variant in onbuild slim alpine; do
+		[ -d "$version/$variant" ] || continue
 		commit="$(cd "$version/$variant" && git log -1 --format='format:%H' -- Dockerfile $(awk 'toupper($1) == "COPY" { for (i = 2; i < NF; i++) { print $i } }' Dockerfile))"
 		echo
 		for va in "${versionAliases[@]}"; do
