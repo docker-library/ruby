@@ -3,7 +3,7 @@ FROM alpine:3.3
 ENV RUBY_MAJOR 2.1
 ENV RUBY_VERSION 2.1.8
 ENV RUBY_DOWNLOAD_SHA256 afd832b8d5ecb2e3e1477ec6a9408fdf9898ee73e4c5df17a2b2cb36bd1c355d
-ENV RUBYGEMS_VERSION 2.5.1
+ENV RUBYGEMS_VERSION 2.5.2
 
 # skip installing gem documentation
 RUN echo -e 'install: --no-document\nupdate: --no-document' >> "$HOME/.gemrc"

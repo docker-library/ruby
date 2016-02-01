@@ -3,7 +3,7 @@ FROM buildpack-deps:jessie
 ENV RUBY_MAJOR 2.0
 ENV RUBY_VERSION 2.0.0-p648
 ENV RUBY_DOWNLOAD_SHA256 8690bd6b4949c333b3919755c4e48885dbfed6fd055fe9ef89930bde0d2376f8
-ENV RUBYGEMS_VERSION 2.5.1
+ENV RUBYGEMS_VERSION 2.5.2
 
 # skip installing gem documentation
 RUN echo 'install: --no-document\nupdate: --no-document' > "$HOME/.gemrc"

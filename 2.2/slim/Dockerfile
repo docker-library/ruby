@@ -16,7 +16,7 @@ RUN apt-get update \
 ENV RUBY_MAJOR 2.2
 ENV RUBY_VERSION 2.2.4
 ENV RUBY_DOWNLOAD_SHA256 b6eff568b48e0fda76e5a36333175df049b204e91217aa32a65153cc0cdcb761
-ENV RUBYGEMS_VERSION 2.5.1
+ENV RUBYGEMS_VERSION 2.5.2
 
 # skip installing gem documentation
 RUN echo 'install: --no-document\nupdate: --no-document' >> "$HOME/.gemrc"
