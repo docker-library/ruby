@@ -1,9 +1,9 @@
 FROM buildpack-deps:jessie
 
-ENV RUBY_MAJOR 2.0
-ENV RUBY_VERSION 2.0.0-p648
-ENV RUBY_DOWNLOAD_SHA256 8690bd6b4949c333b3919755c4e48885dbfed6fd055fe9ef89930bde0d2376f8
-ENV RUBYGEMS_VERSION 2.5.2
+ENV RUBY_MAJOR %%VERSION%%
+ENV RUBY_VERSION %%FULL_VERSION%%
+ENV RUBY_DOWNLOAD_SHA256 %%SHA256%%
+ENV RUBYGEMS_VERSION %%RUBYGEMS%%
 
 # skip installing gem documentation
 RUN echo 'install: --no-document\nupdate: --no-document' >> "$HOME/.gemrc"
@@ -31,7 +31,7 @@ RUN apt-get update \
 ENV GEM_HOME /usr/local/bundle
 ENV PATH $GEM_HOME/bin:$PATH
 
-ENV BUNDLER_VERSION 1.11.2
+ENV BUNDLER_VERSION %%BUNDLER%%
 
 RUN gem install bundler --version "$BUNDLER_VERSION" \
 	&& bundle config --global path "$GEM_HOME" \
