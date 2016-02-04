@@ -51,7 +51,7 @@ RUN set -ex \
 	# the configure script does not detect isnan/isinf as macros
 	&& ac_cv_func_isnan=yes ac_cv_func_isinf=yes \
 		./configure --disable-install-doc \
-	&& make -j"$(nproc)" \
+	&& make -j"$(getconf _NPROCESSORS_ONLN)" \
 	&& make install \
 	&& runDeps="$( \
 		scanelf --needed --nobanner --recursive /usr/local \
