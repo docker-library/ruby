@@ -27,7 +27,6 @@ RUN set -ex \
 		gdbm-dev \
 		glib-dev \
 		libc-dev \
-		libedit-dev \
 		libffi-dev \
 		libxml2-dev \
 		libxslt-dev \
@@ -36,6 +35,8 @@ RUN set -ex \
 		ncurses-dev \
 		openssl-dev \
 		procps \
+# https://bugs.ruby-lang.org/issues/11869 and https://github.com/docker-library/ruby/issues/75
+		readline-dev \
 		ruby \
 		yaml-dev \
 		zlib-dev \
