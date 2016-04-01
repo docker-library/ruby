@@ -8,7 +8,7 @@ if [ ${#versions[@]} -eq 0 ]; then
 	versions=( */ )
 fi
 versions=( "${versions[@]%/}" )
-shaPage=$(curl -fsSL 'https://www.ruby-lang.org/en/downloads/')
+shaPage=$(curl -fsSL 'https://www.ruby-lang.org/en/downloads/' | tr '\r\n' ' ')
 
 latest_gem_version() {
 	curl -sSL "https://rubygems.org/api/v1/gems/$1.json" | sed -r 's/^.*"version":"([^"]+)".*$/\1/'
@@ -19,12 +19,27 @@ bundler="$(latest_gem_version bundler)"
 
 travisEnv=
 for version in "${versions[@]}"; do
-	fullVersion="$(curl -sSL --compressed "http://cache.ruby-lang.org/pub/ruby/$version/" \
-		| grep -E '<a href="ruby-'"$version"'.[^"]+\.tar\.bz2' \
-		| grep -vE 'preview|rc' \
-		| sed -r 's!.*<a href="ruby-([^"]+)\.tar\.bz2.*!\1!' \
-		| sort -V | tail -1)"
-	shaVal="$(echo $shaPage | sed -r "s/.*Ruby ${fullVersion}<\/a><br \/> sha256: ([^<]+).*/\1/")"
+	IFS=$'\n'; allVersions=(
+		$(curl -sSL --compressed "http://cache.ruby-lang.org/pub/ruby/$version/" \
+			| grep -E '<a href="ruby-'"$version"'.[^"]+\.tar\.bz2' \
+			| grep -vE 'preview|rc' \
+			| sed -r 's!.*<a href="ruby-([^"]+)\.tar\.bz2.*!\1!' \
+			| sort -rV)
+	); unset IFS
+
+	fullVersion=
+	for tryVersion in "${allVersions[@]}"; do
+		if echo "$shaPage" | grep -q "Ruby ${tryVersion}<"; then
+			fullVersion="$tryVersion"
+			break
+		fi
+	done
+
+	if [ -z "$fullVersion" ]; then
+		echo >&2 "warning: cannot determine sha for $version (tried all of ${allVersions[*]}); skipping"
+		continue
+	fi
+	shaVal="$(echo "$shaPage" | sed -r "s/.*Ruby ${fullVersion}<\/a><br \/>\s*sha256: ([^<]+).*/\1/")"
 
 	sedStr="
 		s!%%VERSION%%!$version!g;
