@@ -74,7 +74,7 @@ RUN set -ex \
 	&& gem update --system $RUBYGEMS_VERSION \
 	&& rm -r /usr/src/ruby
 
-ENV BUNDLER_VERSION 1.13.0
+ENV BUNDLER_VERSION 1.13.1
 
 RUN gem install bundler --version "$BUNDLER_VERSION"
 
