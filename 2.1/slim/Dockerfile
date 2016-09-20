@@ -4,7 +4,6 @@ RUN apt-get update \
 	&& apt-get install -y --no-install-recommends \
 		bzip2 \
 		ca-certificates \
-		curl \
 		libffi-dev \
 		libgdbm3 \
 		libssl-dev \
@@ -26,8 +25,9 @@ ENV RUBY_DOWNLOAD_SHA256 fb2e454d7a5e5a39eb54db0ec666f53eeb6edc593d1d2b970ae4d15
 ENV RUBYGEMS_VERSION 2.6.6
 
 # some of ruby's build scripts are written in ruby
-# we purge this later to make sure our final image uses what we just built
+#   we purge system ruby later to make sure our final image uses what we just built
 RUN set -ex \
+	\
 	&& buildDeps=' \
 		autoconf \
 		bison \
@@ -41,24 +41,40 @@ RUN set -ex \
 		libxslt-dev \
 		make \
 		ruby \
+		wget \
 	' \
 	&& apt-get update \
 	&& apt-get install -y --no-install-recommends $buildDeps \
 	&& rm -rf /var/lib/apt/lists/* \
-	&& curl -fSL -o ruby.tar.gz "https://cache.ruby-lang.org/pub/ruby/$RUBY_MAJOR/ruby-$RUBY_VERSION.tar.gz" \
+	\
+	&& wget -O ruby.tar.gz "https://cache.ruby-lang.org/pub/ruby/$RUBY_MAJOR/ruby-$RUBY_VERSION.tar.gz" \
 	&& echo "$RUBY_DOWNLOAD_SHA256 *ruby.tar.gz" | sha256sum -c - \
+	\
 	&& mkdir -p /usr/src/ruby \
 	&& tar -xzf ruby.tar.gz -C /usr/src/ruby --strip-components=1 \
 	&& rm ruby.tar.gz \
+	\
 	&& cd /usr/src/ruby \
-	&& { echo '#define ENABLE_PATH_CHECK 0'; echo; cat file.c; } > file.c.new && mv file.c.new file.c \
+	\
+# hack in "ENABLE_PATH_CHECK" disabling to suppress:
+#   warning: Insecure world writable dir
+	&& { \
+		echo '#define ENABLE_PATH_CHECK 0'; \
+		echo; \
+		cat file.c; \
+	} > file.c.new \
+	&& mv file.c.new file.c \
+	\
 	&& autoconf \
 	&& ./configure --disable-install-doc \
 	&& make -j"$(nproc)" \
 	&& make install \
+	\
 	&& apt-get purge -y --auto-remove $buildDeps \
-	&& gem update --system $RUBYGEMS_VERSION \
-	&& rm -r /usr/src/ruby
+	&& cd / \
+	&& rm -r /usr/src/ruby \
+	\
+	&& gem update --system "$RUBYGEMS_VERSION"
 
 ENV BUNDLER_VERSION 1.13.1
 
