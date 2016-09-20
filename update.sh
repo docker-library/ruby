@@ -20,7 +20,7 @@ bundler="$(latest_gem_version bundler)"
 travisEnv=
 for version in "${versions[@]}"; do
 	IFS=$'\n'; allVersions=(
-		$(curl -sSL --compressed "http://cache.ruby-lang.org/pub/ruby/$version/" \
+		$(curl -sSL --compressed "https://cache.ruby-lang.org/pub/ruby/$version/" \
 			| grep -E '<a href="ruby-'"$version"'.[^"]+\.tar\.bz2' \
 			| grep -vE 'preview|rc' \
 			| sed -r 's!.*<a href="ruby-([^"]+)\.tar\.bz2.*!\1!' \

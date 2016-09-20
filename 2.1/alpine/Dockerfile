@@ -40,7 +40,7 @@ RUN set -ex \
 		ruby \
 		yaml-dev \
 		zlib-dev \
-	&& curl -fSL -o ruby.tar.gz "http://cache.ruby-lang.org/pub/ruby/$RUBY_MAJOR/ruby-$RUBY_VERSION.tar.gz" \
+	&& curl -fSL -o ruby.tar.gz "https://cache.ruby-lang.org/pub/ruby/$RUBY_MAJOR/ruby-$RUBY_VERSION.tar.gz" \
 	&& echo "$RUBY_DOWNLOAD_SHA256 *ruby.tar.gz" | sha256sum -c - \
 	&& mkdir -p /usr/src \
 	&& tar -xzf ruby.tar.gz -C /usr/src \
