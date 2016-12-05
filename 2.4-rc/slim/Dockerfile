@@ -1,4 +1,16 @@
-FROM alpine:3.4
+FROM debian:jessie
+
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends \
+		bzip2 \
+		ca-certificates \
+		libffi-dev \
+		libgdbm3 \
+		libssl-dev \
+		libyaml-dev \
+		procps \
+		zlib1g-dev \
+	&& rm -rf /var/lib/apt/lists/*
 
 # skip installing gem documentation
 RUN mkdir -p /usr/local/etc \
@@ -7,41 +19,33 @@ RUN mkdir -p /usr/local/etc \
 		echo 'update: --no-document'; \
 	} >> /usr/local/etc/gemrc
 
-ENV RUBY_MAJOR 2.3
-ENV RUBY_VERSION 2.3.3
-ENV RUBY_DOWNLOAD_SHA256 241408c8c555b258846368830a06146e4849a1d58dcaf6b14a3b6a73058115b7
+ENV RUBY_MAJOR 2.4-rc
+ENV RUBY_VERSION 2.4.0-preview3
+ENV RUBY_DOWNLOAD_SHA256 c35fe752ccfabf69bf48e6aab5111c25a05938b428936f780638e2111934c9dd
 ENV RUBYGEMS_VERSION 2.6.8
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
-# readline-dev vs libedit-dev: https://bugs.ruby-lang.org/issues/11869 and https://github.com/docker-library/ruby/issues/75
 RUN set -ex \
 	\
-	&& apk add --no-cache --virtual .ruby-builddeps \
+	&& buildDeps=' \
 		autoconf \
 		bison \
-		bzip2 \
-		bzip2-dev \
-		ca-certificates \
-		coreutils \
 		gcc \
-		gdbm-dev \
-		glib-dev \
-		libc-dev \
-		libffi-dev \
+		libbz2-dev \
+		libgdbm-dev \
+		libglib2.0-dev \
+		libncurses-dev \
+		libreadline-dev \
 		libxml2-dev \
 		libxslt-dev \
-		linux-headers \
 		make \
-		ncurses-dev \
-		openssl \
-		openssl-dev \
-		procps \
-		readline-dev \
 		ruby \
-		tar \
-		yaml-dev \
-		zlib-dev \
+		wget \
+	' \
+	&& apt-get update \
+	&& apt-get install -y --no-install-recommends $buildDeps \
+	&& rm -rf /var/lib/apt/lists/* \
 	\
 	&& wget -O ruby.tar.gz "https://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR%-rc}/ruby-$RUBY_VERSION.tar.gz" \
 	&& echo "$RUBY_DOWNLOAD_SHA256 *ruby.tar.gz" | sha256sum -c - \
@@ -62,28 +66,11 @@ RUN set -ex \
 	&& mv file.c.new file.c \
 	\
 	&& autoconf \
-# the configure script does not detect isnan/isinf as macros
-	&& ac_cv_func_isnan=yes ac_cv_func_isinf=yes \
-		./configure --disable-install-doc --enable-shared \
-	&& make -j"$(getconf _NPROCESSORS_ONLN)" \
+	&& ./configure --disable-install-doc --enable-shared \
+	&& make -j"$(nproc)" \
 	&& make install \
 	\
-	&& runDeps="$( \
-		scanelf --needed --nobanner --recursive /usr/local \
-			| awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
-			| sort -u \
-			| xargs -r apk info --installed \
-			| sort -u \
-	)" \
-	&& apk add --virtual .ruby-rundeps $runDeps \
-		bzip2 \
-		ca-certificates \
-		libffi-dev \
-		openssl-dev \
-		yaml-dev \
-		procps \
-		zlib-dev \
-	&& apk del .ruby-builddeps \
+	&& apt-get purge -y --auto-remove $buildDeps \
 	&& cd / \
 	&& rm -r /usr/src/ruby \
 	\

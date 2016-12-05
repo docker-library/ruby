@@ -2,6 +2,9 @@ language: bash
 services: docker
 
 env:
+  - VERSION=2.4-rc VARIANT=
+  - VERSION=2.4-rc VARIANT=slim
+  - VERSION=2.4-rc VARIANT=alpine
   - VERSION=2.3 VARIANT=
   - VERSION=2.3 VARIANT=slim
   - VERSION=2.3 VARIANT=alpine
