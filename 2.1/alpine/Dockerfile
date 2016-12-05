@@ -64,7 +64,7 @@ RUN set -ex \
 	&& autoconf \
 # the configure script does not detect isnan/isinf as macros
 	&& ac_cv_func_isnan=yes ac_cv_func_isinf=yes \
-		./configure --disable-install-doc \
+		./configure --disable-install-doc --enable-shared \
 	&& make -j"$(getconf _NPROCESSORS_ONLN)" \
 	&& make install \
 	\
