@@ -8,7 +8,7 @@ if [ ${#versions[@]} -eq 0 ]; then
 	versions=( */ )
 fi
 versions=( "${versions[@]%/}" )
-shaPage=$(curl -fsSL 'https://www.ruby-lang.org/en/downloads/' | tr '\r\n' ' ')
+releasePage=$(curl -fsSL 'https://www.ruby-lang.org/en/downloads/releases/' | tr '\r\n' ' ')
 
 latest_gem_version() {
 	curl -sSL "https://rubygems.org/api/v1/gems/$1.json" | sed -r 's/^.*"version":"([^"]+)".*$/\1/'
@@ -35,7 +35,7 @@ for version in "${versions[@]}"; do
 
 	fullVersion=
 	for tryVersion in "${allVersions[@]}"; do
-		if echo "$shaPage" | grep -q "Ruby ${tryVersion}<"; then
+		if echo "$releasePage" | grep -q "Ruby ${tryVersion}<"; then
 			fullVersion="$tryVersion"
 			break
 		fi
@@ -45,7 +45,8 @@ for version in "${versions[@]}"; do
 		echo >&2 "warning: cannot determine sha for $version (tried all of ${allVersions[*]}); skipping"
 		continue
 	fi
-	shaVal="$(echo "$shaPage" | sed -r "s/.*Ruby ${fullVersion}<\/a><br \/>\s*sha256: ([^<]+).*/\1/")"
+	versionReleasePage="$(curl -fsSL 'https://www.ruby-lang.org/en/downloads/releases/' | grep "<td>Ruby $fullVersion</td>" -A 2 | awk -F'"' '{print $2}' | xargs)"
+	shaVal="$(curl -fsSL "https://www.ruby-lang.org/$versionReleasePage" | grep "ruby-$fullVersion.tar.xz" -A 5 | grep SHA256 | awk '{print $2}')"
 
 	sedStr="
 		s!%%VERSION%%!$version!g;
