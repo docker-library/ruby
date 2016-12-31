@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -eo pipefail
 
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
@@ -8,10 +8,10 @@ if [ ${#versions[@]} -eq 0 ]; then
 	versions=( */ )
 fi
 versions=( "${versions[@]%/}" )
-shaPage=$(curl -fsSL 'https://www.ruby-lang.org/en/downloads/' | tr '\r\n' ' ')
+releasePage="$(curl -fsSL 'https://www.ruby-lang.org/en/downloads/releases/')"
 
 latest_gem_version() {
-	curl -sSL "https://rubygems.org/api/v1/gems/$1.json" | sed -r 's/^.*"version":"([^"]+)".*$/\1/'
+	curl -fsSL "https://rubygems.org/api/v1/gems/$1.json" | sed -r 's/^.*"version":"([^"]+)".*$/\1/'
 }
 
 rubygems="$(latest_gem_version rubygems-update)"
@@ -26,16 +26,16 @@ for version in "${versions[@]}"; do
 	fi
 	
 	IFS=$'\n'; allVersions=(
-		$(curl -sSL --compressed "https://cache.ruby-lang.org/pub/ruby/$rcVersion/" \
-			| grep -E '<a href="ruby-'"$rcVersion"'.[^"]+\.tar\.bz2' \
+		$(curl -fsSL --compressed "https://cache.ruby-lang.org/pub/ruby/$rcVersion/" \
+			| grep -E '<a href="ruby-'"$rcVersion"'.[^"]+\.tar\.xz' \
 			| grep $rcGrepV -E 'preview|rc' \
-			| sed -r 's!.*<a href="ruby-([^"]+)\.tar\.bz2.*!\1!' \
+			| sed -r 's!.*<a href="ruby-([^"]+)\.tar\.xz.*!\1!' \
 			| sort -rV)
 	); unset IFS
 
 	fullVersion=
 	for tryVersion in "${allVersions[@]}"; do
-		if echo "$shaPage" | grep -q "Ruby ${tryVersion}<"; then
+		if echo "$releasePage" | grep -q "Ruby ${tryVersion}<"; then
 			fullVersion="$tryVersion"
 			break
 		fi
@@ -45,7 +45,8 @@ for version in "${versions[@]}"; do
 		echo >&2 "warning: cannot determine sha for $version (tried all of ${allVersions[*]}); skipping"
 		continue
 	fi
-	shaVal="$(echo "$shaPage" | sed -r "s/.*Ruby ${fullVersion}<\/a><br \/>\s*sha256: ([^<]+).*/\1/")"
+	versionReleasePage="$(echo "$releasePage" | grep "<td>Ruby $fullVersion</td>" -A 2 | awk -F '"' '$1 == "<td><a href=" { print $2; exit }')"
+	shaVal="$(curl -fsSL "https://www.ruby-lang.org/$versionReleasePage" |tac|tac| grep "ruby-$fullVersion.tar.xz" -A 5 | awk '/^SHA256:/ { print $2; exit }')"
 
 	sedStr="
 		s!%%VERSION%%!$version!g;
@@ -54,6 +55,7 @@ for version in "${versions[@]}"; do
 		s!%%RUBYGEMS%%!$rubygems!g;
 		s!%%BUNDLER%%!$bundler!g;
 	"
+	echo "$version: $fullVersion; rubygems $rubygems, bundler $bundler; $shaVal"
 	for variant in alpine slim onbuild ''; do
 		[ -d "$version/$variant" ] || continue
 		sed -r "$sedStr" "Dockerfile${variant:+-$variant}.template" > "$version/$variant/Dockerfile"
