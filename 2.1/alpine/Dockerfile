@@ -12,6 +12,8 @@ ENV RUBY_VERSION 2.1.10
 ENV RUBY_DOWNLOAD_SHA256 5be9f8d5d29d252cd7f969ab7550e31bbb001feb4a83532301c0dd3b5006e148
 ENV RUBYGEMS_VERSION 2.6.8
 
+ADD patch/ruby-randegd.patch /tmp/ruby-randegd.patch
+
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
 # readline-dev vs libedit-dev: https://bugs.ruby-lang.org/issues/11869 and https://github.com/docker-library/ruby/issues/75
@@ -61,6 +63,9 @@ RUN set -ex \
 		cat file.c; \
 	} > file.c.new \
 	&& mv file.c.new file.c \
+	\
+	&& patch -p0 < /tmp/ruby-randegd.patch \
+	&& rm /tmp/ruby-randegd.patch \
 	\
 	&& autoconf \
 # the configure script does not detect isnan/isinf as macros
