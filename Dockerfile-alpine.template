@@ -1,5 +1,8 @@
 FROM alpine:3.4
 
+LABEL rubyversion=%%FULL_VERSION%%
+LABEL rubygemsversion=%%RUBYGEMS%%
+
 # skip installing gem documentation
 RUN mkdir -p /usr/local/etc \
 	&& { \
@@ -7,10 +10,10 @@ RUN mkdir -p /usr/local/etc \
 		echo 'update: --no-document'; \
 	} >> /usr/local/etc/gemrc
 
-ENV RUBY_MAJOR %%VERSION%%
-ENV RUBY_VERSION %%FULL_VERSION%%
-ENV RUBY_DOWNLOAD_SHA256 %%SHA256%%
-ENV RUBYGEMS_VERSION %%RUBYGEMS%%
+ARG RUBY_MAJOR %%VERSION%%
+ARG RUBY_VERSION %%FULL_VERSION%%
+ARG RUBY_DOWNLOAD_SHA256 %%SHA256%%
+ARG RUBYGEMS_VERSION %%RUBYGEMS%%
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
@@ -90,18 +93,20 @@ RUN set -ex \
 	\
 	&& gem update --system "$RUBYGEMS_VERSION"
 
-ENV BUNDLER_VERSION %%BUNDLER%%
+ARG BUNDLER_VERSION %%BUNDLER%%
 
 RUN gem install bundler --version "$BUNDLER_VERSION"
 
 # install things globally, for great justice
 # and don't create ".bundle" in all our apps
-ENV GEM_HOME /usr/local/bundle
-ENV BUNDLE_PATH="$GEM_HOME" \
-	BUNDLE_BIN="$GEM_HOME/bin" \
-	BUNDLE_SILENCE_ROOT_WARNING=1 \
-	BUNDLE_APP_CONFIG="$GEM_HOME"
-ENV PATH $BUNDLE_BIN:$PATH
+ARG GEM_HOME /usr/local/bundle
+ARG BUNDLE_PATH="$GEM_HOME" 
+ARG BUNDLE_BIN="$GEM_HOME/bin" 
+ARG BUNDLE_APP_CONFIG="$GEM_HOME"
+ARG PATH $BUNDLE_BIN:$PATH
+
+ENV BUNDLE_SILENCE_ROOT_WARNING=1 
+
 RUN mkdir -p "$GEM_HOME" "$BUNDLE_BIN" \
 	&& chmod 777 "$GEM_HOME" "$BUNDLE_BIN"
 
