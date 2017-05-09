@@ -18,6 +18,7 @@ RUN set -ex \
 	\
 	&& buildDeps=' \
 		bison \
+		dpkg-dev \
 		libgdbm-dev \
 		ruby \
 	' \
@@ -44,8 +45,12 @@ RUN set -ex \
 	&& mv file.c.new file.c \
 	\
 	&& autoconf \
-	&& ./configure --disable-install-doc --enable-shared \
-	&& make -j"$(nproc)" \
+	&& gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
+	&& ./configure \
+		--build="$gnuArch" \
+		--disable-install-doc \
+		--enable-shared \
+	&& make -j "$(nproc)" \
 	&& make install \
 	\
 	&& apt-get purge -y --auto-remove $buildDeps \

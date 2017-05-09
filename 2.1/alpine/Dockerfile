@@ -24,6 +24,7 @@ RUN set -ex \
 		bzip2-dev \
 		ca-certificates \
 		coreutils \
+		dpkg-dev dpkg \
 		gcc \
 		gdbm-dev \
 		glib-dev \
@@ -63,10 +64,14 @@ RUN set -ex \
 	&& mv file.c.new file.c \
 	\
 	&& autoconf \
+	&& gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
 # the configure script does not detect isnan/isinf as macros
-	&& ac_cv_func_isnan=yes ac_cv_func_isinf=yes \
-		./configure --disable-install-doc --enable-shared \
-	&& make -j"$(getconf _NPROCESSORS_ONLN)" \
+	&& export ac_cv_func_isnan=yes ac_cv_func_isinf=yes \
+	&& ./configure \
+		--build="$gnuArch" \
+		--disable-install-doc \
+		--enable-shared \
+	&& make -j "$(nproc)" \
 	&& make install \
 	\
 	&& runDeps="$( \

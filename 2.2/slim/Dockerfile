@@ -31,6 +31,7 @@ RUN set -ex \
 	&& buildDeps=' \
 		autoconf \
 		bison \
+		dpkg-dev \
 		gcc \
 		libbz2-dev \
 		libgdbm-dev \
@@ -67,8 +68,12 @@ RUN set -ex \
 	&& mv file.c.new file.c \
 	\
 	&& autoconf \
-	&& ./configure --disable-install-doc --enable-shared \
-	&& make -j"$(nproc)" \
+	&& gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
+	&& ./configure \
+		--build="$gnuArch" \
+		--disable-install-doc \
+		--enable-shared \
+	&& make -j "$(nproc)" \
 	&& make install \
 	\
 	&& apt-get purge -y --auto-remove $buildDeps \
