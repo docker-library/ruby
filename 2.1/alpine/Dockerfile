@@ -95,7 +95,7 @@ RUN set -ex \
 	\
 	&& gem update --system "$RUBYGEMS_VERSION"
 
-ENV BUNDLER_VERSION 1.14.6
+ENV BUNDLER_VERSION 1.15.0
 
 RUN gem install bundler --version "$BUNDLER_VERSION"
 
