@@ -28,10 +28,11 @@ RUN set -ex \
 		gstreamer1.0-x \
 		xvfb \
 		openssh-client \
-		nodejs \
+		nodejs
+		google-chrome-beta \
 	' \
 	&& apt-get update \
-	&& apt-get install -y $buildDeps \
+	&& apt-get install -y --no-install-recommends $buildDeps \
 	&& rm -rf /var/lib/apt/lists/* \
 	\
 	&& wget -O ruby.tar.xz "https://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR%-rc}/ruby-$RUBY_VERSION.tar.xz" \
