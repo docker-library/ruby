@@ -28,7 +28,7 @@ RUN set -ex \
 		gstreamer1.0-x \
 		xvfb \
 		openssh-client \
-		nodejs
+		nodejs \
 		google-chrome-beta \
 	' \
 	&& apt-get update \
