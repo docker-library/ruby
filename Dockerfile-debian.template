@@ -21,6 +21,14 @@ RUN set -ex \
 		dpkg-dev \
 		libgdbm-dev \
 		ruby \
+		qt5-default \
+		libqt5webkit5-dev \
+		gstreamer1.0-plugins-base \
+		gstreamer1.0-tools \
+		gstreamer1.0-x \
+		xvfb \
+		openssh-client \
+		nodejs \
 	' \
 	&& apt-get update \
 	&& apt-get install -y --no-install-recommends $buildDeps \
