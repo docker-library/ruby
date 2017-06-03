@@ -24,6 +24,7 @@ RUN set -ex \
 	' \
 	&& devDeps=' \
 		xvfb \
+		xauth \
 		qt5-default \
 		libqt5webkit5-dev \
 		gstreamer1.0-plugins-base \
