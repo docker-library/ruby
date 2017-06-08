@@ -12,6 +12,8 @@ ENV RUBY_VERSION 2.1.10
 ENV RUBY_DOWNLOAD_SHA256 5be9f8d5d29d252cd7f969ab7550e31bbb001feb4a83532301c0dd3b5006e148
 ENV RUBYGEMS_VERSION 2.6.12
 
+ADD patch/ruby-randegd.patch /tmp/ruby-randegd.patch
+
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
 # readline-dev vs libedit-dev: https://bugs.ruby-lang.org/issues/11869 and https://github.com/docker-library/ruby/issues/75
@@ -35,8 +37,8 @@ RUN set -ex \
 		linux-headers \
 		make \
 		ncurses-dev \
-		openssl \
-		openssl-dev \
+		libressl \
+		libressl-dev \
 		procps \
 		readline-dev \
 		ruby \
@@ -63,6 +65,9 @@ RUN set -ex \
 	} > file.c.new \
 	&& mv file.c.new file.c \
 	\
+	&& patch -p0 < /tmp/ruby-randegd.patch \
+	&& rm /tmp/ruby-randegd.patch \
+	\
 	&& autoconf \
 	&& gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
 # the configure script does not detect isnan/isinf as macros
@@ -85,7 +90,7 @@ RUN set -ex \
 		bzip2 \
 		ca-certificates \
 		libffi-dev \
-		openssl-dev \
+		libressl-dev \
 		yaml-dev \
 		procps \
 		zlib-dev \
