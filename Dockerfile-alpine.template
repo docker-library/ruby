@@ -78,6 +78,7 @@ RUN set -ex \
 		scanelf --needed --nobanner --recursive /usr/local \
 			| awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
 			| sort -u \
+			| grep -v libruby \
 			| xargs -r apk info --installed \
 			| sort -u \
 	)" \
