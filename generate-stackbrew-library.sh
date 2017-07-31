@@ -1,8 +1,21 @@
-#!/bin/bash
-set -eu
+#!/usr/bin/env bash
+set -Eeuo pipefail
 
 declare -A aliases=(
 	[2.4]='2 latest'
+)
+
+defaultDebianSuite='stretch'
+declare -A debianSuites=(
+	[2.2]='jessie'
+	[2.3]='jessie'
+	[2.4]='jessie'
+)
+defaultAlpineVersion='3.6'
+declare -A alpineVersions=(
+	[2.2]='3.4'
+	[2.3]='3.4'
+	[2.4]='3.4'
 )
 
 self="$(basename "$BASH_SOURCE")"
@@ -10,6 +23,9 @@ cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
 versions=( */ )
 versions=( "${versions[@]%/}" )
+
+# sort version numbers with highest first
+IFS=$'\n'; versions=( $(echo "${versions[*]}" | sort -rV) ); unset IFS
 
 # get the most recent commit which modified any of "$@"
 fileCommit() {
@@ -37,7 +53,7 @@ getArches() {
 	local repo="$1"; shift
 	local officialImagesUrl='https://github.com/docker-library/official-images/raw/master/library/'
 
-	eval "declare -A -g parentRepoToArches=( $(
+	eval "declare -g -A parentRepoToArches=( $(
 		find -name 'Dockerfile' -exec awk '
 				toupper($1) == "FROM" && $2 !~ /^('"$repo"'|scratch|microsoft\/[^:]+)(:|$)/ {
 					print "'"$officialImagesUrl"'" $2
@@ -65,39 +81,47 @@ join() {
 }
 
 for version in "${versions[@]}"; do
-	commit="$(dirCommit "$version")"
+	debianSuite="${debianSuites[$version]:-$defaultDebianSuite}"
+	alpineVersion="${alpineVersions[$version]:-$defaultAlpineVersion}"
 
-	parent="$(awk 'toupper($1) == "FROM" { print $2 }' "$version/Dockerfile")"
-	arches="${parentRepoToArches[$parent]}"
+	for v in \
+		{stretch,jessie}{,/slim,/onbuild} \
+		alpine{3.6,3.4} \
+	; do
+		dir="$version/$v"
+		variant="$(basename "$v")"
 
-	fullVersion="$(git show "$commit":"$version/Dockerfile" | awk '$1 == "ENV" && $2 == "RUBY_VERSION" { print $3; exit }')"
+		[ -f "$dir/Dockerfile" ] || continue
 
-	versionAliases=(
-		$fullVersion
-		$version
-		${aliases[$version]:-}
-	)
+		commit="$(dirCommit "$dir")"
 
-	echo
-	cat <<-EOE
-		Tags: $(join ', ' "${versionAliases[@]}")
-		Architectures: $(join ', ' $arches)
-		GitCommit: $commit
-		Directory: $version
-	EOE
+		versionDockerfile="$dir/Dockerfile"
+		if [ "$variant" = 'onbuild' ]; then
+			versionDockerfile="$(dirname "$dir")/Dockerfile"
+		fi
+		fullVersion="$(git show "$commit":"$versionDockerfile" | awk '$1 == "ENV" && $2 == "RUBY_VERSION" { print $3; exit }')"
 
-	for variant in slim alpine onbuild; do
-		[ -f "$version/$variant/Dockerfile" ] || continue
-
-		commit="$(dirCommit "$version/$variant")"
+		versionAliases=(
+			$fullVersion
+			$version
+			${aliases[$version]:-}
+		)
 
 		variantAliases=( "${versionAliases[@]/%/-$variant}" )
+		if [ "$variant" = "$debianSuite" ]; then
+			variantAliases+=( "${versionAliases[@]}" )
+		elif [ "$variant" = "alpine${alpineVersion}" ]; then
+			variantAliases+=( "${versionAliases[@]/%/-alpine}" )
+		fi
 		variantAliases=( "${variantAliases[@]//latest-/}" )
 
-		case "$variant" in
-			onbuild) variantArches="$arches" ;;
+		case "$v" in
+			*/onbuild)
+				variantParent="$(awk 'toupper($1) == "FROM" { print $2 }' "$(dirname "$dir")/Dockerfile")"
+				variantArches="${parentRepoToArches[$variantParent]}"
+				;;
 			*)
-				variantParent="$(awk 'toupper($1) == "FROM" { print $2 }' "$version/$variant/Dockerfile")"
+				variantParent="$(awk 'toupper($1) == "FROM" { print $2 }' "$dir/Dockerfile")"
 				variantArches="${parentRepoToArches[$variantParent]}"
 				;;
 		esac
@@ -107,7 +131,7 @@ for version in "${versions[@]}"; do
 			Tags: $(join ', ' "${variantAliases[@]}")
 			Architectures: $(join ', ' $variantArches)
 			GitCommit: $commit
-			Directory: $version/$variant
+			Directory: $dir
 		EOE
 	done
 done
