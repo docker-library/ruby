@@ -1,5 +1,5 @@
-#!/bin/bash
-set -eo pipefail
+#!/usr/bin/env bash
+set -Eeuo pipefail
 
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
@@ -24,7 +24,7 @@ for version in "${versions[@]}"; do
 	if [ "$rcVersion" != "$version" ]; then
 		rcGrepV=
 	fi
-	
+
 	IFS=$'\n'; allVersions=(
 		$(curl -fsSL --compressed "https://cache.ruby-lang.org/pub/ruby/$rcVersion/" \
 			| grep -E '<a href="ruby-'"$rcVersion"'.[^"]+\.tar\.xz' \
@@ -48,20 +48,39 @@ for version in "${versions[@]}"; do
 	versionReleasePage="$(echo "$releasePage" | grep "<td>Ruby $fullVersion</td>" -A 2 | awk -F '"' '$1 == "<td><a href=" { print $2; exit }')"
 	shaVal="$(curl -fsSL "https://www.ruby-lang.org/$versionReleasePage" |tac|tac| grep "ruby-$fullVersion.tar.xz" -A 5 | awk '/^SHA256:/ { print $2; exit }')"
 
-	sedStr="
-		s!%%VERSION%%!$version!g;
-		s!%%FULL_VERSION%%!$fullVersion!g;
-		s!%%SHA256%%!$shaVal!g;
-		s!%%RUBYGEMS%%!$rubygems!g;
-		s!%%BUNDLER%%!$bundler!g;
-	"
 	echo "$version: $fullVersion; rubygems $rubygems, bundler $bundler; $shaVal"
-	for variant in alpine slim onbuild ''; do
-		[ -d "$version/$variant" ] || continue
-		sed -r "$sedStr" "Dockerfile${variant:+-$variant}.template" > "$version/$variant/Dockerfile"
-		if [ "$variant" != 'onbuild' ]; then
-			travisEnv='\n  - VERSION='"$version VARIANT=$variant$travisEnv"
-		fi
+
+	for v in \
+		alpine{3.4,3.6} \
+		{jessie,stretch}{/slim,/onbuild,} \
+	; do
+		dir="$version/$v"
+		variant="$(basename "$v")"
+
+		[ -d "$dir" ] || continue
+
+		case "$variant" in
+			slim|onbuild|windowsservercore) template="$variant"; tag="$(basename "$(dirname "$dir")")" ;;
+			alpine*) template='alpine'; tag="${variant#alpine}" ;;
+			*) template='debian'; tag="$variant" ;;
+		esac
+		template="Dockerfile-${template}.template"
+
+		sed -r \
+			-e 's!%%VERSION%%!'"$version"'!g' \
+			-e 's!%%FULL_VERSION%%!'"$fullVersion"'!g' \
+			-e 's!%%SHA256%%!'"$shaVal"'!g' \
+			-e 's!%%RUBYGEMS%%!'"$rubygems"'!g' \
+			-e 's!%%BUNDLER%%!'"$bundler"'!g' \
+			-e 's/^(FROM (debian|buildpack-deps|alpine)):.*/\1:'"$tag"'/' \
+			"$template" > "$dir/Dockerfile"
+
+		case "$v" in
+			*/onbuild) ;;
+			*)
+				travisEnv='\n  - VERSION='"$version VARIANT=$v$travisEnv"
+				;;
+		esac
 	done
 done
 
