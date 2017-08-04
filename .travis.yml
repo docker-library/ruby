@@ -4,6 +4,7 @@ services: docker
 env:
   - VERSION=2.4 VARIANT=jessie
   - VERSION=2.4 VARIANT=jessie/slim
+  - VERSION=2.4 VARIANT=alpine3.6
   - VERSION=2.4 VARIANT=alpine3.4
   - VERSION=2.3 VARIANT=jessie
   - VERSION=2.3 VARIANT=jessie/slim
