@@ -1,4 +1,4 @@
-FROM debian:jessie
+FROM debian:stretch
 
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends \
@@ -19,9 +19,9 @@ RUN mkdir -p /usr/local/etc \
 		echo 'update: --no-document'; \
 	} >> /usr/local/etc/gemrc
 
-ENV RUBY_MAJOR 2.2
-ENV RUBY_VERSION 2.2.7
-ENV RUBY_DOWNLOAD_SHA256 234c8aee6543da9efd67008e6e7ee740d41ed57a52e797f65043c3b5ec3bcb53
+ENV RUBY_MAJOR 2.4
+ENV RUBY_VERSION 2.4.1
+ENV RUBY_DOWNLOAD_SHA256 4fc8a9992de3e90191de369270ea4b6c1b171b7941743614cc50822ddc1fe654
 ENV RUBYGEMS_VERSION 2.6.12
 
 # some of ruby's build scripts are written in ruby
