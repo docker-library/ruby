@@ -30,20 +30,20 @@ RUN set -ex \
 		glib-dev \
 		libc-dev \
 		libffi-dev \
+		libressl \
+		libressl-dev \
 		libxml2-dev \
 		libxslt-dev \
 		linux-headers \
 		make \
 		ncurses-dev \
-		openssl \
-		openssl-dev \
 		procps \
 		readline-dev \
 		ruby \
 		tar \
+		xz \
 		yaml-dev \
 		zlib-dev \
-		xz \
 	\
 	&& wget -O ruby.tar.xz "https://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR%-rc}/ruby-$RUBY_VERSION.tar.xz" \
 	&& echo "$RUBY_DOWNLOAD_SHA256 *ruby.tar.xz" | sha256sum -c - \
@@ -85,9 +85,9 @@ RUN set -ex \
 		bzip2 \
 		ca-certificates \
 		libffi-dev \
-		openssl-dev \
-		yaml-dev \
+		libressl-dev \
 		procps \
+		yaml-dev \
 		zlib-dev \
 	&& apk del .ruby-builddeps \
 	&& cd / \
