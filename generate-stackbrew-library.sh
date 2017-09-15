@@ -102,10 +102,12 @@ for version in "${versions[@]}"; do
 		commit="$(dirCommit "$dir")"
 
 		versionDockerfile="$dir/Dockerfile"
+		versionCommit="$commit"
 		if [ "$variant" = 'onbuild' ]; then
 			versionDockerfile="$(dirname "$dir")/Dockerfile"
+			versionCommit="$(dirCommit "$(dirname "$versionDockerfile")")"
 		fi
-		fullVersion="$(git show "$commit":"$versionDockerfile" | awk '$1 == "ENV" && $2 == "RUBY_VERSION" { print $3; exit }')"
+		fullVersion="$(git show "$versionCommit":"$versionDockerfile" | awk '$1 == "ENV" && $2 == "RUBY_VERSION" { print $3; exit }')"
 
 		versionAliases=(
 			$fullVersion
