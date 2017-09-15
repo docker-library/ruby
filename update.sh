@@ -8,7 +8,9 @@ if [ ${#versions[@]} -eq 0 ]; then
 	versions=( */ )
 fi
 versions=( "${versions[@]%/}" )
-releasePage="$(curl -fsSL 'https://www.ruby-lang.org/en/downloads/releases/')"
+
+releasesPage="$(curl -fsSL 'https://www.ruby-lang.org/en/downloads/releases/')"
+newsPage="$(curl -fsSL 'https://www.ruby-lang.org/en/news/')" # occasionally, releases don't show up on the Releases page
 
 latest_gem_version() {
 	curl -fsSL "https://rubygems.org/api/v1/gems/$1.json" | sed -r 's/^.*"version":"([^"]+)".*$/\1/'
@@ -34,10 +36,25 @@ for version in "${versions[@]}"; do
 	); unset IFS
 
 	fullVersion=
+	shaVal=
 	for tryVersion in "${allVersions[@]}"; do
-		if echo "$releasePage" | grep -q "Ruby ${tryVersion}<"; then
-			fullVersion="$tryVersion"
-			break
+		if \
+			{
+				versionReleasePage="$(echo "$releasesPage" | grep "<td>Ruby $tryVersion</td>" -A 2 | awk -F '"' '$1 == "<td><a href=" { print $2; exit }')" \
+					&& [ "$versionReleasePage" ]
+			} \
+			|| {
+				versionReleasePage="$(echo "$newsPage" | grep -oE '<a href="[^"]+">Ruby '"$tryVersion"' Released</a>' | cut -d'"' -f2)" \
+					&& [ "$versionReleasePage" ]
+			} \
+		; then
+			if \
+				shaVal="$(curl -fsSL "https://www.ruby-lang.org/$versionReleasePage" |tac|tac| grep "ruby-$tryVersion.tar.xz" -A 5 | awk '/^SHA256:/ { print $2; exit }')" \
+				&& [ "$shaVal" ] \
+			; then
+				fullVersion="$tryVersion"
+				break
+			fi
 		fi
 	done
 
@@ -45,8 +62,6 @@ for version in "${versions[@]}"; do
 		echo >&2 "warning: cannot determine sha for $version (tried all of ${allVersions[*]}); skipping"
 		continue
 	fi
-	versionReleasePage="$(echo "$releasePage" | grep "<td>Ruby $fullVersion</td>" -A 2 | awk -F '"' '$1 == "<td><a href=" { print $2; exit }')"
-	shaVal="$(curl -fsSL "https://www.ruby-lang.org/$versionReleasePage" |tac|tac| grep "ruby-$fullVersion.tar.xz" -A 5 | awk '/^SHA256:/ { print $2; exit }')"
 
 	echo "$version: $fullVersion; rubygems $rubygems, bundler $bundler; $shaVal"
 
