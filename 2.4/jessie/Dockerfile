@@ -22,8 +22,24 @@ RUN set -ex \
 		libgdbm-dev \
 		ruby \
 	' \
+	&& devDeps=' \
+		xvfb \
+		xauth \
+		qt5-default \
+		libqt5webkit5-dev \
+		gstreamer1.0-plugins-base \
+		gstreamer1.0-tools \
+		gstreamer1.0-x \
+		openssh-client \
+		nodejs \
+		google-chrome-stable \
+	' \
+	&& wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+	&& echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list \
 	&& apt-get update \
+	&& apt-get install -y --no-install-recommends apt-utils \
 	&& apt-get install -y --no-install-recommends $buildDeps \
+	&& apt-get install -y --no-install-recommends $devDeps \
 	&& rm -rf /var/lib/apt/lists/* \
 	\
 	&& wget -O ruby.tar.xz "https://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR%-rc}/ruby-$RUBY_VERSION.tar.xz" \
