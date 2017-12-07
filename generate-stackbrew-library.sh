@@ -12,11 +12,12 @@ declare -A debianSuites=(
 	[2.3]='jessie'
 	[2.4]='jessie'
 )
-defaultAlpineVersion='3.6'
+defaultAlpineVersion='3.7'
 declare -A alpineVersions=(
 	[2.2]='3.4'
 	[2.3]='3.4'
 	[2.4]='3.4'
+	[2.4]='3.6'
 )
 
 self="$(basename "$BASH_SOURCE")"
@@ -87,7 +88,7 @@ for version in "${versions[@]}"; do
 
 	for v in \
 		{stretch,jessie}{,/slim,/onbuild} \
-		alpine{3.6,3.4} \
+		alpine{3.7,3.6,3.4} \
 	; do
 		dir="$version/$v"
 		variant="$(basename "$v")"
