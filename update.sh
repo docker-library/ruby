@@ -42,20 +42,19 @@ for version in "${versions[@]}"; do
 		if \
 			{
 				versionReleasePage="$(echo "$releasesPage" | grep "<td>Ruby $tryVersion</td>" -A 2 | awk -F '"' '$1 == "<td><a href=" { print $2; exit }')" \
-					&& [ "$versionReleasePage" ]
+					&& [ "$versionReleasePage" ] \
+					&& shaVal="$(curl -fsSL "https://www.ruby-lang.org/$versionReleasePage" |tac|tac| grep "ruby-$tryVersion.tar.xz" -A 5 | awk '/^SHA256:/ { print $2; exit }')" \
+					&& [ "$shaVal" ]
 			} \
 			|| {
 				versionReleasePage="$(echo "$newsPage" | grep -oE '<a href="[^"]+">Ruby '"$tryVersion"' Released</a>' | cut -d'"' -f2)" \
-					&& [ "$versionReleasePage" ]
+					&& [ "$versionReleasePage" ] \
+					&& shaVal="$(curl -fsSL "https://www.ruby-lang.org/$versionReleasePage" |tac|tac| grep "ruby-$tryVersion.tar.xz" -A 5 | awk '/^SHA256:/ { print $2; exit }')" \
+					&& [ "$shaVal" ]
 			} \
 		; then
-			if \
-				shaVal="$(curl -fsSL "https://www.ruby-lang.org/$versionReleasePage" |tac|tac| grep "ruby-$tryVersion.tar.xz" -A 5 | awk '/^SHA256:/ { print $2; exit }')" \
-				&& [ "$shaVal" ] \
-			; then
-				fullVersion="$tryVersion"
-				break
-			fi
+			fullVersion="$tryVersion"
+			break
 		fi
 	done
 
