@@ -2,8 +2,7 @@
 set -Eeuo pipefail
 
 declare -A aliases=(
-	[2.4]='2 latest'
-	[2.5-rc]='rc'
+	[2.5]='2 latest 2.5-rc rc'
 )
 
 defaultDebianSuite='stretch'
@@ -11,12 +10,14 @@ declare -A debianSuites=(
 	[2.2]='jessie'
 	[2.3]='jessie'
 	[2.4]='jessie'
+	[2.5]='stretch'
 )
 defaultAlpineVersion='3.7'
 declare -A alpineVersions=(
 	[2.2]='3.4'
 	[2.3]='3.4'
 	[2.4]='3.4'
+	[2.5]='3.7'
 )
 
 self="$(basename "$BASH_SOURCE")"
