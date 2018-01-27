@@ -1,4 +1,4 @@
-FROM buildpack-deps:%%PLACEHOLDER%%
+FROM buildpack-deps:stretch
 
 # skip installing gem documentation
 RUN mkdir -p /usr/local/etc \
@@ -7,11 +7,11 @@ RUN mkdir -p /usr/local/etc \
 		echo 'update: --no-document'; \
 	} >> /usr/local/etc/gemrc
 
-ENV RUBY_MAJOR %%VERSION%%
-ENV RUBY_VERSION %%FULL_VERSION%%
-ENV RUBY_DOWNLOAD_SHA256 %%SHA256%%
-ENV RUBYGEMS_VERSION %%RUBYGEMS%%
-ENV BUNDLER_VERSION %%BUNDLER%%
+ENV RUBY_MAJOR 2.3
+ENV RUBY_VERSION 2.3.6
+ENV RUBY_DOWNLOAD_SHA256 e0d969ac22d4a403c1204868bb9c0d068aa35045bb3934cf50b17b7f66059f56
+ENV RUBYGEMS_VERSION 2.7.4
+ENV BUNDLER_VERSION 1.16.1
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
