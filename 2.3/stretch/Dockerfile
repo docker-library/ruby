@@ -68,11 +68,11 @@ RUN set -ex \
 # and don't create ".bundle" in all our apps
 ENV GEM_HOME /usr/local/bundle
 ENV BUNDLE_PATH="$GEM_HOME" \
-	BUNDLE_BIN="$GEM_HOME/bin" \
+	BUNDLE_BIN_DIR="$GEM_HOME/bin" \
 	BUNDLE_SILENCE_ROOT_WARNING=1 \
 	BUNDLE_APP_CONFIG="$GEM_HOME"
-ENV PATH $BUNDLE_BIN:$PATH
-RUN mkdir -p "$GEM_HOME" "$BUNDLE_BIN" \
-	&& chmod 777 "$GEM_HOME" "$BUNDLE_BIN"
+ENV PATH $BUNDLE_BIN_DIR:$PATH
+RUN mkdir -p "$GEM_HOME" "$BUNDLE_BIN_DIR" \
+	&& chmod 777 "$GEM_HOME" "$BUNDLE_BIN_DIR"
 
 CMD [ "irb" ]
