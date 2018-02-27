@@ -95,7 +95,10 @@ ENV BUNDLE_PATH="$GEM_HOME" \
 	BUNDLE_BIN="$GEM_HOME/bin" \
 	BUNDLE_SILENCE_ROOT_WARNING=1 \
 	BUNDLE_APP_CONFIG="$GEM_HOME"
-ENV PATH $BUNDLE_BIN:$PATH
+
+# bundler itself is in /usr/local/bin, and due to https://github.com/docker-library/ruby/issues/188 (and thus https://github.com/bundler/bundler/issues/6162) we need to ensure that we don't get a bundler-binstub'd version of bundler in the PATH before our global bundler (hence the explicit "/usr/local/bin" prefix on this PATH)
+ENV PATH /usr/local/bin:$BUNDLE_BIN:$PATH
+
 RUN mkdir -p "$GEM_HOME" "$BUNDLE_BIN" \
 	&& chmod 777 "$GEM_HOME" "$BUNDLE_BIN"
 
