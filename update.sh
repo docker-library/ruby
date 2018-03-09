@@ -87,6 +87,10 @@ for version in "${versions[@]}"; do
 			-e 's!%%SHA256%%!'"$shaVal"'!g' \
 			-e 's!%%RUBYGEMS%%!'"$rubygems"'!g' \
 			-e 's!%%BUNDLER%%!'"$bundler"'!g' \
+			# TODO Should this be supplied for all builds?
+			# TODO If only Debian, we can move this to the .template file
+			-e 's!%%EXTRA_DEPENDENCIES%%!libjemalloc-dev!g' \
+			-e 's!%%EXTRA_CONFIGURATIONS%%!--with-jemalloc!g' \
 			-e "$(
 				if [ "$version" = 2.3 ] && [[ "$v" = stretch* ]]; then
 					echo 's/libssl-dev/libssl1.0-dev/g'
