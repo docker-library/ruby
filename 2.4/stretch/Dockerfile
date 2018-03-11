@@ -24,7 +24,7 @@ RUN set -ex \
 		ruby \
 	' \
 	&& runtimeDeps=' \
-	    libjemalloc-dev
+	    libjemalloc-dev \
 	' \
 	&& apt-get update \
 	&& apt-get install -y --no-install-recommends $buildDeps $runtimeDeps \
@@ -65,6 +65,9 @@ RUN set -ex \
 	&& gem update --system "$RUBYGEMS_VERSION" \
 	&& gem install bundler --version "$BUNDLER_VERSION" --force \
 	&& rm -r /root/.gem/
+
+# TODO remove me before merging
+RUN ruby -r rbconfig -e "RbConfig::CONFIG['LIBS'].include?('jemalloc') ? puts('Ruby is compiled with jemalloc') : warn('JEMALLOC IS MISSING FROM RUBY')"
 
 # install things globally, for great justice
 # and don't create ".bundle" in all our apps
