@@ -24,7 +24,7 @@ RUN set -ex \
 		# ruby 2.3 on stretch can only support libssl1.0-dev (libssl dev from buildpack-deps is 1.1.x)
 		libssl1.0-dev \
 		ruby \
-		# libjemalloc-dev \
+		libjemalloc-dev \
 	' \
 	&& apt-get update \
 	&& apt-get install -y --no-install-recommends $buildDeps \

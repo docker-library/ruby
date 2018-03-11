@@ -22,7 +22,7 @@ RUN set -ex \
 		dpkg-dev \
 		libgdbm-dev \
 		ruby \
-		# libjemalloc-dev \
+		libjemalloc-dev \
 	' \
 	&& apt-get update \
 	&& apt-get install -y --no-install-recommends $buildDeps \
