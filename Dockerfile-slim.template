@@ -10,7 +10,7 @@ RUN apt-get update \
 		libyaml-dev \
 		procps \
 		zlib1g-dev \
-		%%EXTRA_DEPENDENCIES%% \
+		libjemalloc-dev \
 	&& rm -rf /var/lib/apt/lists/*
 
 # skip installing gem documentation
@@ -75,7 +75,7 @@ RUN set -ex \
 		--build="$gnuArch" \
 		--disable-install-doc \
 		--enable-shared \
-		%%EXTRA_CONFIGURATIONS%% \
+		--with-jemalloc \
 	&& make -j "$(nproc)" \
 	&& make install \
 	\

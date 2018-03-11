@@ -22,6 +22,7 @@ RUN set -ex \
 		dpkg-dev \
 		libgdbm-dev \
 		ruby \
+		# libjemalloc-dev \
 	' \
 	&& apt-get update \
 	&& apt-get install -y --no-install-recommends $buildDeps \
@@ -51,6 +52,7 @@ RUN set -ex \
 		--build="$gnuArch" \
 		--disable-install-doc \
 		--enable-shared \
+		--with-jemalloc \
 	&& make -j "$(nproc)" \
 	&& make install \
 	\

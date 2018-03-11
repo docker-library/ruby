@@ -24,6 +24,7 @@ RUN set -ex \
 		# ruby 2.3 on stretch can only support libssl1.0-dev (libssl dev from buildpack-deps is 1.1.x)
 		libssl1.0-dev \
 		ruby \
+		# libjemalloc-dev \
 	' \
 	&& apt-get update \
 	&& apt-get install -y --no-install-recommends $buildDeps \
@@ -53,6 +54,7 @@ RUN set -ex \
 		--build="$gnuArch" \
 		--disable-install-doc \
 		--enable-shared \
+		--with-jemalloc \
 	&& make -j "$(nproc)" \
 	&& make install \
 	\
