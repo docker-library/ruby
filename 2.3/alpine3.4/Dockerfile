@@ -104,6 +104,7 @@ ENV BUNDLE_PATH="$GEM_HOME" \
 	BUNDLE_BIN="$GEM_HOME/bin" \
 	BUNDLE_SILENCE_ROOT_WARNING=1 \
 	BUNDLE_APP_CONFIG="$GEM_HOME"
+# path recommendation: https://github.com/bundler/bundler/pull/6469#issuecomment-383235438
 ENV PATH $BUNDLE_PATH/gems/bin:$PATH
 RUN mkdir -p "$GEM_HOME" "$BUNDLE_BIN" \
 	&& chmod 777 "$GEM_HOME" "$BUNDLE_BIN"
