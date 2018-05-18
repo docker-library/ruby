@@ -10,7 +10,7 @@ RUN mkdir -p /usr/local/etc \
 ENV RUBY_MAJOR 2.6-rc
 ENV RUBY_VERSION 2.6.0-preview1
 ENV RUBY_DOWNLOAD_SHA256 1d99139116e4e245ce543edb137b2a8873c26e9f0bde88d8cee6789617cc8d0e
-ENV RUBYGEMS_VERSION 2.7.6
+ENV RUBYGEMS_VERSION 2.7.7
 ENV BUNDLER_VERSION 1.16.2
 
 # some of ruby's build scripts are written in ruby
