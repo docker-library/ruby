@@ -7,16 +7,7 @@ declare -A aliases=(
 )
 
 defaultDebianSuite='stretch'
-declare -A debianSuites=(
-	[2.2]='jessie'
-	[2.3]='jessie'
-	[2.4]='jessie'
-)
 defaultAlpineVersion='3.7'
-declare -A alpineVersions=(
-	[2.2]='3.4'
-	[2.3]='3.4'
-)
 
 self="$(basename "$BASH_SOURCE")"
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
@@ -81,12 +72,9 @@ join() {
 }
 
 for version in "${versions[@]}"; do
-	debianSuite="${debianSuites[$version]:-$defaultDebianSuite}"
-	alpineVersion="${alpineVersions[$version]:-$defaultAlpineVersion}"
-
 	for v in \
 		{stretch,jessie}{,/slim,/onbuild} \
-		alpine{3.7,3.6,3.4} \
+		alpine{3.7,3.6} \
 	; do
 		dir="$version/$v"
 		variant="$(basename "$v")"
@@ -117,13 +105,13 @@ for version in "${versions[@]}"; do
 
 		variantAliases=( "${versionAliases[@]/%/-$variant}" )
 		case "$variant" in
-			"$debianSuite")
+			"$defaultDebianSuite")
 				variantAliases+=( "${versionAliases[@]}" )
 				;;
-			*-"$debianSuite")
-				variantAliases+=( "${versionAliases[@]/%/-${variant%-$debianSuite}}" )
+			*-"$defaultDebianSuite")
+				variantAliases+=( "${versionAliases[@]/%/-${variant%-$defaultDebianSuite}}" )
 				;;
-			"alpine${alpineVersion}")
+			"alpine${defaultAlpineVersion}")
 				variantAliases+=( "${versionAliases[@]/%/-alpine}" )
 				;;
 		esac

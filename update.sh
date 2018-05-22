@@ -66,7 +66,7 @@ for version in "${versions[@]}"; do
 	echo "$version: $fullVersion; rubygems $rubygems, bundler $bundler; $shaVal"
 
 	for v in \
-		alpine{3.4,3.6,3.7} \
+		alpine{3.6,3.7} \
 		{jessie,stretch}{/slim,/onbuild,} \
 	; do
 		dir="$version/$v"
@@ -96,10 +96,6 @@ for version in "${versions[@]}"; do
 			)" \
 			-e 's/^(FROM (debian|buildpack-deps|alpine)):.*/\1:'"$tag"'/' \
 			"$template" > "$dir/Dockerfile"
-
-		if [ "$variant" = 'alpine3.4' ]; then
-			sed -ri -e 's/libressl/openssl/g' "$dir/Dockerfile"
-		fi
 
 		case "$v" in
 			*/onbuild) ;;
