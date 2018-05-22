@@ -20,9 +20,6 @@ env:
   - VERSION=2.3 VARIANT=jessie
   - VERSION=2.3 VARIANT=jessie/slim
   - VERSION=2.3 VARIANT=alpine3.4
-  - VERSION=2.2 VARIANT=jessie
-  - VERSION=2.2 VARIANT=jessie/slim
-  - VERSION=2.2 VARIANT=alpine3.4
 
 install:
   - git clone --depth 1 https://github.com/docker-library/official-images.git ~/official-images
