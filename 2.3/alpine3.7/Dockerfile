@@ -1,4 +1,4 @@
-FROM alpine:3.4
+FROM alpine:3.7
 
 # skip installing gem documentation
 RUN mkdir -p /usr/local/etc \
@@ -31,8 +31,8 @@ RUN set -ex \
 		glib-dev \
 		libc-dev \
 		libffi-dev \
-		openssl \
-		openssl-dev \
+		libressl \
+		libressl-dev \
 		libxml2-dev \
 		libxslt-dev \
 		linux-headers \
@@ -85,7 +85,7 @@ RUN set -ex \
 		bzip2 \
 		ca-certificates \
 		libffi-dev \
-		openssl-dev \
+		libressl-dev \
 		procps \
 		yaml-dev \
 		zlib-dev \
