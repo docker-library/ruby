@@ -28,13 +28,13 @@ for version in "${versions[@]}"; do
 		rcGrepV=
 	fi
 
-	IFS=$'\n'; allVersions=(
-		$(curl -fsSL --compressed "https://cache.ruby-lang.org/pub/ruby/$rcVersion/" \
-			| grep -E '<a href="ruby-'"$rcVersion"'.[^"]+\.tar\.xz' \
+	IFS=$'\n'; allVersions=( $(
+		curl -fsSL --compressed "https://cache.ruby-lang.org/pub/ruby/$rcVersion/" \
+			| grep -oE '["/]ruby-'"$rcVersion"'.[^"]+\.tar\.xz' \
+			| sed -r 's!^["/]ruby-([^"]+)[.]tar[.]xz!\1!' \
 			| grep $rcGrepV -E 'preview|rc' \
-			| sed -r 's!.*<a href="ruby-([^"]+)\.tar\.xz.*!\1!' \
-			| sort -rV)
-	); unset IFS
+			| sort -ruV
+	) ); unset IFS
 
 	fullVersion=
 	shaVal=
