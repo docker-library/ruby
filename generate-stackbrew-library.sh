@@ -73,7 +73,7 @@ join() {
 
 for version in "${versions[@]}"; do
 	for v in \
-		{stretch,jessie}{,/slim,/onbuild} \
+		{stretch,jessie}{,/slim} \
 		alpine{3.7,3.6} \
 	; do
 		dir="$version/$v"
@@ -89,13 +89,7 @@ for version in "${versions[@]}"; do
 
 		commit="$(dirCommit "$dir")"
 
-		versionDockerfile="$dir/Dockerfile"
-		versionCommit="$commit"
-		if [ "$variant" = 'onbuild' ]; then
-			versionDockerfile="$(dirname "$dir")/Dockerfile"
-			versionCommit="$(dirCommit "$(dirname "$versionDockerfile")")"
-		fi
-		fullVersion="$(git show "$versionCommit":"$versionDockerfile" | awk '$1 == "ENV" && $2 == "RUBY_VERSION" { print $3; exit }')"
+		fullVersion="$(git show "$commit":"$dir/Dockerfile" | awk '$1 == "ENV" && $2 == "RUBY_VERSION" { print $3; exit }')"
 
 		versionAliases=(
 			$fullVersion
@@ -117,16 +111,8 @@ for version in "${versions[@]}"; do
 		esac
 		variantAliases=( "${variantAliases[@]//latest-/}" )
 
-		case "$v" in
-			*/onbuild)
-				variantParent="$(awk 'toupper($1) == "FROM" { print $2 }' "$(dirname "$dir")/Dockerfile")"
-				variantArches="${parentRepoToArches[$variantParent]}"
-				;;
-			*)
-				variantParent="$(awk 'toupper($1) == "FROM" { print $2 }' "$dir/Dockerfile")"
-				variantArches="${parentRepoToArches[$variantParent]}"
-				;;
-		esac
+		variantParent="$(awk 'toupper($1) == "FROM" { print $2 }' "$dir/Dockerfile")"
+		variantArches="${parentRepoToArches[$variantParent]}"
 
 		echo
 		cat <<-EOE

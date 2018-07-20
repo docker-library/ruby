@@ -67,7 +67,7 @@ for version in "${versions[@]}"; do
 
 	for v in \
 		alpine{3.6,3.7} \
-		{jessie,stretch}{/slim,/onbuild,} \
+		{jessie,stretch}{/slim,} \
 	; do
 		dir="$version/$v"
 		variant="$(basename "$v")"
@@ -75,7 +75,7 @@ for version in "${versions[@]}"; do
 		[ -d "$dir" ] || continue
 
 		case "$variant" in
-			slim|onbuild|windowsservercore) template="$variant"; tag="$(basename "$(dirname "$dir")")" ;;
+			slim|windowsservercore) template="$variant"; tag="$(basename "$(dirname "$dir")")" ;;
 			alpine*) template='alpine'; tag="${variant#alpine}" ;;
 			*) template='debian'; tag="$variant" ;;
 		esac
@@ -97,12 +97,7 @@ for version in "${versions[@]}"; do
 			-e 's/^(FROM (debian|buildpack-deps|alpine)):.*/\1:'"$tag"'/' \
 			"$template" > "$dir/Dockerfile"
 
-		case "$v" in
-			*/onbuild) ;;
-			*)
-				travisEnv='\n  - VERSION='"$version VARIANT=$v$travisEnv"
-				;;
-		esac
+		travisEnv='\n  - VERSION='"$version VARIANT=$v$travisEnv"
 	done
 done
 
