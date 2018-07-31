@@ -67,7 +67,7 @@ for version in "${versions[@]}"; do
 
 	for v in \
 		alpine{3.6,3.7} \
-		{jessie,stretch}{/slim,} \
+		{jessie,stretch,buster}{/slim,} \
 	; do
 		dir="$version/$v"
 		variant="$(basename "$v")"
