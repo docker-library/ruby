@@ -85,7 +85,6 @@ RUN set -ex \
 		bzip2 \
 		ca-certificates \
 		libffi-dev \
-		libressl-dev \
 		procps \
 		yaml-dev \
 		zlib-dev \
