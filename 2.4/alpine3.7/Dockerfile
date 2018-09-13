@@ -81,14 +81,14 @@ RUN set -ex \
 			| sort -u \
 			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
 	)" \
-	&& apk add --virtual .ruby-rundeps $runDeps \
+	&& apk add --no-network --virtual .ruby-rundeps $runDeps \
 		bzip2 \
 		ca-certificates \
 		libffi-dev \
 		procps \
 		yaml-dev \
 		zlib-dev \
-	&& apk del .ruby-builddeps \
+	&& apk del --no-network .ruby-builddeps \
 	&& cd / \
 	&& rm -r /usr/src/ruby \
 	\
