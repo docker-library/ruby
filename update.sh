@@ -66,7 +66,7 @@ for version in "${versions[@]}"; do
 	echo "$version: $fullVersion; rubygems $rubygems, bundler $bundler; $shaVal"
 
 	for v in \
-		alpine{3.6,3.7} \
+		alpine{3.6,3.7,3.8} \
 		{jessie,stretch}{/slim,} \
 	; do
 		dir="$version/$v"
