@@ -11,7 +11,6 @@ defaultAlpineVersion='3.8'
 declare -A alpineVersion=(
 	[2.4]='3.8'
 	[2.5]='3.8'
-	[2.6-rc]='3.8'
 )
 
 self="$(basename "$BASH_SOURCE")"
