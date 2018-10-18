@@ -9,10 +9,9 @@ declare -A aliases=(
 defaultDebianSuite='stretch'
 defaultAlpineVersion='3.8'
 declare -A alpineVersion=(
-	# "openssl_missing.h:196:22: error: static declaration of 'EVP_PKEY_get0_RSA' follows non-static declaration" (and friends)
-	# https://github.com/docker-library/ruby/issues/228 / https://bugs.ruby-lang.org/issues/14754
-	[2.4]='3.7' # TODO remove this (and add Alpine 3.8) once 2.4.5+ is released
-	[2.5]='3.7' # TODO remove this (and add Alpine 3.8) once 2.5.2+ is released
+	[2.4]='3.8'
+	[2.5]='3.8'
+	[2.6-rc]='3.8'
 )
 
 self="$(basename "$BASH_SOURCE")"
