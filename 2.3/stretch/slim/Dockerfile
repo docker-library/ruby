@@ -6,11 +6,11 @@ RUN apt-get update \
 		ca-certificates \
 		libffi-dev \
 		libgdbm3 \
+		libjemalloc-dev \
 		libssl1.0-dev \
 		libyaml-dev \
 		procps \
 		zlib1g-dev \
-		libjemalloc-dev \
 	&& rm -rf /var/lib/apt/lists/*
 
 # skip installing gem documentation
@@ -90,8 +90,8 @@ RUN set -ex \
 	&& gem install bundler --version "$BUNDLER_VERSION" --force \
 	&& rm -r /root/.gem/
 
-# TODO remove me before merging
-RUN ruby -r rbconfig -e "RbConfig::CONFIG['LIBS'].include?('jemalloc') ? puts('Ruby is compiled with jemalloc') : warn('JEMALLOC IS MISSING FROM RUBY')"
+# Sanity check for jemalloc
+RUN ruby -r rbconfig -e "abort 'jemalloc not enabled' unless RbConfig::CONFIG['LIBS'].include?('jemalloc')"
 
 # install things globally, for great justice
 # and don't create ".bundle" in all our apps
