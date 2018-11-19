@@ -28,13 +28,13 @@ for version in "${versions[@]}"; do
 		rcGrepV=
 	fi
 
-	IFS=$'\n'; allVersions=(
-		$(curl -fsSL --compressed "https://cache.ruby-lang.org/pub/ruby/$rcVersion/" \
-			| grep -E '<a href="ruby-'"$rcVersion"'.[^"]+\.tar\.xz' \
+	IFS=$'\n'; allVersions=( $(
+		curl -fsSL --compressed "https://cache.ruby-lang.org/pub/ruby/$rcVersion/" \
+			| grep -oE '["/]ruby-'"$rcVersion"'.[^"]+\.tar\.xz' \
+			| sed -r 's!^["/]ruby-([^"]+)[.]tar[.]xz!\1!' \
 			| grep $rcGrepV -E 'preview|rc' \
-			| sed -r 's!.*<a href="ruby-([^"]+)\.tar\.xz.*!\1!' \
-			| sort -rV)
-	); unset IFS
+			| sort -ruV
+	) ); unset IFS
 
 	fullVersion=
 	shaVal=
@@ -66,8 +66,8 @@ for version in "${versions[@]}"; do
 	echo "$version: $fullVersion; rubygems $rubygems, bundler $bundler; $shaVal"
 
 	for v in \
-		alpine{3.4,3.6,3.7} \
-		{jessie,stretch}{/slim,/onbuild,} \
+		alpine{3.6,3.7,3.8} \
+		{jessie,stretch}{/slim,} \
 	; do
 		dir="$version/$v"
 		variant="$(basename "$v")"
@@ -75,7 +75,7 @@ for version in "${versions[@]}"; do
 		[ -d "$dir" ] || continue
 
 		case "$variant" in
-			slim|onbuild|windowsservercore) template="$variant"; tag="$(basename "$(dirname "$dir")")" ;;
+			slim|windowsservercore) template="$variant"; tag="$(basename "$(dirname "$dir")")" ;;
 			alpine*) template='alpine'; tag="${variant#alpine}" ;;
 			*) template='debian'; tag="$variant" ;;
 		esac
@@ -97,16 +97,7 @@ for version in "${versions[@]}"; do
 			-e 's/^(FROM (debian|buildpack-deps|alpine)):.*/\1:'"$tag"'/' \
 			"$template" > "$dir/Dockerfile"
 
-		if [ "$variant" = 'alpine3.4' ]; then
-			sed -ri -e 's/libressl/openssl/g' "$dir/Dockerfile"
-		fi
-
-		case "$v" in
-			*/onbuild) ;;
-			*)
-				travisEnv='\n  - VERSION='"$version VARIANT=$v$travisEnv"
-				;;
-		esac
+		travisEnv='\n  - VERSION='"$version VARIANT=$v$travisEnv"
 	done
 done
 

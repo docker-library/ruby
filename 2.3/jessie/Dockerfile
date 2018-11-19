@@ -8,10 +8,10 @@ RUN mkdir -p /usr/local/etc \
 	} >> /usr/local/etc/gemrc
 
 ENV RUBY_MAJOR 2.3
-ENV RUBY_VERSION 2.3.6
-ENV RUBY_DOWNLOAD_SHA256 e0d969ac22d4a403c1204868bb9c0d068aa35045bb3934cf50b17b7f66059f56
-ENV RUBYGEMS_VERSION 2.7.6
-ENV BUNDLER_VERSION 1.16.1
+ENV RUBY_VERSION 2.3.8
+ENV RUBY_DOWNLOAD_SHA256 910f635d84fd0d81ac9bdee0731279e6026cb4cd1315bbbb5dfb22e09c5c1dfe
+ENV RUBYGEMS_VERSION 2.7.8
+ENV BUNDLER_VERSION 1.17.1
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
@@ -66,11 +66,12 @@ RUN set -ex \
 # and don't create ".bundle" in all our apps
 ENV GEM_HOME /usr/local/bundle
 ENV BUNDLE_PATH="$GEM_HOME" \
-	BUNDLE_BIN="$GEM_HOME/bin" \
 	BUNDLE_SILENCE_ROOT_WARNING=1 \
 	BUNDLE_APP_CONFIG="$GEM_HOME"
-ENV PATH $BUNDLE_BIN:$PATH
-RUN mkdir -p "$GEM_HOME" "$BUNDLE_BIN" \
-	&& chmod 777 "$GEM_HOME" "$BUNDLE_BIN"
+# path recommendation: https://github.com/bundler/bundler/pull/6469#issuecomment-383235438
+ENV PATH $GEM_HOME/bin:$BUNDLE_PATH/gems/bin:$PATH
+# adjust permissions of a few directories for running "gem install" as an arbitrary user
+RUN mkdir -p "$GEM_HOME" && chmod 777 "$GEM_HOME"
+# (BUNDLE_PATH = GEM_HOME, no need to mkdir/chown both)
 
 CMD [ "irb" ]

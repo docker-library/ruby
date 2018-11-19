@@ -7,16 +7,9 @@ declare -A aliases=(
 )
 
 defaultDebianSuite='stretch'
-declare -A debianSuites=(
-	[2.2]='jessie'
-	[2.3]='jessie'
-	[2.4]='jessie'
-)
-defaultAlpineVersion='3.7'
-declare -A alpineVersions=(
-	[2.2]='3.4'
-	[2.3]='3.4'
-	[2.4]='3.4'
+defaultAlpineVersion='3.8'
+declare -A alpineVersion=(
+	#[2.5]='3.8'
 )
 
 self="$(basename "$BASH_SOURCE")"
@@ -82,12 +75,9 @@ join() {
 }
 
 for version in "${versions[@]}"; do
-	debianSuite="${debianSuites[$version]:-$defaultDebianSuite}"
-	alpineVersion="${alpineVersions[$version]:-$defaultAlpineVersion}"
-
 	for v in \
-		{stretch,jessie}{,/slim,/onbuild} \
-		alpine{3.7,3.6,3.4} \
+		{stretch,jessie}{,/slim} \
+		alpine{3.8,3.7,3.6} \
 	; do
 		dir="$version/$v"
 		variant="$(basename "$v")"
@@ -102,13 +92,7 @@ for version in "${versions[@]}"; do
 
 		commit="$(dirCommit "$dir")"
 
-		versionDockerfile="$dir/Dockerfile"
-		versionCommit="$commit"
-		if [ "$variant" = 'onbuild' ]; then
-			versionDockerfile="$(dirname "$dir")/Dockerfile"
-			versionCommit="$(dirCommit "$(dirname "$versionDockerfile")")"
-		fi
-		fullVersion="$(git show "$versionCommit":"$versionDockerfile" | awk '$1 == "ENV" && $2 == "RUBY_VERSION" { print $3; exit }')"
+		fullVersion="$(git show "$commit":"$dir/Dockerfile" | awk '$1 == "ENV" && $2 == "RUBY_VERSION" { print $3; exit }')"
 
 		versionAliases=(
 			$fullVersion
@@ -118,28 +102,20 @@ for version in "${versions[@]}"; do
 
 		variantAliases=( "${versionAliases[@]/%/-$variant}" )
 		case "$variant" in
-			"$debianSuite")
+			"$defaultDebianSuite")
 				variantAliases+=( "${versionAliases[@]}" )
 				;;
-			*-"$debianSuite")
-				variantAliases+=( "${versionAliases[@]/%/-${variant%-$debianSuite}}" )
+			*-"$defaultDebianSuite")
+				variantAliases+=( "${versionAliases[@]/%/-${variant%-$defaultDebianSuite}}" )
 				;;
-			"alpine${alpineVersion}")
+			"alpine${alpineVersion[$version]:-$defaultAlpineVersion}")
 				variantAliases+=( "${versionAliases[@]/%/-alpine}" )
 				;;
 		esac
 		variantAliases=( "${variantAliases[@]//latest-/}" )
 
-		case "$v" in
-			*/onbuild)
-				variantParent="$(awk 'toupper($1) == "FROM" { print $2 }' "$(dirname "$dir")/Dockerfile")"
-				variantArches="${parentRepoToArches[$variantParent]}"
-				;;
-			*)
-				variantParent="$(awk 'toupper($1) == "FROM" { print $2 }' "$dir/Dockerfile")"
-				variantArches="${parentRepoToArches[$variantParent]}"
-				;;
-		esac
+		variantParent="$(awk 'toupper($1) == "FROM" { print $2 }' "$dir/Dockerfile")"
+		variantArches="${parentRepoToArches[$variantParent]}"
 
 		echo
 		cat <<-EOE
