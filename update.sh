@@ -79,7 +79,8 @@ for version in "${versions[@]}"; do
 		case "$variant" in
 			slim|windowsservercore) template="$variant"; tag="$(basename "$(dirname "$dir")")" ;;
 			alpine*) template='alpine'; tag="${variant#alpine}" ;;
-			ubuntu|bionic) template='ubuntu'; tag="${variant#ubuntu}"; os_version='18.04' ;;
+			ubuntu) template='ubuntu'; tag="${variant#ubuntu}"; os_version='latest' ;;
+			bionic) template='ubuntu'; tag="${variant#ubuntu}"; os_version='18.04' ;;
 			*) template='debian'; tag="$variant" ;;
 		esac
 
