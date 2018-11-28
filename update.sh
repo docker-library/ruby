@@ -68,17 +68,21 @@ for version in "${versions[@]}"; do
 	for v in \
 		alpine{3.6,3.7,3.8} \
 		{jessie,stretch}{/slim,} \
+		ubuntu{/bionic,} \
 	; do
 		dir="$version/$v"
 		variant="$(basename "$v")"
 
 		[ -d "$dir" ] || continue
+		echo >&2 "Creating Dockerfile for $variant at $dir/Dockerfile"
 
 		case "$variant" in
 			slim|windowsservercore) template="$variant"; tag="$(basename "$(dirname "$dir")")" ;;
 			alpine*) template='alpine'; tag="${variant#alpine}" ;;
+			ubuntu|bionic) template='ubuntu'; tag="${variant#ubuntu}"; os_version='18.04' ;;
 			*) template='debian'; tag="$variant" ;;
 		esac
+
 		template="Dockerfile-${template}.template"
 
 		sed -r \
@@ -95,6 +99,11 @@ for version in "${versions[@]}"; do
 				fi
 			)" \
 			-e 's/^(FROM (debian|buildpack-deps|alpine)):.*/\1:'"$tag"'/' \
+			-e "$(
+				if [ "$variant" = ubuntu ] || [[ "$variant" = bionic ]]; then
+					echo 's!%%PLACEHOLDER%%!'"$os_version"'!g'
+				fi
+			)" \
 			"$template" > "$dir/Dockerfile"
 
 		travisEnv='\n  - VERSION='"$version VARIANT=$v$travisEnv"
@@ -103,3 +112,5 @@ done
 
 travis="$(awk -v 'RS=\n\n' '$1 == "env:" { $0 = "env:'"$travisEnv"'" } { printf "%s%s", $0, RS }' .travis.yml)"
 echo "$travis" > .travis.yml
+
+
