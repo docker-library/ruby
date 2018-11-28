@@ -10,6 +10,7 @@ RUN apt-get update \
 		gawk \
 		gcc \
 		git \
+                libgdbm5 \
 		libffi-dev \
 		libreadline7 \
 		libssl-dev \
