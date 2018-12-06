@@ -5,7 +5,7 @@ RUN apt-get update \
 		bzip2 \
 		ca-certificates \
 		libffi-dev \
-		libgdbm3 \
+		gdbm-l10n \
 		libssl1.0-dev \
 		libyaml-dev \
 		procps \

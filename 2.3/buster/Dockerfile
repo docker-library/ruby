@@ -21,7 +21,7 @@ RUN set -ex \
 		bison \
 		dpkg-dev \
 		libgdbm-dev \
-		# ruby 2.3 on buster can only support libssl1.0-dev (libssl dev from buildpack-deps is 1.1.x)
+		# ruby 2.3 on stretch can only support libssl1.0-dev (libssl dev from buildpack-deps is 1.1.x)
 		libssl1.0-dev \
 		ruby \
 	' \

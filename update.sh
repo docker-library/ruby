@@ -96,6 +96,11 @@ for version in "${versions[@]}"; do
 					echo '/libssl1.0-dev/d'
 				fi
 			)" \
+			-e "$(
+				if [[ "$v" = buster* ]]; then
+					echo 's/libgdbm3/gdbm-l10n/g'
+				fi
+			)" \
 			-e 's/^(FROM (debian|buildpack-deps|alpine)):.*/\1:'"$tag"'/' \
 			"$template" > "$dir/Dockerfile"
 
@@ -105,3 +110,5 @@ done
 
 travis="$(awk -v 'RS=\n\n' '$1 == "env:" { $0 = "env:'"$travisEnv"'" } { printf "%s%s", $0, RS }' .travis.yml)"
 echo "$travis" > .travis.yml
+
+
