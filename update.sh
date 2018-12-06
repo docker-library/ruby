@@ -67,7 +67,7 @@ for version in "${versions[@]}"; do
 
 	for v in \
 		alpine{3.6,3.7,3.8} \
-		{jessie,stretch}{/slim,} \
+		{jessie,stretch,buster}{/slim,} \
 	; do
 		dir="$version/$v"
 		variant="$(basename "$v")"
@@ -89,6 +89,8 @@ for version in "${versions[@]}"; do
 			-e 's!%%BUNDLER%%!'"$bundler"'!g' \
 			-e "$(
 				if [ "$version" = 2.3 ] && [[ "$v" = stretch* ]]; then
+					echo 's/libssl-dev/libssl1.0-dev/g'
+				elif [ "$version" = 2.3 ] && [[ "$v" = buster* ]]; then
 					echo 's/libssl-dev/libssl1.0-dev/g'
 				else
 					echo '/libssl1.0-dev/d'
