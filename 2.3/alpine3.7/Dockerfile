@@ -11,7 +11,7 @@ ENV RUBY_MAJOR 2.3
 ENV RUBY_VERSION 2.3.8
 ENV RUBY_DOWNLOAD_SHA256 910f635d84fd0d81ac9bdee0731279e6026cb4cd1315bbbb5dfb22e09c5c1dfe
 ENV RUBYGEMS_VERSION 3.0.1
-ENV BUNDLER_VERSION 1.17.2
+ENV BUNDLER_VERSION 1.17.3
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
