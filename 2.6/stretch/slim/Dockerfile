@@ -1,4 +1,16 @@
-FROM buildpack-deps:stretch
+FROM debian:stretch
+
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends \
+		bzip2 \
+		ca-certificates \
+		libffi-dev \
+		libgdbm3 \
+		libssl-dev \
+		libyaml-dev \
+		procps \
+		zlib1g-dev \
+	&& rm -rf /var/lib/apt/lists/*
 
 # skip installing gem documentation
 RUN mkdir -p /usr/local/etc \
@@ -7,9 +19,9 @@ RUN mkdir -p /usr/local/etc \
 		echo 'update: --no-document'; \
 	} >> /usr/local/etc/gemrc
 
-ENV RUBY_MAJOR 2.6-rc
-ENV RUBY_VERSION 2.6.0-rc2
-ENV RUBY_DOWNLOAD_SHA256 d620b3d87b3190867304067f3ce77f5305f7ec1b2e73b09c17710c97c028986d
+ENV RUBY_MAJOR 2.6
+ENV RUBY_VERSION 2.6.0
+ENV RUBY_DOWNLOAD_SHA256 acb00f04374899ba8ee74bbbcb9b35c5c6b1fd229f1876554ee76f0f1710ff5f
 ENV RUBYGEMS_VERSION 3.0.1
 ENV BUNDLER_VERSION 1.17.2
 
@@ -18,10 +30,21 @@ ENV BUNDLER_VERSION 1.17.2
 RUN set -ex \
 	\
 	&& buildDeps=' \
+		autoconf \
 		bison \
 		dpkg-dev \
+		gcc \
+		libbz2-dev \
 		libgdbm-dev \
+		libglib2.0-dev \
+		libncurses-dev \
+		libreadline-dev \
+		libxml2-dev \
+		libxslt-dev \
+		make \
 		ruby \
+		wget \
+		xz-utils \
 	' \
 	&& apt-get update \
 	&& apt-get install -y --no-install-recommends $buildDeps \
@@ -54,6 +77,9 @@ RUN set -ex \
 	&& make -j "$(nproc)" \
 	&& make install \
 	\
+	&& dpkg-query --show --showformat '${package}\n' \
+		| grep -P '^libreadline\d+$' \
+		| xargs apt-mark manual \
 	&& apt-get purge -y --auto-remove $buildDeps \
 	&& cd / \
 	&& rm -r /usr/src/ruby \
