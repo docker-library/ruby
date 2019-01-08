@@ -85,6 +85,10 @@ for version in "${versions[@]}"; do
 		esac
 		template="Dockerfile-${template}.template"
 
+		if [ "$variant" = 'slim' ]; then
+			tag+='-slim'
+		fi
+
 		sed -r \
 			-e 's!%%VERSION%%!'"$version"'!g' \
 			-e 's!%%FULL_VERSION%%!'"$fullVersion"'!g' \
