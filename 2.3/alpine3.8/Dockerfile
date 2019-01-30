@@ -30,13 +30,13 @@ RUN set -ex \
 		glib-dev \
 		libc-dev \
 		libffi-dev \
-		libressl \
-		libressl-dev \
 		libxml2-dev \
 		libxslt-dev \
 		linux-headers \
 		make \
 		ncurses-dev \
+		libressl \
+		libressl-dev \
 		procps \
 		readline-dev \
 		ruby \
