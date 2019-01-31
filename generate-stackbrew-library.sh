@@ -7,9 +7,9 @@ declare -A aliases=(
 )
 
 defaultDebianSuite='stretch'
-defaultAlpineVersion='3.8'
+defaultAlpineVersion='3.9'
 declare -A alpineVersion=(
-	#[2.5]='3.8'
+	[2.3]='3.8'
 )
 
 self="$(basename "$BASH_SOURCE")"
@@ -77,7 +77,7 @@ join() {
 for version in "${versions[@]}"; do
 	for v in \
 		{stretch,jessie}{,/slim} \
-		alpine{3.8,3.7,3.6} \
+		alpine{3.9,3.8,3.7} \
 	; do
 		dir="$version/$v"
 		variant="$(basename "$v")"
