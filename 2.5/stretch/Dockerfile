@@ -20,6 +20,7 @@ RUN set -ex \
 		bison \
 		dpkg-dev \
 		libgdbm-dev \
+		libgmp3-dev \
 		ruby \
 	' \
 	&& apt-get update \
