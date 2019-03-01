@@ -12,8 +12,6 @@ ENV RUBY_VERSION 2.5.3
 ENV RUBY_DOWNLOAD_SHA256 1cc9d0359a8ea35fc6111ec830d12e60168f3b9b305a3c2578357d360fcf306f
 ENV RUBYGEMS_VERSION 3.0.1
 
-RUN apt-get update && apt-get install -y libgmp3-dev && rm -rf /var/lib/apt/lists/*
-
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
 RUN set -ex \

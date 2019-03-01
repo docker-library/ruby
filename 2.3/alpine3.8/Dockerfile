@@ -28,6 +28,7 @@ RUN set -ex \
 		gcc \
 		gdbm-dev \
 		glib-dev \
+		gmp-dev \
 		libc-dev \
 		libffi-dev \
 		libxml2-dev \
