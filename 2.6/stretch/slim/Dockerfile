@@ -6,6 +6,7 @@ RUN apt-get update \
 		ca-certificates \
 		libffi-dev \
 		libgdbm3 \
+		libgmp-dev \
 		libssl-dev \
 		libyaml-dev \
 		procps \
@@ -36,7 +37,6 @@ RUN set -ex \
 		libbz2-dev \
 		libgdbm-dev \
 		libglib2.0-dev \
-		libgmp-dev \
 		libncurses-dev \
 		libreadline-dev \
 		libxml2-dev \
