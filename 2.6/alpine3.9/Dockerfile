@@ -1,5 +1,8 @@
 FROM alpine:3.9
 
+RUN apk add --no-cache \
+		gmp-dev
+
 # skip installing gem documentation
 RUN mkdir -p /usr/local/etc \
 	&& { \
@@ -27,7 +30,6 @@ RUN set -ex \
 		gcc \
 		gdbm-dev \
 		glib-dev \
-		gmp-dev \
 		libc-dev \
 		libffi-dev \
 		libxml2-dev \
