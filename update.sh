@@ -18,9 +18,9 @@ latest_gem_version() {
 }
 
 # https://github.com/docker-library/ruby/issues/246
-rubygems='3.0.1'
+rubygems='3.0.3'
 declare -A newEnoughRubygems=(
-	[2.6]=1 # 3.0.1+
+#	[2.6]=1 # 2.6.1 => gems 3.0.1
 )
 # TODO once all versions are in this family of "new enough", remove RUBYGEMS_VERSION code entirely
 
