@@ -21,9 +21,8 @@ RUN mkdir -p /usr/local/etc \
 	} >> /usr/local/etc/gemrc
 
 ENV RUBY_MAJOR 2.6
-ENV RUBY_VERSION 2.6.1
-ENV RUBY_DOWNLOAD_SHA256 47b629808e9fd44ce1f760cdf3ed14875fc9b19d4f334e82e2cf25cb2898f2f2
-ENV RUBYGEMS_VERSION 3.0.3
+ENV RUBY_VERSION 2.6.2
+ENV RUBY_DOWNLOAD_SHA256 91fcde77eea8e6206d775a48ac58450afe4883af1a42e5b358320beb33a445fa
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
@@ -88,9 +87,6 @@ RUN set -ex \
 	\
 	&& cd / \
 	&& rm -r /usr/src/ruby \
-# make sure bundled "rubygems" is older than RUBYGEMS_VERSION (https://github.com/docker-library/ruby/issues/246)
-	&& ruby -e 'exit(Gem::Version.create(ENV["RUBYGEMS_VERSION"]) > Gem::Version.create(Gem::VERSION))' \
-	&& gem update --system "$RUBYGEMS_VERSION" && rm -r /root/.gem/ \
 # rough smoke test
 	&& ruby --version && gem --version && bundle --version
 
