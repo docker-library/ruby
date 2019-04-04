@@ -9,7 +9,7 @@ declare -A aliases=(
 defaultDebianSuite='stretch'
 defaultAlpineVersion='3.9'
 declare -A alpineVersion=(
-	[2.3]='3.8'
+	#[2.3]='3.8'
 )
 
 self="$(basename "$BASH_SOURCE")"

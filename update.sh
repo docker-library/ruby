@@ -94,13 +94,6 @@ for version in "${versions[@]}"; do
 			-e 's!%%FULL_VERSION%%!'"$fullVersion"'!g' \
 			-e 's!%%SHA256%%!'"$shaVal"'!g' \
 			-e 's!%%RUBYGEMS%%!'"$rubygems"'!g' \
-			-e "$(
-				if [ "$version" = 2.3 ] && [[ "$v" = stretch* ]]; then
-					echo 's/libssl-dev/libssl1.0-dev/g'
-				else
-					echo '/libssl1.0-dev/d'
-				fi
-			)" \
 			-e 's/^(FROM (debian|buildpack-deps|alpine)):.*/\1:'"$tag"'/' \
 			"$template" > "$dir/Dockerfile"
 
