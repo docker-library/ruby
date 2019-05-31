@@ -20,7 +20,8 @@ latest_gem_version() {
 # https://github.com/docker-library/ruby/issues/246
 rubygems='3.0.3'
 declare -A newEnoughRubygems=(
-	[2.6]=1 # 2.6.2 => gems 3.0.3
+	[2.6]=1 # 2.6.3 => gems 3.0.3 (https://github.com/ruby/ruby/blob/v2_6_3/lib/rubygems.rb#L12)
+	[2.7]=1 # 2.7.0-preview1 => gems 3.1.0.pre1 (https://github.com/ruby/ruby/blob/v2_7_0_preview1/lib/rubygems.rb#L12)
 )
 # TODO once all versions are in this family of "new enough", remove RUBYGEMS_VERSION code entirely
 
@@ -104,7 +105,7 @@ for version in "${versions[@]}"; do
 				;;
 		esac
 
-		if [ -n "${newEnoughRubygems[$version]:-}" ]; then
+		if [ -n "${newEnoughRubygems[$rcVersion]:-}" ]; then
 			sed -ri -e '/RUBYGEMS_VERSION/d' "$dir/Dockerfile"
 		fi
 
