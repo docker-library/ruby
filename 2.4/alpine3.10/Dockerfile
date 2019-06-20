@@ -1,4 +1,4 @@
-FROM alpine:3.8
+FROM alpine:3.10
 
 RUN apk add --no-cache \
 		gmp-dev
@@ -38,8 +38,8 @@ RUN set -ex \
 		linux-headers \
 		make \
 		ncurses-dev \
-		libressl \
-		libressl-dev \
+		openssl \
+		openssl-dev \
 		procps \
 		readline-dev \
 		ruby \

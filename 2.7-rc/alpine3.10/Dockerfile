@@ -1,4 +1,4 @@
-FROM alpine:3.8
+FROM alpine:3.10
 
 RUN apk add --no-cache \
 		gmp-dev
@@ -10,9 +10,9 @@ RUN mkdir -p /usr/local/etc \
 		echo 'update: --no-document'; \
 	} >> /usr/local/etc/gemrc
 
-ENV RUBY_MAJOR 2.6
-ENV RUBY_VERSION 2.6.3
-ENV RUBY_DOWNLOAD_SHA256 11a83f85c03d3f0fc9b8a9b6cad1b2674f26c5aaa43ba858d4b0fcc2b54171e1
+ENV RUBY_MAJOR 2.7-rc
+ENV RUBY_VERSION 2.7.0-preview1
+ENV RUBY_DOWNLOAD_SHA256 8c546df3345398b3edc9d0ab097846f033783d33762889fd0f3dc8bb465c3354
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
@@ -37,8 +37,8 @@ RUN set -ex \
 		linux-headers \
 		make \
 		ncurses-dev \
-		libressl \
-		libressl-dev \
+		openssl \
+		openssl-dev \
 		procps \
 		readline-dev \
 		ruby \

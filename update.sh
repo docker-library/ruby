@@ -71,7 +71,7 @@ for version in "${versions[@]}"; do
 	echo "$version: $fullVersion; $shaVal"
 
 	for v in \
-		alpine{3.7,3.8,3.9} \
+		alpine{3.9,3.10} \
 		{jessie,stretch}{/slim,} \
 	; do
 		dir="$version/$v"
@@ -97,13 +97,6 @@ for version in "${versions[@]}"; do
 			-e 's!%%RUBYGEMS%%!'"$rubygems"'!g' \
 			-e 's/^(FROM (debian|buildpack-deps|alpine)):.*/\1:'"$tag"'/' \
 			"$template" > "$dir/Dockerfile"
-
-		case "$variant" in
-			alpine3.8 | alpine3.7)
-				# Alpine 3.9+ uses OpenSSL, but 3.8/3.7 still uses LibreSSL
-				sed -ri -e 's/openssl/libressl/g' "$dir/Dockerfile"
-				;;
-		esac
 
 		if [ -n "${newEnoughRubygems[$rcVersion]:-}" ]; then
 			sed -ri -e '/RUBYGEMS_VERSION/d' "$dir/Dockerfile"
