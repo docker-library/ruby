@@ -6,7 +6,10 @@ declare -A aliases=(
 	[2.7-rc]='rc'
 )
 
-defaultDebianSuite='stretch'
+defaultDebianSuite='stretch' # TODO buster
+declare -A debianSuites=(
+	[2.7-rc]='buster'
+)
 defaultAlpineVersion='3.10'
 declare -A alpineVersion=(
 	#[2.3]='3.8'
@@ -76,7 +79,7 @@ join() {
 
 for version in "${versions[@]}"; do
 	for v in \
-		{stretch,jessie}{,/slim} \
+		{buster,stretch,jessie}{,/slim} \
 		alpine{3.10,3.9} \
 	; do
 		dir="$version/$v"
@@ -101,12 +104,13 @@ for version in "${versions[@]}"; do
 		)
 
 		variantAliases=( "${versionAliases[@]/%/-$variant}" )
+		debianSuite="${debianSuites[$version]:-$defaultDebianSuite}"
 		case "$variant" in
-			"$defaultDebianSuite")
+			"$debianSuite")
 				variantAliases+=( "${versionAliases[@]}" )
 				;;
-			*-"$defaultDebianSuite")
-				variantAliases+=( "${versionAliases[@]/%/-${variant%-$defaultDebianSuite}}" )
+			*-"$debianSuite")
+				variantAliases+=( "${versionAliases[@]/%/-${variant%-$debianSuite}}" )
 				;;
 			"alpine${alpineVersion[$version]:-$defaultAlpineVersion}")
 				variantAliases+=( "${versionAliases[@]/%/-alpine}" )

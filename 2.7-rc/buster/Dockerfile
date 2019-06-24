@@ -1,4 +1,4 @@
-FROM buildpack-deps:stretch
+FROM buildpack-deps:buster
 
 # skip installing gem documentation
 RUN mkdir -p /usr/local/etc \
