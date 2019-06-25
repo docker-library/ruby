@@ -98,6 +98,13 @@ for version in "${versions[@]}"; do
 			-e 's/^(FROM (debian|buildpack-deps|alpine)):.*/\1:'"$tag"'/' \
 			"$template" > "$dir/Dockerfile"
 
+		case "$v" in
+			# https://packages.debian.org/sid/libgdbm-compat-dev (needed for "dbm" core module, but only in Buster+)
+			jessie/slim | stretch/slim)
+				sed -i -e '/libgdbm-compat-dev/d' "$dir/Dockerfile"
+				;;
+		esac
+
 		if [ -n "${newEnoughRubygems[$rcVersion]:-}" ]; then
 			sed -ri -e '/RUBYGEMS_VERSION/d' "$dir/Dockerfile"
 		fi

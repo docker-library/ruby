@@ -38,6 +38,7 @@ RUN set -eux; \
 		dpkg-dev \
 		gcc \
 		libbz2-dev \
+		libgdbm-compat-dev \
 		libgdbm-dev \
 		libglib2.0-dev \
 		libncurses-dev \
