@@ -93,6 +93,9 @@ RUN set -eux; \
 	\
 	cd /; \
 	rm -r /usr/src/ruby; \
+# verify we have no "ruby" packages installed
+	! dpkg -l | grep -i ruby; \
+	[ "$(command -v ruby)" = '/usr/local/bin/ruby' ]; \
 # rough smoke test
 	ruby --version; \
 	gem --version; \

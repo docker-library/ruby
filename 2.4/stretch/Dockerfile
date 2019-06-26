@@ -72,6 +72,9 @@ RUN set -eux; \
 # make sure bundled "rubygems" is older than RUBYGEMS_VERSION (https://github.com/docker-library/ruby/issues/246)
 	ruby -e 'exit(Gem::Version.create(ENV["RUBYGEMS_VERSION"]) > Gem::Version.create(Gem::VERSION))'; \
 	gem update --system "$RUBYGEMS_VERSION" && rm -r /root/.gem/; \
+# verify we have no "ruby" packages installed
+	! dpkg -l | grep -i ruby; \
+	[ "$(command -v ruby)" = '/usr/local/bin/ruby' ]; \
 # rough smoke test
 	ruby --version; \
 	gem --version; \
