@@ -7,7 +7,7 @@ RUN apk add --no-cache \
 RUN set -eux; \
 	mkdir -p /usr/local/etc; \
 	{ \
-		echo 'install: --no-document'; \
+	echo 'install: --no-document'; \
 		echo 'update: --no-document'; \
 	} >> /usr/local/etc/gemrc
 
