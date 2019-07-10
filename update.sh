@@ -72,7 +72,7 @@ for version in "${versions[@]}"; do
 
 	for v in \
 		alpine{3.9,3.10} \
-		{jessie,stretch,buster}{/slim,} \
+		{stretch,buster}{/slim,} \
 	; do
 		dir="$version/$v"
 		variant="$(basename "$v")"
@@ -100,7 +100,7 @@ for version in "${versions[@]}"; do
 
 		case "$v" in
 			# https://packages.debian.org/sid/libgdbm-compat-dev (needed for "dbm" core module, but only in Buster+)
-			jessie/slim | stretch/slim)
+			stretch/slim)
 				sed -i -e '/libgdbm-compat-dev/d' "$dir/Dockerfile"
 				;;
 		esac
