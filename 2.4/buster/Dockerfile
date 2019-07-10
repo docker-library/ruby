@@ -1,4 +1,4 @@
-FROM buildpack-deps:jessie
+FROM buildpack-deps:buster
 
 # skip installing gem documentation
 RUN set -eux; \

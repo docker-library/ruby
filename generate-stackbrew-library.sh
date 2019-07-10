@@ -6,9 +6,9 @@ declare -A aliases=(
 	[2.7-rc]='rc'
 )
 
-defaultDebianSuite='stretch' # TODO buster
+defaultDebianSuite='buster'
 declare -A debianSuites=(
-	[2.7-rc]='buster'
+	#[2.7-rc]='buster'
 )
 defaultAlpineVersion='3.10'
 declare -A alpineVersion=(
@@ -79,14 +79,14 @@ join() {
 
 for version in "${versions[@]}"; do
 	for v in \
-		{buster,stretch,jessie}{,/slim} \
+		{buster,stretch}{,/slim} \
 		alpine{3.10,3.9} \
 	; do
 		dir="$version/$v"
 		variant="$(basename "$v")"
 
 		if [ "$variant" = 'slim' ]; then
-			# convert "slim" into "slim-jessie"
+			# convert "slim" into "slim-buster"
 			# https://github.com/docker-library/ruby/pull/142#issuecomment-320012893
 			variant="$variant-$(basename "$(dirname "$v")")"
 		fi
