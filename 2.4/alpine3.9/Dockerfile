@@ -12,8 +12,8 @@ RUN set -eux; \
 	} >> /usr/local/etc/gemrc
 
 ENV RUBY_MAJOR 2.4
-ENV RUBY_VERSION 2.4.6
-ENV RUBY_DOWNLOAD_SHA256 25da31b9815bfa9bba9f9b793c055a40a35c43c6adfb1fdbd81a09099f9b529c
+ENV RUBY_VERSION 2.4.7
+ENV RUBY_DOWNLOAD_SHA256 a249193c7e79b891a4783f951cad8160fa5fe985c385b4628db8e9913bff1f98
 ENV RUBYGEMS_VERSION 3.0.3
 
 # some of ruby's build scripts are written in ruby
