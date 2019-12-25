@@ -3,12 +3,12 @@ set -Eeuo pipefail
 
 declare -A aliases=(
 	[2.6]='2 latest'
-	[2.7-rc]='rc'
+	[2.7]='rc'
 )
 
 defaultDebianSuite='buster'
 declare -A debianSuites=(
-	#[2.7-rc]='buster'
+	#[2.7]='buster'
 )
 defaultAlpineVersion='3.10'
 declare -A alpineVersion=(
