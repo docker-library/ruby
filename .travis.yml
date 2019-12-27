@@ -2,9 +2,9 @@ language: bash
 services: docker
 
 env:
-  - VERSION=2.7-rc VARIANT=buster
-  - VERSION=2.7-rc VARIANT=buster/slim
-  - VERSION=2.7-rc VARIANT=alpine3.10
+  - VERSION=2.7 VARIANT=buster
+  - VERSION=2.7 VARIANT=buster/slim
+  - VERSION=2.7 VARIANT=alpine3.10
   - VERSION=2.6 VARIANT=buster
   - VERSION=2.6 VARIANT=buster/slim
   - VERSION=2.6 VARIANT=stretch
