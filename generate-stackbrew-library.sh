@@ -80,7 +80,7 @@ join() {
 for version in "${versions[@]}"; do
 	for v in \
 		{buster,stretch}{,/slim} \
-		alpine{3.10,3.11} \
+		alpine{3.11,3.10} \
 	; do
 		dir="$version/$v"
 		variant="$(basename "$v")"
