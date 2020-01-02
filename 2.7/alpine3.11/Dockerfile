@@ -1,4 +1,4 @@
-FROM alpine:3.9
+FROM alpine:3.11
 
 RUN apk add --no-cache \
 		gmp-dev
@@ -11,10 +11,9 @@ RUN set -eux; \
 		echo 'update: --no-document'; \
 	} >> /usr/local/etc/gemrc
 
-ENV RUBY_MAJOR 2.5
-ENV RUBY_VERSION 2.5.7
-ENV RUBY_DOWNLOAD_SHA256 201870e8f58957d542233fef588b1d76f7bf962fea44dcbd2237f4a5899a3f95
-ENV RUBYGEMS_VERSION 3.0.3
+ENV RUBY_MAJOR 2.7
+ENV RUBY_VERSION 2.7.0
+ENV RUBY_DOWNLOAD_SHA256 27d350a52a02b53034ca0794efe518667d558f152656c2baaf08f3d0c8b02343
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
@@ -107,9 +106,6 @@ RUN set -eux; \
 	\
 	cd /; \
 	rm -r /usr/src/ruby; \
-# make sure bundled "rubygems" is older than RUBYGEMS_VERSION (https://github.com/docker-library/ruby/issues/246)
-	ruby -e 'exit(Gem::Version.create(ENV["RUBYGEMS_VERSION"]) > Gem::Version.create(Gem::VERSION))'; \
-	gem update --system "$RUBYGEMS_VERSION" && rm -r /root/.gem/; \
 # verify we have no "ruby" packages installed
 	! apk --no-network list --installed \
 		| grep -v '^[.]ruby-rundeps' \

@@ -4,25 +4,26 @@ services: docker
 env:
   - VERSION=2.7 VARIANT=buster
   - VERSION=2.7 VARIANT=buster/slim
+  - VERSION=2.7 VARIANT=alpine3.11
   - VERSION=2.7 VARIANT=alpine3.10
   - VERSION=2.6 VARIANT=buster
   - VERSION=2.6 VARIANT=buster/slim
   - VERSION=2.6 VARIANT=stretch
   - VERSION=2.6 VARIANT=stretch/slim
+  - VERSION=2.6 VARIANT=alpine3.11
   - VERSION=2.6 VARIANT=alpine3.10
-  - VERSION=2.6 VARIANT=alpine3.9
   - VERSION=2.5 VARIANT=buster
   - VERSION=2.5 VARIANT=buster/slim
   - VERSION=2.5 VARIANT=stretch
   - VERSION=2.5 VARIANT=stretch/slim
+  - VERSION=2.5 VARIANT=alpine3.11
   - VERSION=2.5 VARIANT=alpine3.10
-  - VERSION=2.5 VARIANT=alpine3.9
   - VERSION=2.4 VARIANT=buster
   - VERSION=2.4 VARIANT=buster/slim
   - VERSION=2.4 VARIANT=stretch
   - VERSION=2.4 VARIANT=stretch/slim
+  - VERSION=2.4 VARIANT=alpine3.11
   - VERSION=2.4 VARIANT=alpine3.10
-  - VERSION=2.4 VARIANT=alpine3.9
 
 install:
   - git clone --depth 1 https://github.com/docker-library/official-images.git ~/official-images
