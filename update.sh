@@ -71,7 +71,7 @@ for version in "${versions[@]}"; do
 	echo "$version: $fullVersion; $shaVal"
 
 	for v in \
-		alpine{3.9,3.10} \
+		alpine{3.10,3.11} \
 		{stretch,buster}{/slim,} \
 	; do
 		dir="$version/$v"
