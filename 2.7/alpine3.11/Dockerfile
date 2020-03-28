@@ -75,6 +75,10 @@ RUN set -eux; \
 	} > file.c.new; \
 	mv file.c.new file.c; \
 	\
+# Patch configure.ac for armv6/7 native ucontext
+	sed -i 's/armv7/arm/' configure.ac; \
+	sed -i '2329s/ucontext/arm32/' configure.ac; \
+	\
 	autoconf; \
 	gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
 # the configure script does not detect isnan/isinf as macros
