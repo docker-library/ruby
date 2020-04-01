@@ -75,6 +75,14 @@ RUN set -eux; \
 	} > file.c.new; \
 	mv file.c.new file.c; \
 	\
+# https://github.com/ruby/ruby/pull/2995
+  sed -i 's/armv7/arm/' configure.ac; \
+  sed -i '2329s/ucontext/arm32/' configure.ac; \
+  sed -i '/^\.text/i .file "Context.S"' coroutine/arm32/Context.S; \
+  sed -i '/^\.globl coroutine_transfer/a .syntax unified' coroutine/arm32/Context.S; \
+  sed -i '/^\.globl coroutine_transfer/a .type coroutine_transfer,%function' coroutine/arm32/Context.S; \
+  sed -i '/^\.globl coroutine_transfer/a .align 2' coroutine/arm32/Context.S; \
+	\
 	autoconf; \
 	gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
 # the configure script does not detect isnan/isinf as macros
