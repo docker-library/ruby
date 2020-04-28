@@ -25,7 +25,6 @@ declare -A newEnoughRubygems=(
 )
 # TODO once all versions are in this family of "new enough", remove RUBYGEMS_VERSION code entirely
 
-travisEnv=
 for version in "${versions[@]}"; do
 	rcGrepV='-v'
 	rcVersion="${version%-rc}"
@@ -108,10 +107,5 @@ for version in "${versions[@]}"; do
 		if [ -n "${newEnoughRubygems[$rcVersion]:-}" ]; then
 			sed -ri -e '/RUBYGEMS_VERSION/d' "$dir/Dockerfile"
 		fi
-
-		travisEnv='\n  - VERSION='"$version VARIANT=$v$travisEnv"
 	done
 done
-
-travis="$(awk -v 'RS=\n\n' '$1 == "env:" { $0 = "env:'"$travisEnv"'" } { printf "%s%s", $0, RS }' .travis.yml)"
-echo "$travis" > .travis.yml
