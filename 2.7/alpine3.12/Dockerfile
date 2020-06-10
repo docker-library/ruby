@@ -1,4 +1,4 @@
-FROM alpine:3.10
+FROM alpine:3.12
 
 RUN apk add --no-cache \
 		gmp-dev
@@ -40,6 +40,7 @@ RUN set -eux; \
 		ncurses-dev \
 		openssl \
 		openssl-dev \
+		patch \
 		procps \
 		readline-dev \
 		ruby \
