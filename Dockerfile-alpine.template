@@ -41,6 +41,7 @@ RUN set -eux; \
 		ncurses-dev \
 		openssl \
 		openssl-dev \
+		patch \
 		procps \
 		readline-dev \
 		ruby \
