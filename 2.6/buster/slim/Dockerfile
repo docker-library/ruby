@@ -22,6 +22,7 @@ RUN set -eux; \
 		echo 'update: --no-document'; \
 	} >> /usr/local/etc/gemrc
 
+ENV LANG C.UTF-8
 ENV RUBY_MAJOR 2.6
 ENV RUBY_VERSION 2.6.6
 ENV RUBY_DOWNLOAD_SHA256 5db187882b7ac34016cd48d7032e197f07e4968f406b0690e20193b9b424841f
