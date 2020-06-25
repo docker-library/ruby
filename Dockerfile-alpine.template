@@ -11,6 +11,7 @@ RUN set -eux; \
 		echo 'update: --no-document'; \
 	} >> /usr/local/etc/gemrc
 
+ENV LANG C.UTF-8
 ENV RUBY_MAJOR %%VERSION%%
 ENV RUBY_VERSION %%FULL_VERSION%%
 ENV RUBY_DOWNLOAD_SHA256 %%SHA256%%
