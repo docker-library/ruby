@@ -13,19 +13,6 @@ releasesPage="$(curl -fsSL 'https://www.ruby-lang.org/en/downloads/releases/')"
 newsPage="$(curl -fsSL 'https://www.ruby-lang.org/en/news/')" # occasionally, releases don't show up on the Releases page (see https://github.com/ruby/www.ruby-lang.org/blob/master/_data/releases.yml)
 # TODO consider parsing https://github.com/ruby/www.ruby-lang.org/blob/master/_data/downloads.yml as well
 
-latest_gem_version() {
-	curl -fsSL "https://rubygems.org/api/v1/gems/$1.json" | sed -r 's/^.*"version":"([^"]+)".*$/\1/'
-}
-
-# https://github.com/docker-library/ruby/issues/246
-rubygems='3.0.3'
-declare -A newEnoughRubygems=(
-	[2.6]=1 # 2.6.3 => gems 3.0.3 (https://github.com/ruby/ruby/blob/v2_6_3/lib/rubygems.rb#L12)
-	[2.7]=1 # 2.7.0-preview2 => gems 3.1.0.pre1 (https://github.com/ruby/ruby/blob/v2_7_0_preview1/lib/rubygems.rb#L12)
-	[3.0]=1 # 3.0.0-preview1 => gems 3.2.0.rc.1 (https://github.com/ruby/ruby/blob/v3_0_0_preview1/lib/rubygems.rb#L11)
-)
-# TODO once all versions are in this family of "new enough", remove RUBYGEMS_VERSION code entirely
-
 for version in "${versions[@]}"; do
 	rcGrepV='-v'
 	rcVersion="${version%-rc}"
@@ -94,7 +81,6 @@ for version in "${versions[@]}"; do
 			-e 's!%%VERSION%%!'"$version"'!g' \
 			-e 's!%%FULL_VERSION%%!'"$fullVersion"'!g' \
 			-e 's!%%SHA256%%!'"$shaVal"'!g' \
-			-e 's!%%RUBYGEMS%%!'"$rubygems"'!g' \
 			-e 's/^(FROM (debian|buildpack-deps|alpine)):.*/\1:'"$tag"'/' \
 			"$template" > "$dir/Dockerfile"
 
@@ -105,7 +91,13 @@ for version in "${versions[@]}"; do
 				;;
 		esac
 
-		if [ -n "${newEnoughRubygems[$rcVersion]:-}" ]; then
+		# https://github.com/docker-library/ruby/issues/246
+		if [ "$rcVersion" = '2.5' ]; then
+			rubygems='3.0.3'
+			sed -ri \
+				-e 's!%%RUBYGEMS%%!'"$rubygems"'!g' \
+				"$dir/Dockerfile"
+		else
 			sed -ri -e '/RUBYGEMS_VERSION/d' "$dir/Dockerfile"
 		fi
 	done
