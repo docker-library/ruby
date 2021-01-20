@@ -10,7 +10,7 @@ defaultDebianSuite='buster'
 declare -A debianSuites=(
 	#[2.7]='buster'
 )
-defaultAlpineVersion='3.12'
+defaultAlpineVersion='3.13'
 declare -A alpineVersion=(
 	#[2.3]='3.8'
 )
@@ -80,7 +80,7 @@ join() {
 for version in "${versions[@]}"; do
 	for v in \
 		{buster,stretch}{,/slim} \
-		alpine{3.12,3.11} \
+		alpine{3.13,3.12} \
 	; do
 		dir="$version/$v"
 		variant="$(basename "$v")"
