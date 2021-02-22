@@ -87,6 +87,7 @@ RUN set -eux; \
 	find /usr/local -type f -executable -not \( -name '*tkinter*' \) -exec ldd '{}' ';' \
 		| awk '/=>/ { print $(NF-1) }' \
 		| sort -u \
+		| grep -vF '/usr/local/lib' \
 		| xargs -r dpkg-query --search \
 		| cut -d: -f1 \
 		| sort -u \
