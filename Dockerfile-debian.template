@@ -75,7 +75,7 @@ RUN savedAptMark="$(apt-mark showmanual)"; \
 	gem update --system "$RUBYGEMS_VERSION"; \
 	rm -fr /root/.gem/; \
 # verify we have no "ruby" packages installed
-	! dpkg -l | grep -i ruby; \
+	if dpkg -l | grep -i 'ruby'; then false; fi; \
 	[ "$(command -v ruby)" = '/usr/local/bin/ruby' ]; \
 # rough smoke test
 	ruby --version; \

@@ -114,10 +114,10 @@ RUN apk add --no-cache --virtual .ruby-builddeps \
 	gem update --system "$RUBYGEMS_VERSION"; \
 	rm -fr /root/.gem/; \
 # verify we have no "ruby" packages installed
-	! apk --no-network list --installed \
+	if apk --no-network list --installed \
 		| grep -v '^[.]ruby-rundeps' \
 		| grep -i ruby \
-	; \
+	; then false; fi; \
 	[ "$(command -v ruby)" = '/usr/local/bin/ruby' ]; \
 # rough smoke test
 	ruby --version; \
