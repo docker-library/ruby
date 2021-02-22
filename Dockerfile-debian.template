@@ -1,8 +1,9 @@
 FROM buildpack-deps:%%PLACEHOLDER%%
 
+SHELL ["/bin/bash", "-eux", "-c"]
+
 # skip installing gem documentation
-RUN set -eux; \
-	mkdir -p /usr/local/etc; \
+RUN mkdir -p /usr/local/etc; \
 	{ \
 		echo 'install: --no-document'; \
 		echo 'update: --no-document'; \
@@ -16,9 +17,7 @@ ENV RUBYGEMS_VERSION %%RUBYGEMS%%
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
-RUN set -eux; \
-	\
-	savedAptMark="$(apt-mark showmanual)"; \
+RUN savedAptMark="$(apt-mark showmanual)"; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
 		bison \
@@ -73,7 +72,8 @@ RUN set -eux; \
 	rm -r /usr/src/ruby; \
 # make sure bundled "rubygems" is older than RUBYGEMS_VERSION (https://github.com/docker-library/ruby/issues/246)
 	ruby -e 'exit(Gem::Version.create(ENV["RUBYGEMS_VERSION"]) > Gem::Version.create(Gem::VERSION))'; \
-	gem update --system "$RUBYGEMS_VERSION" && rm -r /root/.gem/; \
+	gem update --system "$RUBYGEMS_VERSION"; \
+	rm -fr /root/.gem/; \
 # verify we have no "ruby" packages installed
 	! dpkg -l | grep -i ruby; \
 	[ "$(command -v ruby)" = '/usr/local/bin/ruby' ]; \
@@ -88,6 +88,6 @@ ENV BUNDLE_SILENCE_ROOT_WARNING=1 \
 	BUNDLE_APP_CONFIG="$GEM_HOME"
 ENV PATH $GEM_HOME/bin:$PATH
 # adjust permissions of a few directories for running "gem install" as an arbitrary user
-RUN mkdir -p "$GEM_HOME" && chmod 777 "$GEM_HOME"
+RUN mkdir -p "$GEM_HOME"; chmod 777 "$GEM_HOME"
 
 CMD [ "irb" ]
