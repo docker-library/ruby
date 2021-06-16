@@ -45,6 +45,7 @@ RUN set -eux; \
 		libgdbm-dev \
 		ruby \
 		autoconf \
+		g++ \
 		gcc \
 		libbz2-dev \
 		libglib2.0-dev \

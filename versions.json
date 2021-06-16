@@ -6,8 +6,8 @@
       "slim-buster",
       "stretch",
       "slim-stretch",
-      "alpine3.13",
-      "alpine3.12"
+      "alpine3.14",
+      "alpine3.13"
     ],
     "version": "2.6.8"
   },
@@ -16,8 +16,8 @@
     "variants": [
       "buster",
       "slim-buster",
-      "alpine3.13",
-      "alpine3.12"
+      "alpine3.14",
+      "alpine3.13"
     ],
     "version": "2.7.4"
   },
@@ -26,8 +26,8 @@
     "variants": [
       "buster",
       "slim-buster",
-      "alpine3.13",
-      "alpine3.12"
+      "alpine3.14",
+      "alpine3.13"
     ],
     "version": "3.0.2"
   }

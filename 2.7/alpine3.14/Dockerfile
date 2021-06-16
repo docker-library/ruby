@@ -4,7 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM alpine:3.12
+FROM alpine:3.14
 
 RUN set -eux; \
 	apk add --no-cache \
@@ -43,6 +43,7 @@ RUN set -eux; \
 		ca-certificates \
 		coreutils \
 		dpkg-dev dpkg \
+		g++ \
 		gcc \
 		gdbm-dev \
 		glib-dev \

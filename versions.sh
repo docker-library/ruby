@@ -74,8 +74,8 @@ for version in "${versions[@]}"; do
 					else empty end
 				| ., "slim-" + .), # https://github.com/docker-library/ruby/pull/142#issuecomment-320012893
 				(
-					"3.13",
-					"3.12"
+					"3.14",
+					"3.13"
 				| "alpine" + .)
 			],
 		}

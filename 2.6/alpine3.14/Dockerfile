@@ -4,7 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM alpine:3.12
+FROM alpine:3.14
 
 RUN set -eux; \
 	apk add --no-cache \
@@ -26,9 +26,9 @@ RUN set -eux; \
 	} >> /usr/local/etc/gemrc
 
 ENV LANG C.UTF-8
-ENV RUBY_MAJOR 3.0
-ENV RUBY_VERSION 3.0.2
-ENV RUBY_DOWNLOAD_SHA256 570e7773100f625599575f363831166d91d49a1ab97d3ab6495af44774155c40
+ENV RUBY_MAJOR 2.6
+ENV RUBY_VERSION 2.6.8
+ENV RUBY_DOWNLOAD_SHA256 8262e4663169c85787fdc9bfbd04d9eb86eb2a4b56d7f98373a8fcaa18e593eb
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
@@ -43,6 +43,7 @@ RUN set -eux; \
 		ca-certificates \
 		coreutils \
 		dpkg-dev dpkg \
+		g++ \
 		gcc \
 		gdbm-dev \
 		glib-dev \
@@ -81,6 +82,13 @@ RUN set -eux; \
 	echo '3ab628a51d92fdf0d2b5835e93564857aea73e0c1de00313864a94a6255cb645 *thread-stack-fix.patch' | sha256sum --check --strict; \
 	patch -p1 -i thread-stack-fix.patch; \
 	rm thread-stack-fix.patch; \
+	\
+# https://bugs.ruby-lang.org/issues/17723 (building with autoconf 2.70+ fails)
+# https://github.com/ruby/ruby/pull/3773
+	wget -O 'autoconf-2.70.patch' 'https://github.com/ruby/ruby/commit/fcc88da5eb162043adcba552646677d2ab5adf55.patch'; \
+	echo '62eefa55030788d409003eccd945ccc408f02fe0d71616ed1c1bdcaf7a2f8a54 *autoconf-2.70.patch' | sha256sum --check --strict; \
+	patch -p1 -i autoconf-2.70.patch; \
+	rm autoconf-2.70.patch; \
 	\
 # the configure script does not detect isnan/isinf as macros
 	export ac_cv_func_isnan=yes ac_cv_func_isinf=yes; \
