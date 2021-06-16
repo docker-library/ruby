@@ -29,6 +29,7 @@ RUN set -eux; \
 		ca-certificates \
 		coreutils \
 		dpkg-dev dpkg \
+		g++ \
 		gcc \
 		gdbm-dev \
 		glib-dev \

@@ -1,4 +1,4 @@
-FROM alpine:3.12
+FROM alpine:3.14
 
 RUN apk add --no-cache \
 		gmp-dev
@@ -12,9 +12,9 @@ RUN set -eux; \
 	} >> /usr/local/etc/gemrc
 
 ENV LANG C.UTF-8
-ENV RUBY_MAJOR 2.7
-ENV RUBY_VERSION 2.7.4
-ENV RUBY_DOWNLOAD_SHA256 2a80824e0ad6100826b69b9890bf55cfc4cf2b61a1e1330fccbcb30c46cef8d7
+ENV RUBY_MAJOR 3.0
+ENV RUBY_VERSION 3.0.2
+ENV RUBY_DOWNLOAD_SHA256 570e7773100f625599575f363831166d91d49a1ab97d3ab6495af44774155c40
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
@@ -29,6 +29,7 @@ RUN set -eux; \
 		ca-certificates \
 		coreutils \
 		dpkg-dev dpkg \
+		g++ \
 		gcc \
 		gdbm-dev \
 		glib-dev \

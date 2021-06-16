@@ -58,7 +58,7 @@ for version in "${versions[@]}"; do
 	echo "$version: $fullVersion; $shaVal"
 
 	for v in \
-		alpine{3.13,3.12} \
+		alpine{3.14,3.13} \
 		{stretch,buster}{/slim,} \
 	; do
 		dir="$version/$v"
@@ -88,6 +88,15 @@ for version in "${versions[@]}"; do
 			# https://packages.debian.org/sid/libgdbm-compat-dev (needed for "dbm" core module, but only in Buster+)
 			stretch/slim)
 				sed -i -e '/libgdbm-compat-dev/d' "$dir/Dockerfile"
+				;;
+			alpine3.13)
+				sed -i -e '/autoconf-2.70.patch/d' "$dir/Dockerfile"
+				;;
+		esac
+
+		case "$version" in
+			'2.7'|'3.0')
+				sed -i -e '/autoconf-2.70.patch/d' "$dir/Dockerfile"
 				;;
 		esac
 

@@ -30,6 +30,7 @@ RUN set -eux; \
 		ca-certificates \
 		coreutils \
 		dpkg-dev dpkg \
+		g++ \
 		gcc \
 		gdbm-dev \
 		glib-dev \
@@ -68,6 +69,11 @@ RUN set -eux; \
 	echo '3ab628a51d92fdf0d2b5835e93564857aea73e0c1de00313864a94a6255cb645 *thread-stack-fix.patch' | sha256sum --check --strict; \
 	patch -p1 -i thread-stack-fix.patch; \
 	rm thread-stack-fix.patch; \
+# https://bugs.ruby-lang.org/issues/17723 (autoconf-2.70.patch)
+	wget -O 'autoconf-2.70.patch' 'https://github.com/ruby/ruby/commit/fcc88da5eb162043adcba552646677d2ab5adf55.patch'; \
+	echo '62eefa55030788d409003eccd945ccc408f02fe0d71616ed1c1bdcaf7a2f8a54 *autoconf-2.70.patch' | sha256sum --check --strict; \
+	patch -p1 -i autoconf-2.70.patch; \
+	rm autoconf-2.70.patch; \
 	\
 # hack in "ENABLE_PATH_CHECK" disabling to suppress:
 #   warning: Insecure world writable dir
