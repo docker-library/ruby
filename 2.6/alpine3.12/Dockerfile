@@ -1,7 +1,21 @@
+#
+# NOTE: THIS DOCKERFILE IS GENERATED VIA "apply-templates.sh"
+#
+# PLEASE DO NOT EDIT IT DIRECTLY.
+#
+
 FROM alpine:3.12
 
-RUN apk add --no-cache \
-		gmp-dev
+RUN set -eux; \
+	apk add --no-cache \
+		bzip2 \
+		ca-certificates \
+		gmp-dev \
+		libffi-dev \
+		procps \
+		yaml-dev \
+		zlib-dev \
+	;
 
 # skip installing gem documentation
 RUN set -eux; \
@@ -18,9 +32,9 @@ ENV RUBY_DOWNLOAD_SHA256 8262e4663169c85787fdc9bfbd04d9eb86eb2a4b56d7f98373a8fca
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
-# readline-dev vs libedit-dev: https://bugs.ruby-lang.org/issues/11869 and https://github.com/docker-library/ruby/issues/75
 RUN set -eux; \
 	\
+# readline-dev vs libedit-dev: https://bugs.ruby-lang.org/issues/11869 and https://github.com/docker-library/ruby/issues/75
 	apk add --no-cache --virtual .ruby-builddeps \
 		autoconf \
 		bison \
@@ -68,6 +82,9 @@ RUN set -eux; \
 	patch -p1 -i thread-stack-fix.patch; \
 	rm thread-stack-fix.patch; \
 	\
+# the configure script does not detect isnan/isinf as macros
+	export ac_cv_func_isnan=yes ac_cv_func_isinf=yes; \
+	\
 # hack in "ENABLE_PATH_CHECK" disabling to suppress:
 #   warning: Insecure world writable dir
 	{ \
@@ -79,8 +96,6 @@ RUN set -eux; \
 	\
 	autoconf; \
 	gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
-# the configure script does not detect isnan/isinf as macros
-	export ac_cv_func_isnan=yes ac_cv_func_isinf=yes; \
 	./configure \
 		--build="$gnuArch" \
 		--disable-install-doc \
@@ -95,24 +110,19 @@ RUN set -eux; \
 			| sort -u \
 			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
 	)"; \
-	apk add --no-network --virtual .ruby-rundeps \
-		$runDeps \
-		bzip2 \
-		ca-certificates \
-		libffi-dev \
-		procps \
-		yaml-dev \
-		zlib-dev \
-	; \
+	apk add --no-network --virtual .ruby-rundeps $runDeps; \
 	apk del --no-network .ruby-builddeps; \
 	\
 	cd /; \
 	rm -r /usr/src/ruby; \
 # verify we have no "ruby" packages installed
-	! apk --no-network list --installed \
-		| grep -v '^[.]ruby-rundeps' \
-		| grep -i ruby \
-	; \
+	if \
+		apk --no-network list --installed \
+			| grep -v '^[.]ruby-rundeps' \
+			| grep -i ruby \
+	; then \
+		exit 1; \
+	fi; \
 	[ "$(command -v ruby)" = '/usr/local/bin/ruby' ]; \
 # rough smoke test
 	ruby --version; \

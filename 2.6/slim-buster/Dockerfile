@@ -1,4 +1,10 @@
-FROM debian:stretch-slim
+#
+# NOTE: THIS DOCKERFILE IS GENERATED VIA "apply-templates.sh"
+#
+# PLEASE DO NOT EDIT IT DIRECTLY.
+#
+
+FROM debian:buster-slim
 
 RUN set -eux; \
 	apt-get update; \
@@ -34,21 +40,23 @@ RUN set -eux; \
 	savedAptMark="$(apt-mark showmanual)"; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
-		autoconf \
 		bison \
 		dpkg-dev \
+		libgdbm-dev \
+		ruby \
+		autoconf \
 		gcc \
 		libbz2-dev \
-		libgdbm-dev \
 		libglib2.0-dev \
 		libncurses-dev \
 		libreadline-dev \
 		libxml2-dev \
 		libxslt-dev \
 		make \
-		ruby \
 		wget \
 		xz-utils \
+# https://packages.debian.org/sid/libgdbm-compat-dev (needed for "dbm" core module, but only in Buster+)
+		libgdbm-compat-dev \
 	; \
 	rm -rf /var/lib/apt/lists/*; \
 	\
@@ -85,6 +93,7 @@ RUN set -eux; \
 	find /usr/local -type f -executable -not \( -name '*tkinter*' \) -exec ldd '{}' ';' \
 		| awk '/=>/ { print $(NF-1) }' \
 		| sort -u \
+		| grep -vE '^/usr/local/lib/' \
 		| xargs -r dpkg-query --search \
 		| cut -d: -f1 \
 		| sort -u \
@@ -95,7 +104,7 @@ RUN set -eux; \
 	cd /; \
 	rm -r /usr/src/ruby; \
 # verify we have no "ruby" packages installed
-	! dpkg -l | grep -i ruby; \
+	if dpkg -l | grep -i ruby; then exit 1; fi; \
 	[ "$(command -v ruby)" = '/usr/local/bin/ruby' ]; \
 # rough smoke test
 	ruby --version; \
