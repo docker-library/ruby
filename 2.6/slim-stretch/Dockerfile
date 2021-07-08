@@ -1,4 +1,10 @@
-FROM debian:%%PLACEHOLDER%%
+#
+# NOTE: THIS DOCKERFILE IS GENERATED VIA "apply-templates.sh"
+#
+# PLEASE DO NOT EDIT IT DIRECTLY.
+#
+
+FROM debian:stretch-slim
 
 RUN set -eux; \
 	apt-get update; \
@@ -23,10 +29,9 @@ RUN set -eux; \
 	} >> /usr/local/etc/gemrc
 
 ENV LANG C.UTF-8
-ENV RUBY_MAJOR %%VERSION%%
-ENV RUBY_VERSION %%FULL_VERSION%%
-ENV RUBY_DOWNLOAD_SHA256 %%SHA256%%
-ENV RUBYGEMS_VERSION %%RUBYGEMS%%
+ENV RUBY_MAJOR 2.6
+ENV RUBY_VERSION 2.6.8
+ENV RUBY_DOWNLOAD_SHA256 8262e4663169c85787fdc9bfbd04d9eb86eb2a4b56d7f98373a8fcaa18e593eb
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
@@ -35,20 +40,20 @@ RUN set -eux; \
 	savedAptMark="$(apt-mark showmanual)"; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
-		autoconf \
 		bison \
 		dpkg-dev \
+		libgdbm-dev \
+		ruby \
+		autoconf \
+		g++ \
 		gcc \
 		libbz2-dev \
-		libgdbm-compat-dev \
-		libgdbm-dev \
 		libglib2.0-dev \
 		libncurses-dev \
 		libreadline-dev \
 		libxml2-dev \
 		libxslt-dev \
 		make \
-		ruby \
 		wget \
 		xz-utils \
 	; \
@@ -87,6 +92,7 @@ RUN set -eux; \
 	find /usr/local -type f -executable -not \( -name '*tkinter*' \) -exec ldd '{}' ';' \
 		| awk '/=>/ { print $(NF-1) }' \
 		| sort -u \
+		| grep -vE '^/usr/local/lib/' \
 		| xargs -r dpkg-query --search \
 		| cut -d: -f1 \
 		| sort -u \
@@ -96,11 +102,8 @@ RUN set -eux; \
 	\
 	cd /; \
 	rm -r /usr/src/ruby; \
-# make sure bundled "rubygems" is older than RUBYGEMS_VERSION (https://github.com/docker-library/ruby/issues/246)
-	ruby -e 'exit(Gem::Version.create(ENV["RUBYGEMS_VERSION"]) > Gem::Version.create(Gem::VERSION))'; \
-	gem update --system "$RUBYGEMS_VERSION" && rm -r /root/.gem/; \
 # verify we have no "ruby" packages installed
-	! dpkg -l | grep -i ruby; \
+	if dpkg -l | grep -i ruby; then exit 1; fi; \
 	[ "$(command -v ruby)" = '/usr/local/bin/ruby' ]; \
 # rough smoke test
 	ruby --version; \

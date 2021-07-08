@@ -1,7 +1,21 @@
-FROM alpine:3.12
+#
+# NOTE: THIS DOCKERFILE IS GENERATED VIA "apply-templates.sh"
+#
+# PLEASE DO NOT EDIT IT DIRECTLY.
+#
 
-RUN apk add --no-cache \
-		gmp-dev
+FROM alpine:3.14
+
+RUN set -eux; \
+	apk add --no-cache \
+		bzip2 \
+		ca-certificates \
+		gmp-dev \
+		libffi-dev \
+		procps \
+		yaml-dev \
+		zlib-dev \
+	;
 
 # skip installing gem documentation
 RUN set -eux; \
@@ -12,15 +26,15 @@ RUN set -eux; \
 	} >> /usr/local/etc/gemrc
 
 ENV LANG C.UTF-8
-ENV RUBY_MAJOR 3.0
-ENV RUBY_VERSION 3.0.2
-ENV RUBY_DOWNLOAD_SHA256 570e7773100f625599575f363831166d91d49a1ab97d3ab6495af44774155c40
+ENV RUBY_MAJOR 2.7
+ENV RUBY_VERSION 2.7.4
+ENV RUBY_DOWNLOAD_SHA256 2a80824e0ad6100826b69b9890bf55cfc4cf2b61a1e1330fccbcb30c46cef8d7
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
-# readline-dev vs libedit-dev: https://bugs.ruby-lang.org/issues/11869 and https://github.com/docker-library/ruby/issues/75
 RUN set -eux; \
 	\
+# readline-dev vs libedit-dev: https://bugs.ruby-lang.org/issues/11869 and https://github.com/docker-library/ruby/issues/75
 	apk add --no-cache --virtual .ruby-builddeps \
 		autoconf \
 		bison \
@@ -29,6 +43,7 @@ RUN set -eux; \
 		ca-certificates \
 		coreutils \
 		dpkg-dev dpkg \
+		g++ \
 		gcc \
 		gdbm-dev \
 		glib-dev \
@@ -68,6 +83,9 @@ RUN set -eux; \
 	patch -p1 -i thread-stack-fix.patch; \
 	rm thread-stack-fix.patch; \
 	\
+# the configure script does not detect isnan/isinf as macros
+	export ac_cv_func_isnan=yes ac_cv_func_isinf=yes; \
+	\
 # hack in "ENABLE_PATH_CHECK" disabling to suppress:
 #   warning: Insecure world writable dir
 	{ \
@@ -79,8 +97,6 @@ RUN set -eux; \
 	\
 	autoconf; \
 	gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
-# the configure script does not detect isnan/isinf as macros
-	export ac_cv_func_isnan=yes ac_cv_func_isinf=yes; \
 	./configure \
 		--build="$gnuArch" \
 		--disable-install-doc \
@@ -95,24 +111,19 @@ RUN set -eux; \
 			| sort -u \
 			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
 	)"; \
-	apk add --no-network --virtual .ruby-rundeps \
-		$runDeps \
-		bzip2 \
-		ca-certificates \
-		libffi-dev \
-		procps \
-		yaml-dev \
-		zlib-dev \
-	; \
+	apk add --no-network --virtual .ruby-rundeps $runDeps; \
 	apk del --no-network .ruby-builddeps; \
 	\
 	cd /; \
 	rm -r /usr/src/ruby; \
 # verify we have no "ruby" packages installed
-	! apk --no-network list --installed \
-		| grep -v '^[.]ruby-rundeps' \
-		| grep -i ruby \
-	; \
+	if \
+		apk --no-network list --installed \
+			| grep -v '^[.]ruby-rundeps' \
+			| grep -i ruby \
+	; then \
+		exit 1; \
+	fi; \
 	[ "$(command -v ruby)" = '/usr/local/bin/ruby' ]; \
 # rough smoke test
 	ruby --version; \
