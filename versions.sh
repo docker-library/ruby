@@ -68,10 +68,8 @@ for version in "${versions[@]}"; do
 			sha256: env.shaVal,
 			variants: [
 				(
-					"buster",
-					if env.rcVersion == "2.6" then
-						"stretch"
-					else empty end
+					"bullseye",
+					"buster"
 				| ., "slim-" + .), # https://github.com/docker-library/ruby/pull/142#issuecomment-320012893
 				(
 					"3.14",
