@@ -143,7 +143,7 @@ RUN set -eux; \
 		"2.6": {
 			url: "https://github.com/ruby/ruby/pull/3773",
 			commit: "fcc88da5eb162043adcba552646677d2ab5adf55",
-			sha256: "62eefa55030788d409003eccd945ccc408f02fe0d71616ed1c1bdcaf7a2f8a54",
+			sha256: "95565a8a8f0eddd39d76fe8af63fc34b6429c956c8f8fe0aa17282d37adced64",
 		},
 	}[env.version] | if . and env.variant != "alpine3.13" then (
 -}}
