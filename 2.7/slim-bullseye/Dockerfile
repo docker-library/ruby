@@ -4,7 +4,21 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM buildpack-deps:stretch
+FROM debian:bullseye-slim
+
+RUN set -eux; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
+		bzip2 \
+		ca-certificates \
+		libffi-dev \
+		libgmp-dev \
+		libssl-dev \
+		libyaml-dev \
+		procps \
+		zlib1g-dev \
+	; \
+	rm -rf /var/lib/apt/lists/*
 
 # skip installing gem documentation
 RUN set -eux; \
@@ -15,9 +29,9 @@ RUN set -eux; \
 	} >> /usr/local/etc/gemrc
 
 ENV LANG C.UTF-8
-ENV RUBY_MAJOR 2.6
-ENV RUBY_VERSION 2.6.8
-ENV RUBY_DOWNLOAD_SHA256 8262e4663169c85787fdc9bfbd04d9eb86eb2a4b56d7f98373a8fcaa18e593eb
+ENV RUBY_MAJOR 2.7
+ENV RUBY_VERSION 2.7.4
+ENV RUBY_DOWNLOAD_SHA256 2a80824e0ad6100826b69b9890bf55cfc4cf2b61a1e1330fccbcb30c46cef8d7
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
@@ -30,6 +44,19 @@ RUN set -eux; \
 		dpkg-dev \
 		libgdbm-dev \
 		ruby \
+		autoconf \
+		g++ \
+		gcc \
+		libbz2-dev \
+		libgdbm-compat-dev \
+		libglib2.0-dev \
+		libncurses-dev \
+		libreadline-dev \
+		libxml2-dev \
+		libxslt-dev \
+		make \
+		wget \
+		xz-utils \
 	; \
 	rm -rf /var/lib/apt/lists/*; \
 	\

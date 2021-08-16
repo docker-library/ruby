@@ -48,6 +48,7 @@ RUN set -eux; \
 		g++ \
 		gcc \
 		libbz2-dev \
+		libgdbm-compat-dev \
 		libglib2.0-dev \
 		libncurses-dev \
 		libreadline-dev \
@@ -56,8 +57,6 @@ RUN set -eux; \
 		make \
 		wget \
 		xz-utils \
-# https://packages.debian.org/sid/libgdbm-compat-dev (needed for "dbm" core module, but only in Buster+)
-		libgdbm-compat-dev \
 	; \
 	rm -rf /var/lib/apt/lists/*; \
 	\
