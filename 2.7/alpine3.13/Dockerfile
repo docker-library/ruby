@@ -51,6 +51,7 @@ RUN set -eux; \
 		libffi-dev \
 		libxml2-dev \
 		libxslt-dev \
+		libucontext-dev \
 		linux-headers \
 		make \
 		ncurses-dev \
@@ -97,6 +98,7 @@ RUN set -eux; \
 	\
 	autoconf; \
 	gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
+	export LIBS='-lucontext'; \
 	./configure \
 		--build="$gnuArch" \
 		--disable-install-doc \
