@@ -86,7 +86,6 @@ RUN set -eux; \
 # https://bugs.ruby-lang.org/issues/17723 (building with autoconf 2.70+ fails)
 # https://github.com/ruby/ruby/pull/3773
 	wget -O 'autoconf-2.70.patch' 'https://github.com/ruby/ruby/commit/fcc88da5eb162043adcba552646677d2ab5adf55.patch'; \
-	echo '95565a8a8f0eddd39d76fe8af63fc34b6429c956c8f8fe0aa17282d37adced64 *autoconf-2.70.patch' | sha256sum --check --strict; \
 	patch -p1 -i autoconf-2.70.patch; \
 	rm autoconf-2.70.patch; \
 	\
