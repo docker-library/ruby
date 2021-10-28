@@ -51,7 +51,6 @@ RUN set -eux; \
 		libffi-dev \
 		libxml2-dev \
 		libxslt-dev \
-		libucontext-dev \
 		linux-headers \
 		make \
 		ncurses-dev \

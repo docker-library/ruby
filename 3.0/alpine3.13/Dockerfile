@@ -51,7 +51,6 @@ RUN set -eux; \
 		libffi-dev \
 		libxml2-dev \
 		libxslt-dev \
-		libucontext-dev \
 		linux-headers \
 		make \
 		ncurses-dev \
@@ -97,6 +96,15 @@ RUN set -eux; \
 	mv file.c.new file.c; \
 	\
 	autoconf; \
+	# fix builds on arm32v6/7 and s390x: https://github.com/docker-library/ruby/issues/308
+	# and don't break the other arches: https://github.com/docker-library/ruby/issues/365
+	apkArch="$(apk --print-arch)"; \
+	case "$apkArch" in \
+		s390x | armhf | armv7) \
+			apk add --no-cache libucontext-dev; \
+			export LIBS='-lucontext'; \
+			;; \
+	esac; \
 	gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
 	./configure \
 		--build="$gnuArch" \
