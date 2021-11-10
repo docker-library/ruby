@@ -34,5 +34,17 @@
       "alpine3.13"
     ],
     "version": "3.0.2"
+  },
+  "3.1-rc": {
+    "sha256": "86a836ad42f6a7a469fce71ffec48fd3184af55bf79e488b568a4f64adee551d",
+    "variants": [
+      "bullseye",
+      "slim-bullseye",
+      "buster",
+      "slim-buster",
+      "alpine3.14",
+      "alpine3.13"
+    ],
+    "version": "3.1.0-preview1"
   }
 }
