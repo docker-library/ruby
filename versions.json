@@ -1,6 +1,6 @@
 {
   "2.6": {
-    "sha256": "8262e4663169c85787fdc9bfbd04d9eb86eb2a4b56d7f98373a8fcaa18e593eb",
+    "sha256": "6a041d82ae6e0f02ccb1465e620d94a7196489d8a13d6018a160da42ebc1eece",
     "variants": [
       "bullseye",
       "slim-bullseye",
@@ -9,10 +9,10 @@
       "alpine3.14",
       "alpine3.13"
     ],
-    "version": "2.6.8"
+    "version": "2.6.9"
   },
   "2.7": {
-    "sha256": "2a80824e0ad6100826b69b9890bf55cfc4cf2b61a1e1330fccbcb30c46cef8d7",
+    "sha256": "d216d95190eaacf3bf165303747b02ff13f10b6cfab67a9031b502a49512b516",
     "variants": [
       "bullseye",
       "slim-bullseye",
@@ -21,10 +21,10 @@
       "alpine3.14",
       "alpine3.13"
     ],
-    "version": "2.7.4"
+    "version": "2.7.5"
   },
   "3.0": {
-    "sha256": "570e7773100f625599575f363831166d91d49a1ab97d3ab6495af44774155c40",
+    "sha256": "88cc7f0f021f15c4cd62b1f922e3a401697f7943551fe45b1fdf4f2417a17a9c",
     "variants": [
       "bullseye",
       "slim-bullseye",
@@ -33,7 +33,7 @@
       "alpine3.14",
       "alpine3.13"
     ],
-    "version": "3.0.2"
+    "version": "3.0.3"
   },
   "3.1-rc": {
     "sha256": "86a836ad42f6a7a469fce71ffec48fd3184af55bf79e488b568a4f64adee551d",
