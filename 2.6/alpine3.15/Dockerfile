@@ -4,7 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM alpine:3.13
+FROM alpine:3.15
 
 RUN set -eux; \
 	apk add --no-cache \
@@ -26,9 +26,9 @@ RUN set -eux; \
 	} >> /usr/local/etc/gemrc
 
 ENV LANG C.UTF-8
-ENV RUBY_MAJOR 2.7
-ENV RUBY_VERSION 2.7.5
-ENV RUBY_DOWNLOAD_SHA256 d216d95190eaacf3bf165303747b02ff13f10b6cfab67a9031b502a49512b516
+ENV RUBY_MAJOR 2.6
+ENV RUBY_VERSION 2.6.9
+ENV RUBY_DOWNLOAD_SHA256 6a041d82ae6e0f02ccb1465e620d94a7196489d8a13d6018a160da42ebc1eece
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
@@ -83,6 +83,12 @@ RUN set -eux; \
 	patch -p1 -i thread-stack-fix.patch; \
 	rm thread-stack-fix.patch; \
 	\
+# https://bugs.ruby-lang.org/issues/17723 (building with autoconf 2.70+ fails)
+# https://github.com/ruby/ruby/pull/3773
+	wget -O 'autoconf-2.70.patch' 'https://github.com/ruby/ruby/commit/fcc88da5eb162043adcba552646677d2ab5adf55.patch'; \
+	patch -p1 -i autoconf-2.70.patch; \
+	rm autoconf-2.70.patch; \
+	\
 # the configure script does not detect isnan/isinf as macros
 	export ac_cv_func_isnan=yes ac_cv_func_isinf=yes; \
 	\
@@ -96,15 +102,6 @@ RUN set -eux; \
 	mv file.c.new file.c; \
 	\
 	autoconf; \
-	# fix builds on arm32v6/7 and s390x: https://github.com/docker-library/ruby/issues/308
-	# and don't break the other arches: https://github.com/docker-library/ruby/issues/365
-	apkArch="$(apk --print-arch)"; \
-	case "$apkArch" in \
-		s390x | armhf | armv7) \
-			apk add --no-cache libucontext-dev; \
-			export LIBS='-lucontext'; \
-			;; \
-	esac; \
 	gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
 	./configure \
 		--build="$gnuArch" \
