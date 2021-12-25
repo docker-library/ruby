@@ -26,9 +26,9 @@ RUN set -eux; \
 	} >> /usr/local/etc/gemrc
 
 ENV LANG C.UTF-8
-ENV RUBY_MAJOR 3.1-rc
-ENV RUBY_VERSION 3.1.0-preview1
-ENV RUBY_DOWNLOAD_SHA256 86a836ad42f6a7a469fce71ffec48fd3184af55bf79e488b568a4f64adee551d
+ENV RUBY_MAJOR 3.1
+ENV RUBY_VERSION 3.1.0
+ENV RUBY_DOWNLOAD_SHA256 1a0e0b69b9b062b6299ff1f6c6d77b66aff3995f63d1d8b8771e7a113ec472e2
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
