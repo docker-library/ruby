@@ -4,18 +4,21 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM alpine:3.15
+FROM debian:bullseye-slim
 
 RUN set -eux; \
-	apk add --no-cache \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
 		bzip2 \
 		ca-certificates \
-		gmp-dev \
 		libffi-dev \
+		libgmp-dev \
+		libssl-dev \
+		libyaml-dev \
 		procps \
-		yaml-dev \
-		zlib-dev \
-	;
+		zlib1g-dev \
+	; \
+	rm -rf /var/lib/apt/lists/*
 
 # skip installing gem documentation
 RUN set -eux; \
@@ -26,45 +29,36 @@ RUN set -eux; \
 	} >> /usr/local/etc/gemrc
 
 ENV LANG C.UTF-8
-ENV RUBY_MAJOR 3.1-rc
-ENV RUBY_VERSION 3.1.0-preview1
-ENV RUBY_DOWNLOAD_SHA256 86a836ad42f6a7a469fce71ffec48fd3184af55bf79e488b568a4f64adee551d
+ENV RUBY_MAJOR 3.1
+ENV RUBY_VERSION 3.1.0
+ENV RUBY_DOWNLOAD_SHA256 1a0e0b69b9b062b6299ff1f6c6d77b66aff3995f63d1d8b8771e7a113ec472e2
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
 RUN set -eux; \
 	\
-# readline-dev vs libedit-dev: https://bugs.ruby-lang.org/issues/11869 and https://github.com/docker-library/ruby/issues/75
-	apk add --no-cache --virtual .ruby-builddeps \
-		autoconf \
+	savedAptMark="$(apt-mark showmanual)"; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
 		bison \
-		bzip2 \
-		bzip2-dev \
-		ca-certificates \
-		coreutils \
-		dpkg-dev dpkg \
+		dpkg-dev \
+		libgdbm-dev \
+		ruby \
+		autoconf \
 		g++ \
 		gcc \
-		gdbm-dev \
-		glib-dev \
-		libc-dev \
-		libffi-dev \
+		libbz2-dev \
+		libgdbm-compat-dev \
+		libglib2.0-dev \
+		libncurses-dev \
+		libreadline-dev \
 		libxml2-dev \
 		libxslt-dev \
-		linux-headers \
 		make \
-		ncurses-dev \
-		openssl \
-		openssl-dev \
-		patch \
-		procps \
-		readline-dev \
-		ruby \
-		tar \
-		xz \
-		yaml-dev \
-		zlib-dev \
+		wget \
+		xz-utils \
 	; \
+	rm -rf /var/lib/apt/lists/*; \
 	\
 	wget -O ruby.tar.xz "https://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR%-rc}/ruby-$RUBY_VERSION.tar.xz"; \
 	echo "$RUBY_DOWNLOAD_SHA256 *ruby.tar.xz" | sha256sum --check --strict; \
@@ -74,17 +68,6 @@ RUN set -eux; \
 	rm ruby.tar.xz; \
 	\
 	cd /usr/src/ruby; \
-	\
-# https://github.com/docker-library/ruby/issues/196
-# https://bugs.ruby-lang.org/issues/14387#note-13 (patch source)
-# https://bugs.ruby-lang.org/issues/14387#note-16 ("Therefore ncopa's patch looks good for me in general." -- only breaks glibc which doesn't matter here)
-	wget -O 'thread-stack-fix.patch' 'https://bugs.ruby-lang.org/attachments/download/7081/0001-thread_pthread.c-make-get_main_stack-portable-on-lin.patch'; \
-	echo '3ab628a51d92fdf0d2b5835e93564857aea73e0c1de00313864a94a6255cb645 *thread-stack-fix.patch' | sha256sum --check --strict; \
-	patch -p1 -i thread-stack-fix.patch; \
-	rm thread-stack-fix.patch; \
-	\
-# the configure script does not detect isnan/isinf as macros
-	export ac_cv_func_isnan=yes ac_cv_func_isinf=yes; \
 	\
 # hack in "ENABLE_PATH_CHECK" disabling to suppress:
 #   warning: Insecure world writable dir
@@ -105,25 +88,23 @@ RUN set -eux; \
 	make -j "$(nproc)"; \
 	make install; \
 	\
-	runDeps="$( \
-		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
-			| tr ',' '\n' \
-			| sort -u \
-			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
-	)"; \
-	apk add --no-network --virtual .ruby-rundeps $runDeps; \
-	apk del --no-network .ruby-builddeps; \
+	apt-mark auto '.*' > /dev/null; \
+	apt-mark manual $savedAptMark > /dev/null; \
+	find /usr/local -type f -executable -not \( -name '*tkinter*' \) -exec ldd '{}' ';' \
+		| awk '/=>/ { print $(NF-1) }' \
+		| sort -u \
+		| grep -vE '^/usr/local/lib/' \
+		| xargs -r dpkg-query --search \
+		| cut -d: -f1 \
+		| sort -u \
+		| xargs -r apt-mark manual \
+	; \
+	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
 	\
 	cd /; \
 	rm -r /usr/src/ruby; \
 # verify we have no "ruby" packages installed
-	if \
-		apk --no-network list --installed \
-			| grep -v '^[.]ruby-rundeps' \
-			| grep -i ruby \
-	; then \
-		exit 1; \
-	fi; \
+	if dpkg -l | grep -i ruby; then exit 1; fi; \
 	[ "$(command -v ruby)" = '/usr/local/bin/ruby' ]; \
 # rough smoke test
 	ruby --version; \
