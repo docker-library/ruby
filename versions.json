@@ -1,6 +1,6 @@
 {
   "2.6": {
-    "sha256": "6a041d82ae6e0f02ccb1465e620d94a7196489d8a13d6018a160da42ebc1eece",
+    "sha256": "5fd8ded51321b88fdc9c1b4b0eb1b951d2eddbc293865da0151612c2e814c1f2",
     "variants": [
       "bullseye",
       "slim-bullseye",
@@ -9,10 +9,10 @@
       "alpine3.15",
       "alpine3.14"
     ],
-    "version": "2.6.9"
+    "version": "2.6.10"
   },
   "2.7": {
-    "sha256": "d216d95190eaacf3bf165303747b02ff13f10b6cfab67a9031b502a49512b516",
+    "sha256": "54dcd3044726c4ab75a9d4604720501442b229a3aed6a55fe909567da8807f24",
     "variants": [
       "bullseye",
       "slim-bullseye",
@@ -21,10 +21,10 @@
       "alpine3.15",
       "alpine3.14"
     ],
-    "version": "2.7.5"
+    "version": "2.7.6"
   },
   "3.0": {
-    "sha256": "88cc7f0f021f15c4cd62b1f922e3a401697f7943551fe45b1fdf4f2417a17a9c",
+    "sha256": "8e22fc7304520435522253210ed0aa9a50545f8f13c959fe01a05aea06bef2f0",
     "variants": [
       "bullseye",
       "slim-bullseye",
@@ -33,10 +33,10 @@
       "alpine3.15",
       "alpine3.14"
     ],
-    "version": "3.0.3"
+    "version": "3.0.4"
   },
   "3.1": {
-    "sha256": "7aefaa6b78b076515d272ec59c4616707a54fc9f2391239737d5f10af7a16caa",
+    "sha256": "ca10d017f8a1b6d247556622c841fc56b90c03b1803f87198da1e4fd3ec3bf2a",
     "variants": [
       "bullseye",
       "slim-bullseye",
@@ -45,7 +45,7 @@
       "alpine3.15",
       "alpine3.14"
     ],
-    "version": "3.1.1"
+    "version": "3.1.2"
   },
   "3.2-rc": {
     "sha256": "6d28477f7fa626b63bf139afd37bcfeb28fce6847b203fa10f37cb3615d0c35d",
