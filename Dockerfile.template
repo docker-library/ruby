@@ -135,21 +135,6 @@ RUN set -eux; \
 	patch -p1 -i thread-stack-fix.patch; \
 	rm thread-stack-fix.patch; \
 	\
-{{
-	{
-		"2.6": {
-			url: "https://github.com/ruby/ruby/pull/3773",
-			commit: "fcc88da5eb162043adcba552646677d2ab5adf55",
-		},
-	}[env.version] | if . and env.variant != "alpine3.13" then (
--}}
-# https://bugs.ruby-lang.org/issues/17723 (building with autoconf 2.70+ fails)
-# {{ .url }}
-	wget -O 'autoconf-2.70.patch' 'https://github.com/ruby/ruby/commit/{{ .commit }}.patch'; \
-	patch -p1 -i autoconf-2.70.patch; \
-	rm autoconf-2.70.patch; \
-	\
-{{ ) else "" end -}}
 # the configure script does not detect isnan/isinf as macros
 	export ac_cv_func_isnan=yes ac_cv_func_isinf=yes; \
 	\
