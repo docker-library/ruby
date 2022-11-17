@@ -4,6 +4,11 @@
 	;
 	def is_slim:
 		env.variant | startswith("slim-")
+	;
+	def should_yjit:
+		# https://github.com/docker-library/ruby/issues/390
+		([ "2.7", "3.0", "3.1" ] | index(env.version) | not)
+		and is_alpine and ([ "alpine3.15" ] | index(env.variant) | not)
 -}}
 {{ if is_alpine then ( -}}
 FROM alpine:{{ env.variant | ltrimstr("alpine") }}
@@ -59,6 +64,13 @@ ENV RUBY_DOWNLOAD_SHA256 {{ .sha256 }}
 RUN set -eux; \
 	\
 {{ if is_alpine then ( -}}
+{{ if should_yjit then ( -}}
+	yjit=; \
+	apkArch="$(apk --print-arch)"; \
+	case "$apkArch" in \
+		x86_64 | aarch64) yjit=1 ;; \
+	esac; \
+{{ ) else "" end -}}
 # readline-dev vs libedit-dev: https://bugs.ruby-lang.org/issues/11869 and https://github.com/docker-library/ruby/issues/75
 	apk add --no-cache --virtual .ruby-builddeps \
 		autoconf \
@@ -89,6 +101,9 @@ RUN set -eux; \
 		xz \
 		yaml-dev \
 		zlib-dev \
+{{ if should_yjit then ( -}}
+		${yjit:+rust} \
+{{ ) else "" end -}}
 	; \
 {{ ) else ( -}}
 	savedAptMark="$(apt-mark showmanual)"; \
@@ -152,7 +167,9 @@ RUN set -eux; \
 {{ if is_alpine and ( [ "2.7", "3.0" ] | index(env.version) ) then ( -}}
 	# fix builds on arm32v6/7 and s390x: https://github.com/docker-library/ruby/issues/308
 	# and don't break the other arches: https://github.com/docker-library/ruby/issues/365
+{{ if should_yjit then "" else ( -}}
 	apkArch="$(apk --print-arch)"; \
+{{ ) end -}}
 	case "$apkArch" in \
 		s390x | armhf | armv7) \
 			apk add --no-cache libucontext-dev; \
@@ -165,6 +182,9 @@ RUN set -eux; \
 		--build="$gnuArch" \
 		--disable-install-doc \
 		--enable-shared \
+{{ if should_yjit then ( -}}
+		${yjit:+--enable-yjit} \
+{{ ) else "" end -}}
 	; \
 	make -j "$(nproc)"; \
 	make install; \

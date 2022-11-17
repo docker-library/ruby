@@ -34,6 +34,11 @@ ENV RUBY_DOWNLOAD_SHA256 d3f5619de544240d92a5d03aa289e71bd1103379622c523a0e80ed0
 #   we purge system ruby later to make sure our final image uses what we just built
 RUN set -eux; \
 	\
+	yjit=; \
+	apkArch="$(apk --print-arch)"; \
+	case "$apkArch" in \
+		x86_64 | aarch64) yjit=1 ;; \
+	esac; \
 # readline-dev vs libedit-dev: https://bugs.ruby-lang.org/issues/11869 and https://github.com/docker-library/ruby/issues/75
 	apk add --no-cache --virtual .ruby-builddeps \
 		autoconf \
@@ -64,6 +69,7 @@ RUN set -eux; \
 		xz \
 		yaml-dev \
 		zlib-dev \
+		${yjit:+rust} \
 	; \
 	\
 	wget -O ruby.tar.xz "https://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR%-rc}/ruby-$RUBY_VERSION.tar.xz"; \
@@ -101,6 +107,7 @@ RUN set -eux; \
 		--build="$gnuArch" \
 		--disable-install-doc \
 		--enable-shared \
+		${yjit:+--enable-yjit} \
 	; \
 	make -j "$(nproc)"; \
 	make install; \
