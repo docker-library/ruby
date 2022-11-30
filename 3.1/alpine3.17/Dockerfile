@@ -4,7 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM alpine:3.15
+FROM alpine:3.17
 
 RUN set -eux; \
 	apk add --no-cache \
@@ -26,9 +26,9 @@ RUN set -eux; \
 	} >> /usr/local/etc/gemrc
 
 ENV LANG C.UTF-8
-ENV RUBY_MAJOR 2.7
-ENV RUBY_VERSION 2.7.7
-ENV RUBY_DOWNLOAD_SHA256 b38dff2e1f8ce6e5b7d433f8758752987a6b2adfd9bc7571dbc42ea5d04e3e4c
+ENV RUBY_MAJOR 3.1
+ENV RUBY_VERSION 3.1.3
+ENV RUBY_DOWNLOAD_SHA256 4ee161939826bcdfdafa757cf8e293a7f14e357f62be7144f040335cc8c7371a
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
@@ -96,15 +96,6 @@ RUN set -eux; \
 	mv file.c.new file.c; \
 	\
 	autoconf; \
-	# fix builds on arm32v6/7 and s390x: https://github.com/docker-library/ruby/issues/308
-	# and don't break the other arches: https://github.com/docker-library/ruby/issues/365
-	apkArch="$(apk --print-arch)"; \
-	case "$apkArch" in \
-		s390x | armhf | armv7) \
-			apk add --no-cache libucontext-dev; \
-			export LIBS='-lucontext'; \
-			;; \
-	esac; \
 	gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
 	./configure \
 		--build="$gnuArch" \
