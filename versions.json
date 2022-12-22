@@ -41,7 +41,8 @@
       "buster",
       "slim-buster",
       "alpine3.17",
-      "alpine3.16"
+      "alpine3.16",
+      "sid"
     ],
     "version": "3.2.0-rc1"
   }

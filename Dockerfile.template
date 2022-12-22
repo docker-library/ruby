@@ -5,10 +5,13 @@
 	def is_slim:
 		env.variant | startswith("slim-")
 	;
+	def is_sid:
+		env.variant | startswith("sid")
+	;
 	def should_yjit:
 		# https://github.com/docker-library/ruby/issues/390
 		([ "2.7", "3.0", "3.1" ] | index(env.version) | not)
-		and is_alpine
+		and is_alpine or is_sid
 -}}
 {{ if is_alpine then ( -}}
 FROM alpine:{{ env.variant | ltrimstr("alpine") }}
@@ -113,6 +116,9 @@ RUN set -eux; \
 		dpkg-dev \
 		libgdbm-dev \
 		ruby \
+{{ if should_yjit then ( -}}
+		rustc \
+{{ ) else "" end -}}
 {{ if is_slim then ( -}}
 		autoconf \
 		g++ \
