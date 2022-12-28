@@ -8,7 +8,6 @@
 	def should_yjit:
 		# https://github.com/docker-library/ruby/issues/390
 		([ "2.7", "3.0", "3.1" ] | index(env.version) | not)
-		and is_alpine
 -}}
 {{ if is_alpine then ( -}}
 FROM alpine:{{ env.variant | ltrimstr("alpine") }}
@@ -106,6 +105,19 @@ RUN set -eux; \
 {{ ) else "" end -}}
 	; \
 {{ ) else ( -}}
+{{ if should_yjit then ( -}}
+	yjit=; \
+	debArch="$(uname -m)"; \
+	\
+	export RUSTUP_HOME=/tmp/rustup; \
+	export CARGO_HOME=/tmp/cargo; \
+	PATH=$CARGO_HOME/bin:$PATH; \
+	rustArch=${debArch}-unknown-linux-gnu; \
+	case "$debArch" in \
+		x86_64)  yjit=1; RUST_VERSION=1.66; rustupSha256='5cc9ffd1026e82e7fb2eec2121ad71f4b0f044e88bca39207b3f6b769aaa799c' ;; \
+		aarch64) yjit=1; RUST_VERSION=1.66; rustupSha256='e189948e396d47254103a49c987e7fb0e5dd8e34b200aa4481ecc4b8e41fb929';; \
+	esac; \
+{{ ) else "" end -}}
 	savedAptMark="$(apt-mark showmanual)"; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
@@ -130,6 +142,18 @@ RUN set -eux; \
 {{ ) else "" end -}}
 	; \
 	rm -rf /var/lib/apt/lists/*; \
+{{ if should_yjit then ( -}}
+	\
+	case "$yjit" in \
+		1) wget https://static.rust-lang.org/rustup/archive/1.25.1/${rustArch}/rustup-init; \
+		   echo "${rustupSha256} *rustup-init" | sha256sum --check --strict; \
+		   chmod +x rustup-init; \
+		   ./rustup-init -y --no-modify-path --profile minimal --default-toolchain $RUST_VERSION --default-host ${rustArch}; \
+		   rm rustup-init; \
+		   cargo --version; \
+		   rustc --version ;; \
+	esac; \
+{{ ) else "" end -}}
 {{ ) end -}}
 	\
 	wget -O ruby.tar.xz "https://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR%-rc}/ruby-$RUBY_VERSION.tar.xz"; \
@@ -211,6 +235,10 @@ RUN set -eux; \
 		| xargs -r apt-mark manual \
 	; \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
+{{ if should_yjit then ( -}}
+	rm -rf $RUSTUP_HOME; \
+	rm -rf $CARGO_HOME; \
+{{ ) else "" end -}}
 {{ ) end -}}
 	\
 	cd /; \
