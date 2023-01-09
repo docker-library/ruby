@@ -34,11 +34,6 @@ ENV RUBY_DOWNLOAD_SHA256 d2f4577306e6dd932259693233141e5c3ec13622c95b75996541b8d
 #   we purge system ruby later to make sure our final image uses what we just built
 RUN set -eux; \
 	\
-	yjit=; \
-	apkArch="$(apk --print-arch)"; \
-	case "$apkArch" in \
-		x86_64 | aarch64) yjit=1 ;; \
-	esac; \
 # readline-dev vs libedit-dev: https://bugs.ruby-lang.org/issues/11869 and https://github.com/docker-library/ruby/issues/75
 	apk add --no-cache --virtual .ruby-builddeps \
 		autoconf \
@@ -69,8 +64,29 @@ RUN set -eux; \
 		xz \
 		yaml-dev \
 		zlib-dev \
-		${yjit:+rust} \
 	; \
+	\
+	rustArch=; \
+	apkArch="$(apk --print-arch)"; \
+	case "$apkArch" in \
+		'x86_64') rustArch='x86_64-unknown-linux-musl'; rustupUrl='https://static.rust-lang.org/rustup/archive/1.25.1/x86_64-unknown-linux-musl/rustup-init'; rustupSha256='95427cb0592e32ed39c8bd522fe2a40a746ba07afb8149f91e936cddb4d6eeac' ;; \
+		'aarch64') rustArch='aarch64-unknown-linux-musl'; rustupUrl='https://static.rust-lang.org/rustup/archive/1.25.1/aarch64-unknown-linux-musl/rustup-init'; rustupSha256='7855404cdc50c20040c743800c947b6f452490d47f8590a4a83bc6f75d1d8eda' ;; \
+	esac; \
+	\
+	if [ -n "$rustArch" ]; then \
+		mkdir -p /tmp/rust; \
+		\
+		wget -O /tmp/rust/rustup-init "$rustupUrl"; \
+		echo "$rustupSha256 */tmp/rust/rustup-init" | sha256sum --check --strict; \
+		chmod +x /tmp/rust/rustup-init; \
+		\
+		export RUSTUP_HOME='/tmp/rust/rustup' CARGO_HOME='/tmp/rust/cargo'; \
+		export PATH="$CARGO_HOME/bin:$PATH"; \
+		/tmp/rust/rustup-init -y --no-modify-path --profile minimal --default-toolchain '1.66.0' --default-host "$rustArch"; \
+		\
+		rustc --version; \
+		cargo --version; \
+	fi; \
 	\
 	wget -O ruby.tar.xz "https://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR%-rc}/ruby-$RUBY_VERSION.tar.xz"; \
 	echo "$RUBY_DOWNLOAD_SHA256 *ruby.tar.xz" | sha256sum --check --strict; \
@@ -107,11 +123,12 @@ RUN set -eux; \
 		--build="$gnuArch" \
 		--disable-install-doc \
 		--enable-shared \
-		${yjit:+--enable-yjit} \
+		${rustArch:+--enable-yjit} \
 	; \
 	make -j "$(nproc)"; \
 	make install; \
 	\
+	rm -rf /tmp/rust; \
 	runDeps="$( \
 		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
 			| tr ',' '\n' \

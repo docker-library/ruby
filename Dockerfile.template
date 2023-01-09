@@ -4,10 +4,6 @@
 	;
 	def is_slim:
 		env.variant | startswith("slim-")
-	;
-	def should_yjit:
-		# https://github.com/docker-library/ruby/issues/390
-		([ "2.7", "3.0", "3.1" ] | index(env.version) | not)
 -}}
 {{ if is_alpine then ( -}}
 FROM alpine:{{ env.variant | ltrimstr("alpine") }}
@@ -63,13 +59,6 @@ ENV RUBY_DOWNLOAD_SHA256 {{ .sha256 }}
 RUN set -eux; \
 	\
 {{ if is_alpine then ( -}}
-{{ if should_yjit then ( -}}
-	yjit=; \
-	apkArch="$(apk --print-arch)"; \
-	case "$apkArch" in \
-		x86_64 | aarch64) yjit=1 ;; \
-	esac; \
-{{ ) else "" end -}}
 # readline-dev vs libedit-dev: https://bugs.ruby-lang.org/issues/11869 and https://github.com/docker-library/ruby/issues/75
 	apk add --no-cache --virtual .ruby-builddeps \
 		autoconf \
@@ -100,24 +89,8 @@ RUN set -eux; \
 		xz \
 		yaml-dev \
 		zlib-dev \
-{{ if should_yjit then ( -}}
-		${yjit:+rust} \
-{{ ) else "" end -}}
 	; \
 {{ ) else ( -}}
-{{ if should_yjit then ( -}}
-	yjit=; \
-	debArch="$(uname -m)"; \
-	\
-	export RUSTUP_HOME=/tmp/rustup; \
-	export CARGO_HOME=/tmp/cargo; \
-	PATH=$CARGO_HOME/bin:$PATH; \
-	rustArch=${debArch}-unknown-linux-gnu; \
-	case "$debArch" in \
-		x86_64)  yjit=1; RUST_VERSION=1.66; rustupSha256='5cc9ffd1026e82e7fb2eec2121ad71f4b0f044e88bca39207b3f6b769aaa799c' ;; \
-		aarch64) yjit=1; RUST_VERSION=1.66; rustupSha256='e189948e396d47254103a49c987e7fb0e5dd8e34b200aa4481ecc4b8e41fb929';; \
-	esac; \
-{{ ) else "" end -}}
 	savedAptMark="$(apt-mark showmanual)"; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
@@ -142,19 +115,76 @@ RUN set -eux; \
 {{ ) else "" end -}}
 	; \
 	rm -rf /var/lib/apt/lists/*; \
-{{ if should_yjit then ( -}}
-	\
-	case "$yjit" in \
-		1) wget https://static.rust-lang.org/rustup/archive/1.25.1/${rustArch}/rustup-init; \
-		   echo "${rustupSha256} *rustup-init" | sha256sum --check --strict; \
-		   chmod +x rustup-init; \
-		   ./rustup-init -y --no-modify-path --profile minimal --default-toolchain $RUST_VERSION --default-host ${rustArch}; \
-		   rm rustup-init; \
-		   cargo --version; \
-		   rustc --version ;; \
-	esac; \
-{{ ) else "" end -}}
 {{ ) end -}}
+{{ if .rust.version then ( -}}
+	\
+	rustArch=; \
+{{ def archVar: if is_alpine then "apkArch" else "dpkgArch" end -}}
+	{{ archVar }}="$({{ if is_alpine then "apk --print-arch" else "dpkg --print-architecture" end }})"; \
+	case "${{ archVar }}" in \
+{{
+	(
+		.rustup.arches
+		| (if is_alpine then "musl" else "glibc" end) as $libcKey
+		| to_entries
+		| map(
+			.key as $bashbrewArch
+			| (
+				if is_alpine then
+					{
+						amd64: "x86_64",
+						arm32v6: "armhf",
+						arm32v7: "armv7",
+						arm64v8: "aarch64",
+						i386: "x86",
+						ppc64le: "ppc64le",
+						riscv64: "riscv64",
+						s390x: "s390x",
+					}
+				else
+					{
+						amd64: "amd64",
+						arm32v5: "armel",
+						arm32v7: "armhf",
+						arm64v8: "arm64",
+						i386: "i386",
+						mips64le: "mips64el",
+						ppc64le: "ppc64el",
+						riscv64: "riscv64",
+						s390x: "s390x",
+					}
+				end
+			)[$bashbrewArch] as $distroArch
+			| select($distroArch)
+			| .value
+			| select(has($libcKey))
+			| .[$libcKey]
+			| (
+-}}
+		{{ $distroArch | @sh }}) rustArch={{ .arch | @sh }}; rustupUrl={{ .url | @sh }}; rustupSha256={{ .sha256 | @sh }} ;; \
+{{
+			)
+		)
+		| join("")
+	)
+-}}
+	esac; \
+	\
+	if [ -n "$rustArch" ]; then \
+		mkdir -p /tmp/rust; \
+		\
+		wget -O /tmp/rust/rustup-init "$rustupUrl"; \
+		echo "$rustupSha256 */tmp/rust/rustup-init" | sha256sum --check --strict; \
+		chmod +x /tmp/rust/rustup-init; \
+		\
+		export RUSTUP_HOME='/tmp/rust/rustup' CARGO_HOME='/tmp/rust/cargo'; \
+		export PATH="$CARGO_HOME/bin:$PATH"; \
+		/tmp/rust/rustup-init -y --no-modify-path --profile minimal --default-toolchain {{ .rust.version | @sh }} --default-host "$rustArch"; \
+		\
+		rustc --version; \
+		cargo --version; \
+	fi; \
+{{ ) else "" end -}}
 	\
 	wget -O ruby.tar.xz "https://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR%-rc}/ruby-$RUBY_VERSION.tar.xz"; \
 	echo "$RUBY_DOWNLOAD_SHA256 *ruby.tar.xz" | sha256sum --check --strict; \
@@ -191,10 +221,10 @@ RUN set -eux; \
 {{ if is_alpine and ( [ "2.7", "3.0" ] | index(env.version) ) then ( -}}
 	# fix builds on arm32v6/7 and s390x: https://github.com/docker-library/ruby/issues/308
 	# and don't break the other arches: https://github.com/docker-library/ruby/issues/365
-{{ if should_yjit then "" else ( -}}
-	apkArch="$(apk --print-arch)"; \
+{{ if .rust.version then "" else ( -}}
+	{{ archVar }}="$(apk --print-arch)"; \
 {{ ) end -}}
-	case "$apkArch" in \
+	case "${{ archVar }}" in \
 		s390x | armhf | armv7) \
 			apk add --no-cache libucontext-dev; \
 			export LIBS='-lucontext'; \
@@ -206,13 +236,16 @@ RUN set -eux; \
 		--build="$gnuArch" \
 		--disable-install-doc \
 		--enable-shared \
-{{ if should_yjit then ( -}}
-		${yjit:+--enable-yjit} \
+{{ if .rust.version then ( -}}
+		${rustArch:+--enable-yjit} \
 {{ ) else "" end -}}
 	; \
 	make -j "$(nproc)"; \
 	make install; \
 	\
+{{ if .rust.version then ( -}}
+	rm -rf /tmp/rust; \
+{{ ) else "" end -}}
 {{ if is_alpine then ( -}}
 	runDeps="$( \
 		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
@@ -235,10 +268,6 @@ RUN set -eux; \
 		| xargs -r apt-mark manual \
 	; \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
-{{ if should_yjit then ( -}}
-	rm -rf $RUSTUP_HOME; \
-	rm -rf $CARGO_HOME; \
-{{ ) else "" end -}}
 {{ ) end -}}
 	\
 	cd /; \
