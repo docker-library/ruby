@@ -66,7 +66,7 @@
       },
       "version": "1.25.1"
     },
-    "sha256": "d2f4577306e6dd932259693233141e5c3ec13622c95b75996541b8d5b68b28b4",
+    "sha256": "746c8661ae25449cbdc5297d1092702e93e66f365a75fecb740d4f292ced630c",
     "variants": [
       "bullseye",
       "slim-bullseye",
@@ -75,6 +75,6 @@
       "alpine3.17",
       "alpine3.16"
     ],
-    "version": "3.2.0"
+    "version": "3.2.1"
   }
 }
