@@ -70,9 +70,16 @@ for version in "${versions[@]}"; do
 			sha256: env.shaVal,
 			variants: [
 				(
-					"bullseye",
-					"buster",
-					empty # trailing comma hack
+					# https://bugs.ruby-lang.org/issues/18658
+					# https://github.com/docker-library/ruby/pull/392#issuecomment-1329896174
+					if  "3.0" == env.version then
+						"bullseye",
+						"buster"
+					else
+						"bookworm",
+						"bullseye",
+						empty # trailing comma hack
+					end
 				| ., "slim-" + .), # https://github.com/docker-library/ruby/pull/142#issuecomment-320012893
 				(
 					# Alpine 3.17+ defaults to OpenSSL 3 which is not supported by Ruby 3.0

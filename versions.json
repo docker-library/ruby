@@ -13,10 +13,10 @@
   "3.1": {
     "sha256": "1b6d6010e76036c937b9671f4752f065aeca800a6c664f71f6c9a699453af94f",
     "variants": [
+      "bookworm",
+      "slim-bookworm",
       "bullseye",
       "slim-bullseye",
-      "buster",
-      "slim-buster",
       "alpine3.18",
       "alpine3.17"
     ],
@@ -57,10 +57,10 @@
     },
     "sha256": "4b352d0f7ec384e332e3e44cdbfdcd5ff2d594af3c8296b5636c710975149e23",
     "variants": [
+      "bookworm",
+      "slim-bookworm",
       "bullseye",
       "slim-bullseye",
-      "buster",
-      "slim-buster",
       "alpine3.18",
       "alpine3.17"
     ],
@@ -101,10 +101,10 @@
     },
     "sha256": "ae300b49e06c13087dd163b97eddd38db895dc8e0c9904284119795d75303fbb",
     "variants": [
+      "bookworm",
+      "slim-bookworm",
       "bullseye",
       "slim-bullseye",
-      "buster",
-      "slim-buster",
       "alpine3.18",
       "alpine3.17"
     ],
