@@ -28,8 +28,8 @@
       "slim-bullseye",
       "buster",
       "slim-buster",
-      "alpine3.17",
-      "alpine3.16"
+      "alpine3.18",
+      "alpine3.17"
     ],
     "version": "3.1.4"
   },
@@ -72,8 +72,8 @@
       "slim-bullseye",
       "buster",
       "slim-buster",
-      "alpine3.17",
-      "alpine3.16"
+      "alpine3.18",
+      "alpine3.17"
     ],
     "version": "3.2.2"
   }
