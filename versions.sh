@@ -75,11 +75,12 @@ for version in "${versions[@]}"; do
 					empty # trailing comma hack
 				| ., "slim-" + .), # https://github.com/docker-library/ruby/pull/142#issuecomment-320012893
 				(
-					# Alpine 3.17 defaults to OpenSSL 3 which is not supported (yet?) by Ruby 2.7 or 3.0
+					# Alpine 3.17+ defaults to OpenSSL 3 which is not supported (yet?) by Ruby 2.7 or 3.0
 					# https://bugs.ruby-lang.org/issues/18658
 					# https://github.com/docker-library/ruby/pull/392#issuecomment-1329896174
 					if [ "2.7", "3.0" ] | index(env.version) then empty else
 						"3.17",
+						"3.18",
 						empty # trailing comma hack
 					end,
 					"3.16",
