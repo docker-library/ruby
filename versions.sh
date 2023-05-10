@@ -75,10 +75,10 @@ for version in "${versions[@]}"; do
 					empty # trailing comma hack
 				| ., "slim-" + .), # https://github.com/docker-library/ruby/pull/142#issuecomment-320012893
 				(
-					# Alpine 3.17+ defaults to OpenSSL 3 which is not supported (yet?) by Ruby 2.7 or 3.0
+					# Alpine 3.17+ defaults to OpenSSL 3 which is not supported by Ruby 3.0
 					# https://bugs.ruby-lang.org/issues/18658
 					# https://github.com/docker-library/ruby/pull/392#issuecomment-1329896174
-					if [ "2.7", "3.0" ] | index(env.version) then "3.16" else
+					if  "3.0" == env.version then "3.16" else
 						"3.18",
 						"3.17",
 						empty # trailing comma hack
@@ -89,7 +89,7 @@ for version in "${versions[@]}"; do
 	')"
 
 	case "$rcVersion" in
-		2.7 | 3.0 | 3.1) ;;
+		3.0 | 3.1) ;;
 		*)
 			# YJIT
 			doc="$(jq <<<"$doc" -sc '
