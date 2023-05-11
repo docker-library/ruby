@@ -218,7 +218,7 @@ RUN set -eux; \
 	mv file.c.new file.c; \
 	\
 	autoconf; \
-{{ if is_alpine and ( [ "2.7", "3.0" ] | index(env.version) ) then ( -}}
+{{ if is_alpine and "3.0" == env.version then ( -}}
 	# fix builds on arm32v6/7 and s390x: https://github.com/docker-library/ruby/issues/308
 	# and don't break the other arches: https://github.com/docker-library/ruby/issues/365
 {{ if .rust.version then "" else ( -}}
