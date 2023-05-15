@@ -59,7 +59,6 @@ ENV RUBY_DOWNLOAD_SHA256 {{ .sha256 }}
 RUN set -eux; \
 	\
 {{ if is_alpine then ( -}}
-# readline-dev vs libedit-dev: https://bugs.ruby-lang.org/issues/11869 and https://github.com/docker-library/ruby/issues/75
 	apk add --no-cache --virtual .ruby-builddeps \
 		autoconf \
 		bison \
@@ -83,7 +82,9 @@ RUN set -eux; \
 		openssl-dev \
 		patch \
 		procps \
+{{ if [ "3.0", "3.1", "3.2" ] | index(env.version | rtrimstr("-rc")) then ( -}}
 		readline-dev \
+{{ ) else "" end -}}
 		ruby \
 		tar \
 		xz \
@@ -106,7 +107,9 @@ RUN set -eux; \
 		libgdbm-compat-dev \
 		libglib2.0-dev \
 		libncurses-dev \
+{{ if [ "3.0", "3.1", "3.2" ] | index(env.version | rtrimstr("-rc")) then ( -}}
 		libreadline-dev \
+{{ ) else "" end -}}
 		libxml2-dev \
 		libxslt-dev \
 		make \
@@ -218,7 +221,7 @@ RUN set -eux; \
 	mv file.c.new file.c; \
 	\
 	autoconf; \
-{{ if is_alpine and "3.0" == env.version then ( -}}
+{{ if is_alpine and "3.0" == (env.version | rtrimstr("-rc")) then ( -}}
 	# fix builds on arm32v6/7 and s390x: https://github.com/docker-library/ruby/issues/308
 	# and don't break the other arches: https://github.com/docker-library/ruby/issues/365
 {{ if .rust.version then "" else ( -}}

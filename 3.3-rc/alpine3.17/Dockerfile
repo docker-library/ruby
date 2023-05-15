@@ -34,7 +34,6 @@ ENV RUBY_DOWNLOAD_SHA256 ae300b49e06c13087dd163b97eddd38db895dc8e0c9904284119795
 #   we purge system ruby later to make sure our final image uses what we just built
 RUN set -eux; \
 	\
-# readline-dev vs libedit-dev: https://bugs.ruby-lang.org/issues/11869 and https://github.com/docker-library/ruby/issues/75
 	apk add --no-cache --virtual .ruby-builddeps \
 		autoconf \
 		bison \
@@ -58,7 +57,6 @@ RUN set -eux; \
 		openssl-dev \
 		patch \
 		procps \
-		readline-dev \
 		ruby \
 		tar \
 		xz \

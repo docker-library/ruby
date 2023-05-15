@@ -51,7 +51,6 @@ RUN set -eux; \
 		libgdbm-compat-dev \
 		libglib2.0-dev \
 		libncurses-dev \
-		libreadline-dev \
 		libxml2-dev \
 		libxslt-dev \
 		make \
