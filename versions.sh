@@ -12,8 +12,8 @@ else
 fi
 versions=( "${versions[@]%/}" )
 
-releasesPage="$(curl -fsSL 'https://www.ruby-lang.org/en/downloads/releases/')"
-newsPage="$(curl -fsSL 'https://www.ruby-lang.org/en/news/')" # occasionally, releases don't show up on the Releases page (see https://github.com/ruby/www.ruby-lang.org/blob/master/_data/releases.yml)
+releasesPage="$(curl -fsSL 'https://www.ruby-lang.org/en/downloads/releases/' | grep -A 2 '<td>Ruby')" # very wide grep to cut down on "set -x" output when debugging (should match the one later)
+newsPage="$(curl -fsSL 'https://www.ruby-lang.org/en/news/' | grep 'Released</a>')" # occasionally, releases don't show up on the Releases page (see https://github.com/ruby/www.ruby-lang.org/blob/master/_data/releases.yml)
 # TODO consider parsing https://github.com/ruby/www.ruby-lang.org/blob/master/_data/downloads.yml as well
 
 for version in "${versions[@]}"; do
@@ -39,14 +39,14 @@ for version in "${versions[@]}"; do
 			{
 				versionReleasePage="$(grep "<td>Ruby $tryVersion</td>" -A 2 <<<"$releasesPage" | awk -F '"' '$1 == "<td><a href=" { print $2; exit }')" \
 					&& [ -n "$versionReleasePage" ] \
-					&& shaVal="$(curl -fsSL "https://www.ruby-lang.org/$versionReleasePage" | grep "ruby-$tryVersion.tar.xz" -A 5)" \
+					&& shaVal="$(curl -fsL "https://www.ruby-lang.org/$versionReleasePage" | grep "ruby-$tryVersion.tar.xz" -A 5)" \
 					&& shaVal="$(awk <<<"$shaVal" '$1 == "SHA256:" { print $2; exit }')" \
 					&& [ -n "$shaVal" ]
 			} \
 			|| {
-				versionReleasePage="$(echo "$newsPage" | grep -oE '<a href="[^"]+">Ruby '"$tryVersion"' Released</a>' | cut -d'"' -f2)" \
+				versionReleasePage="$(grep -oE '<a href="[^"]+">Ruby '"$tryVersion"' Released</a>' <<<"$newsPage" | cut -d'"' -f2)" \
 					&& [ -n "$versionReleasePage" ] \
-					&& shaVal="$(curl -fsSL "https://www.ruby-lang.org/$versionReleasePage" | grep "ruby-$tryVersion.tar.xz" -A 5)" \
+					&& shaVal="$(curl -fsL "https://www.ruby-lang.org/$versionReleasePage" | grep "ruby-$tryVersion.tar.xz" -A 5)" \
 					&& shaVal="$(awk <<<"$shaVal" '$1 == "SHA256:" { print $2; exit }')" \
 					&& [ -n "$shaVal" ]
 			} \
