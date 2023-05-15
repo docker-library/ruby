@@ -65,5 +65,49 @@
       "alpine3.17"
     ],
     "version": "3.2.2"
+  },
+  "3.3-rc": {
+    "rust": {
+      "version": "1.66.0"
+    },
+    "rustup": {
+      "arches": {
+        "amd64": {
+          "glibc": {
+            "arch": "x86_64-unknown-linux-gnu",
+            "sha256": "5cc9ffd1026e82e7fb2eec2121ad71f4b0f044e88bca39207b3f6b769aaa799c",
+            "url": "https://static.rust-lang.org/rustup/archive/1.25.1/x86_64-unknown-linux-gnu/rustup-init"
+          },
+          "musl": {
+            "arch": "x86_64-unknown-linux-musl",
+            "sha256": "95427cb0592e32ed39c8bd522fe2a40a746ba07afb8149f91e936cddb4d6eeac",
+            "url": "https://static.rust-lang.org/rustup/archive/1.25.1/x86_64-unknown-linux-musl/rustup-init"
+          }
+        },
+        "arm64v8": {
+          "glibc": {
+            "arch": "aarch64-unknown-linux-gnu",
+            "sha256": "e189948e396d47254103a49c987e7fb0e5dd8e34b200aa4481ecc4b8e41fb929",
+            "url": "https://static.rust-lang.org/rustup/archive/1.25.1/aarch64-unknown-linux-gnu/rustup-init"
+          },
+          "musl": {
+            "arch": "aarch64-unknown-linux-musl",
+            "sha256": "7855404cdc50c20040c743800c947b6f452490d47f8590a4a83bc6f75d1d8eda",
+            "url": "https://static.rust-lang.org/rustup/archive/1.25.1/aarch64-unknown-linux-musl/rustup-init"
+          }
+        }
+      },
+      "version": "1.25.1"
+    },
+    "sha256": "ae300b49e06c13087dd163b97eddd38db895dc8e0c9904284119795d75303fbb",
+    "variants": [
+      "bullseye",
+      "slim-bullseye",
+      "buster",
+      "slim-buster",
+      "alpine3.18",
+      "alpine3.17"
+    ],
+    "version": "3.3.0-preview1"
   }
 }
