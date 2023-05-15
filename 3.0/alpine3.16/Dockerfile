@@ -34,7 +34,6 @@ ENV RUBY_DOWNLOAD_SHA256 b5cbee93e62d85cfb2a408c49fa30a74231ae8409c2b3858e5f5ea2
 #   we purge system ruby later to make sure our final image uses what we just built
 RUN set -eux; \
 	\
-# readline-dev vs libedit-dev: https://bugs.ruby-lang.org/issues/11869 and https://github.com/docker-library/ruby/issues/75
 	apk add --no-cache --virtual .ruby-builddeps \
 		autoconf \
 		bison \
