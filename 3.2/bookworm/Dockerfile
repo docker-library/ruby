@@ -4,21 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM debian:buster-slim
-
-RUN set -eux; \
-	apt-get update; \
-	apt-get install -y --no-install-recommends \
-		bzip2 \
-		ca-certificates \
-		libffi-dev \
-		libgmp-dev \
-		libssl-dev \
-		libyaml-dev \
-		procps \
-		zlib1g-dev \
-	; \
-	rm -rf /var/lib/apt/lists/*
+FROM buildpack-deps:bookworm
 
 # skip installing gem documentation
 RUN set -eux; \
@@ -29,9 +15,9 @@ RUN set -eux; \
 	} >> /usr/local/etc/gemrc
 
 ENV LANG C.UTF-8
-ENV RUBY_MAJOR 3.1
-ENV RUBY_VERSION 3.1.4
-ENV RUBY_DOWNLOAD_SHA256 1b6d6010e76036c937b9671f4752f065aeca800a6c664f71f6c9a699453af94f
+ENV RUBY_MAJOR 3.2
+ENV RUBY_VERSION 3.2.2
+ENV RUBY_DOWNLOAD_SHA256 4b352d0f7ec384e332e3e44cdbfdcd5ff2d594af3c8296b5636c710975149e23
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
@@ -44,21 +30,30 @@ RUN set -eux; \
 		dpkg-dev \
 		libgdbm-dev \
 		ruby \
-		autoconf \
-		g++ \
-		gcc \
-		libbz2-dev \
-		libgdbm-compat-dev \
-		libglib2.0-dev \
-		libncurses-dev \
-		libreadline-dev \
-		libxml2-dev \
-		libxslt-dev \
-		make \
-		wget \
-		xz-utils \
 	; \
 	rm -rf /var/lib/apt/lists/*; \
+	\
+	rustArch=; \
+	dpkgArch="$(dpkg --print-architecture)"; \
+	case "$dpkgArch" in \
+		'amd64') rustArch='x86_64-unknown-linux-gnu'; rustupUrl='https://static.rust-lang.org/rustup/archive/1.25.1/x86_64-unknown-linux-gnu/rustup-init'; rustupSha256='5cc9ffd1026e82e7fb2eec2121ad71f4b0f044e88bca39207b3f6b769aaa799c' ;; \
+		'arm64') rustArch='aarch64-unknown-linux-gnu'; rustupUrl='https://static.rust-lang.org/rustup/archive/1.25.1/aarch64-unknown-linux-gnu/rustup-init'; rustupSha256='e189948e396d47254103a49c987e7fb0e5dd8e34b200aa4481ecc4b8e41fb929' ;; \
+	esac; \
+	\
+	if [ -n "$rustArch" ]; then \
+		mkdir -p /tmp/rust; \
+		\
+		wget -O /tmp/rust/rustup-init "$rustupUrl"; \
+		echo "$rustupSha256 */tmp/rust/rustup-init" | sha256sum --check --strict; \
+		chmod +x /tmp/rust/rustup-init; \
+		\
+		export RUSTUP_HOME='/tmp/rust/rustup' CARGO_HOME='/tmp/rust/cargo'; \
+		export PATH="$CARGO_HOME/bin:$PATH"; \
+		/tmp/rust/rustup-init -y --no-modify-path --profile minimal --default-toolchain '1.66.0' --default-host "$rustArch"; \
+		\
+		rustc --version; \
+		cargo --version; \
+	fi; \
 	\
 	wget -O ruby.tar.xz "https://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR%-rc}/ruby-$RUBY_VERSION.tar.xz"; \
 	echo "$RUBY_DOWNLOAD_SHA256 *ruby.tar.xz" | sha256sum --check --strict; \
@@ -84,16 +79,17 @@ RUN set -eux; \
 		--build="$gnuArch" \
 		--disable-install-doc \
 		--enable-shared \
+		${rustArch:+--enable-yjit} \
 	; \
 	make -j "$(nproc)"; \
 	make install; \
 	\
+	rm -rf /tmp/rust; \
 	apt-mark auto '.*' > /dev/null; \
 	apt-mark manual $savedAptMark > /dev/null; \
 	find /usr/local -type f -executable -not \( -name '*tkinter*' \) -exec ldd '{}' ';' \
-		| awk '/=>/ { print $(NF-1) }' \
+		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); print so }' \
 		| sort -u \
-		| grep -vE '^/usr/local/lib/' \
 		| xargs -r dpkg-query --search \
 		| cut -d: -f1 \
 		| sort -u \
