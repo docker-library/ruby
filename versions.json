@@ -99,7 +99,7 @@
       },
       "version": "1.25.1"
     },
-    "sha256": "ae300b49e06c13087dd163b97eddd38db895dc8e0c9904284119795d75303fbb",
+    "sha256": "62b1c4f586c70bf1cb58f2d909d0d824506315782e835f9dd3fcc0b659a70fc1",
     "variants": [
       "bookworm",
       "slim-bookworm",
@@ -108,6 +108,6 @@
       "alpine3.18",
       "alpine3.17"
     ],
-    "version": "3.3.0-preview1"
+    "version": "3.3.0-preview2"
   }
 }
