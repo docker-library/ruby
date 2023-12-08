@@ -86,8 +86,8 @@ for version in "${versions[@]}"; do
 					# https://bugs.ruby-lang.org/issues/18658
 					# https://github.com/docker-library/ruby/pull/392#issuecomment-1329896174
 					if  "3.0" == env.version then "3.16" else
+						"3.19",
 						"3.18",
-						"3.17",
 						empty # trailing comma hack
 					end
 				| "alpine" + .)

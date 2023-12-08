@@ -17,8 +17,8 @@
       "slim-bookworm",
       "bullseye",
       "slim-bullseye",
-      "alpine3.18",
-      "alpine3.17"
+      "alpine3.19",
+      "alpine3.18"
     ],
     "version": "3.1.4"
   },
@@ -61,8 +61,8 @@
       "slim-bookworm",
       "bullseye",
       "slim-bullseye",
-      "alpine3.18",
-      "alpine3.17"
+      "alpine3.19",
+      "alpine3.18"
     ],
     "version": "3.2.2"
   },
@@ -105,8 +105,8 @@
       "slim-bookworm",
       "bullseye",
       "slim-bullseye",
-      "alpine3.18",
-      "alpine3.17"
+      "alpine3.19",
+      "alpine3.18"
     ],
     "version": "3.3.0-preview3"
   }

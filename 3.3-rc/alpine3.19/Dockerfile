@@ -4,7 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM alpine:3.17
+FROM alpine:3.19
 
 RUN set -eux; \
 	apk add --no-cache \
@@ -26,9 +26,9 @@ RUN set -eux; \
 	} >> /usr/local/etc/gemrc
 
 ENV LANG C.UTF-8
-ENV RUBY_MAJOR 3.2
-ENV RUBY_VERSION 3.2.2
-ENV RUBY_DOWNLOAD_SHA256 4b352d0f7ec384e332e3e44cdbfdcd5ff2d594af3c8296b5636c710975149e23
+ENV RUBY_MAJOR 3.3-rc
+ENV RUBY_VERSION 3.3.0-preview3
+ENV RUBY_DOWNLOAD_SHA256 f79afcf122dc7d04fe26cfa4436b9c488b21766fc54b0d2dfb2ba41cd0cdd355
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
@@ -57,7 +57,6 @@ RUN set -eux; \
 		openssl-dev \
 		patch \
 		procps \
-		readline-dev \
 		ruby \
 		tar \
 		xz \
