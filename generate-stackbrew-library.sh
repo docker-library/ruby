@@ -75,10 +75,13 @@ join() {
 
 for version; do
 	export version
+
+	if ! fullVersion="$(jq -er '.[env.version] | if . then .version else empty end' versions.json)"; then
+		continue
+	fi
+
 	variants="$(jq -r '.[env.version].variants | map(@sh) | join(" ")' versions.json)"
 	eval "variants=( $variants )"
-
-	fullVersion="$(jq -r '.[env.version].version' versions.json)"
 
 	versionAliases=(
 		$fullVersion
