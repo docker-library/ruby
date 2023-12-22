@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-declare -A aliases=(
-	[3.2]='3 latest'
-)
-
 self="$(basename "$BASH_SOURCE")"
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
@@ -73,6 +69,11 @@ join() {
 	echo "${out#$sep}"
 }
 
+declare -A latest=(
+	#[3]='3.2'
+	#[latest]='3.2'
+)
+
 for version; do
 	export version
 
@@ -86,8 +87,16 @@ for version; do
 	versionAliases=(
 		$fullVersion
 		$version
-		${aliases[$version]:-}
 	)
+
+	if [ "$version" = "${version%-rc}" ]; then
+		for a in "${version%%.*}" latest; do # "3", "latest"
+			if [ -z "${latest[$a]:-}" ]; then
+				latest[$a]="$version"
+				versionAliases+=( "$a" )
+			fi
+		done
+	fi
 
 	defaultDebianVariant="$(jq -r '
 		.[env.version].variants
