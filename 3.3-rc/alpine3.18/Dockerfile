@@ -26,8 +26,10 @@ RUN set -eux; \
 	} >> /usr/local/etc/gemrc
 
 ENV LANG C.UTF-8
-ENV RUBY_MAJOR 3.3-rc
+
+# https://www.ruby-lang.org/en/news/2023/12/11/ruby-3-3-0-rc1-released/
 ENV RUBY_VERSION 3.3.0-rc1
+ENV RUBY_DOWNLOAD_URL https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.0-rc1.tar.xz
 ENV RUBY_DOWNLOAD_SHA256 051815637f1fa75a1edf2c54b66d5d5b69563daad777da8dc39543b7754b5290
 
 # some of ruby's build scripts are written in ruby
@@ -86,7 +88,7 @@ RUN set -eux; \
 		cargo --version; \
 	fi; \
 	\
-	wget -O ruby.tar.xz "https://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR%-rc}/ruby-$RUBY_VERSION.tar.xz"; \
+	wget -O ruby.tar.xz "$RUBY_DOWNLOAD_URL"; \
 	echo "$RUBY_DOWNLOAD_SHA256 *ruby.tar.xz" | sha256sum --check --strict; \
 	\
 	mkdir -p /usr/src/ruby; \
