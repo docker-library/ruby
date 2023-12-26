@@ -75,7 +75,7 @@ for version in "${versions[@]}"; do
 		latestVersion="$({ echo "$fullVersion"; echo "$gaFullVersion"; } | sort -V | tail -1)"
 		if [[ "$fullVersion" == "$gaFullVersion"* ]] || [ "$latestVersion" = "$gaFullVersion" ]; then
 			# "x.y.z-rc1" == x.y.z*
-			json="$(jq <<<"$json" -c 'del(.[env.rcVersion])')"
+			json="$(jq <<<"$json" -c 'del(.[env.version])')"
 			continue
 		fi
 	fi
