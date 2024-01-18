@@ -26,9 +26,11 @@ RUN set -eux; \
 	} >> /usr/local/etc/gemrc
 
 ENV LANG C.UTF-8
-ENV RUBY_MAJOR 3.2
-ENV RUBY_VERSION 3.2.2
-ENV RUBY_DOWNLOAD_SHA256 4b352d0f7ec384e332e3e44cdbfdcd5ff2d594af3c8296b5636c710975149e23
+
+# https://www.ruby-lang.org/en/news/2024/01/18/ruby-3-2-3-released/
+ENV RUBY_VERSION 3.2.3
+ENV RUBY_DOWNLOAD_URL https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.3.tar.xz
+ENV RUBY_DOWNLOAD_SHA256 cfb231954b8c241043a538a4c682a1cca0b2016d835fee0b9e4a0be3ceba476b
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
@@ -87,7 +89,7 @@ RUN set -eux; \
 		cargo --version; \
 	fi; \
 	\
-	wget -O ruby.tar.xz "https://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR%-rc}/ruby-$RUBY_VERSION.tar.xz"; \
+	wget -O ruby.tar.xz "$RUBY_DOWNLOAD_URL"; \
 	echo "$RUBY_DOWNLOAD_SHA256 *ruby.tar.xz" | sha256sum --check --strict; \
 	\
 	mkdir -p /usr/src/ruby; \
