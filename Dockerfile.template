@@ -69,7 +69,10 @@ RUN set -eux; \
 {{ if is_alpine then ( -}}
 	apk add --no-cache --virtual .ruby-builddeps \
 		autoconf \
+{{ if [ "3.0", "3.1", "3.2" ] | index(env.version | rtrimstr("-rc")) then ( -}}
+{{ # https://github.com/docker-library/ruby/pull/438 -}}
 		bison \
+{{ ) else "" end -}}
 		bzip2 \
 		bzip2-dev \
 		ca-certificates \
@@ -103,7 +106,10 @@ RUN set -eux; \
 	savedAptMark="$(apt-mark showmanual)"; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
+{{ if [ "3.0", "3.1", "3.2" ] | index(env.version | rtrimstr("-rc")) then ( -}}
+{{ # https://github.com/docker-library/ruby/pull/438 -}}
 		bison \
+{{ ) else "" end -}}
 		dpkg-dev \
 		libgdbm-dev \
 		ruby \
