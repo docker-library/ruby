@@ -38,7 +38,6 @@ RUN set -eux; \
 	\
 	apk add --no-cache --virtual .ruby-builddeps \
 		autoconf \
-		bison \
 		bzip2 \
 		bzip2-dev \
 		ca-certificates \
