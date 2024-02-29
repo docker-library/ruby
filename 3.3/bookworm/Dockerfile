@@ -74,7 +74,6 @@ RUN set -eux; \
 	} > file.c.new; \
 	mv file.c.new file.c; \
 	\
-	autoconf; \
 	# workaround crash on arm64
 	# https://bugs.ruby-lang.org/issues/20085
 	# https://github.com/ruby/ruby/pull/9385 <- https://github.com/ruby/ruby/pull/9371
@@ -82,6 +81,8 @@ RUN set -eux; \
 	echo '86bc65415fd62cb2272a4df249f39fb79db15617ad05c540e05a22f02eae73b3 *arm64-fix.patch' | sha256sum --check --strict; \
 	patch -p1 -i arm64-fix.patch; \
 	rm arm64-fix.patch; \
+	\
+	autoconf; \
 	gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
 	./configure \
 		--build="$gnuArch" \
