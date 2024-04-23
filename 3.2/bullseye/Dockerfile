@@ -16,10 +16,10 @@ RUN set -eux; \
 
 ENV LANG C.UTF-8
 
-# https://www.ruby-lang.org/en/news/2024/01/18/ruby-3-2-3-released/
-ENV RUBY_VERSION 3.2.3
-ENV RUBY_DOWNLOAD_URL https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.3.tar.xz
-ENV RUBY_DOWNLOAD_SHA256 cfb231954b8c241043a538a4c682a1cca0b2016d835fee0b9e4a0be3ceba476b
+# https://www.ruby-lang.org/en/news/2024/04/23/ruby-3-2-4-released/
+ENV RUBY_VERSION 3.2.4
+ENV RUBY_DOWNLOAD_URL https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.4.tar.xz
+ENV RUBY_DOWNLOAD_SHA256 e7f1653d653232ec433472489a91afbc7433c9f760cc822defe7437c9d95791b
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
