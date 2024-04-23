@@ -50,13 +50,13 @@ RUN set -eux; \
 	} >> /usr/local/etc/gemrc
 
 ENV LANG C.UTF-8
-{{ if .version | . == "3.0.6" or . == "3.1.4" or . == "3.2.2" then ( -}}
+
+# https://www.ruby-lang.org/{{ .post | ltrimstr("/") }}
+{{ if env.version == "3.0" then ( -}}
 ENV RUBY_MAJOR {{ env.version }}
 ENV RUBY_VERSION {{ .version }}
 ENV RUBY_DOWNLOAD_SHA256 {{ .sha256.xz }}
 {{ ) else ( -}}
-
-# https://www.ruby-lang.org/{{ .post | ltrimstr("/") }}
 ENV RUBY_VERSION {{ .version }}
 ENV RUBY_DOWNLOAD_URL {{ .url.xz }}
 ENV RUBY_DOWNLOAD_SHA256 {{ .sha256.xz }}
@@ -203,7 +203,7 @@ RUN set -eux; \
 	fi; \
 {{ ) else "" end -}}
 	\
-{{ if .version | . == "3.0.6" or . == "3.1.4" or . == "3.2.2" then ( -}}
+{{ if env.version == "3.0" then ( -}}
 {{ if .url.xz != "https://cache.ruby-lang.org/pub/ruby/\(env.version | rtrimstr("-rc"))/ruby-\(.version).tar.xz" then error("url for \(.version) is not as expected!") else "" end -}}
 	wget -O ruby.tar.xz "https://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR%-rc}/ruby-$RUBY_VERSION.tar.xz"; \
 {{ ) else ( -}}

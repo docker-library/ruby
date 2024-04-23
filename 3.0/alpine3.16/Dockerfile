@@ -28,8 +28,8 @@ RUN set -eux; \
 ENV LANG C.UTF-8
 
 # https://www.ruby-lang.org/en/news/2024/04/23/ruby-3-0-7-released/
+ENV RUBY_MAJOR 3.0
 ENV RUBY_VERSION 3.0.7
-ENV RUBY_DOWNLOAD_URL https://cache.ruby-lang.org/pub/ruby/3.0/ruby-3.0.7.tar.xz
 ENV RUBY_DOWNLOAD_SHA256 1748338373c4fad80129921080d904aca326e41bd9589b498aa5ee09fd575bab
 
 # some of ruby's build scripts are written in ruby
@@ -67,7 +67,7 @@ RUN set -eux; \
 		zlib-dev \
 	; \
 	\
-	wget -O ruby.tar.xz "$RUBY_DOWNLOAD_URL"; \
+	wget -O ruby.tar.xz "https://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR%-rc}/ruby-$RUBY_VERSION.tar.xz"; \
 	echo "$RUBY_DOWNLOAD_SHA256 *ruby.tar.xz" | sha256sum --check --strict; \
 	\
 	mkdir -p /usr/src/ruby; \
