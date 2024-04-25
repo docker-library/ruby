@@ -28,9 +28,14 @@ RUN set -eux; \
 ENV LANG C.UTF-8
 
 # https://www.ruby-lang.org/en/news/2024/04/23/ruby-3-2-4-released/
-ENV RUBY_VERSION 3.2.4
-ENV RUBY_DOWNLOAD_URL https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.4.tar.xz
-ENV RUBY_DOWNLOAD_SHA256 e7f1653d653232ec433472489a91afbc7433c9f760cc822defe7437c9d95791b
+ARG RUBY_VERSION=3.2.4
+ARG RUBY_DOWNLOAD_URL=https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.4.tar.xz
+ARG RUBY_DOWNLOAD_SHA256=e7f1653d653232ec433472489a91afbc7433c9f760cc822defe7437c9d95791b
+ARG SKIP_CHECKSUM_CHECK=0
+ENV RUBY_VERSION=${RUBY_VERSION}
+ENV RUBY_DOWNLOAD_URL=${RUBY_DOWNLOAD_URL}
+ENV RUBY_DOWNLOAD_SHA256=${RUBY_DOWNLOAD_SHA256}
+ENV SKIP_CHECKSUM_CHECK=${SKIP_CHECKSUM_CHECK}
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
@@ -90,7 +95,9 @@ RUN set -eux; \
 	fi; \
 	\
 	wget -O ruby.tar.xz "$RUBY_DOWNLOAD_URL"; \
-	echo "$RUBY_DOWNLOAD_SHA256 *ruby.tar.xz" | sha256sum --check --strict; \
+  if [[ "$SKIP_CHECKSUM_CHECK" -ne "1" ]]; then \
+		echo "$RUBY_DOWNLOAD_SHA256 *ruby.tar.xz" | sha256sum --check --strict; \
+  fi; \
 	\
 	mkdir -p /usr/src/ruby; \
 	tar -xJf ruby.tar.xz -C /usr/src/ruby --strip-components=1; \

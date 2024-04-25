@@ -57,9 +57,14 @@ ENV RUBY_MAJOR {{ env.version }}
 ENV RUBY_VERSION {{ .version }}
 ENV RUBY_DOWNLOAD_SHA256 {{ .sha256.xz }}
 {{ ) else ( -}}
-ENV RUBY_VERSION {{ .version }}
-ENV RUBY_DOWNLOAD_URL {{ .url.xz }}
-ENV RUBY_DOWNLOAD_SHA256 {{ .sha256.xz }}
+ARG RUBY_VERSION={{ .version }}
+ARG RUBY_DOWNLOAD_URL={{ .url.xz }}
+ARG RUBY_DOWNLOAD_SHA256={{ .sha256.xz }}
+ARG SKIP_CHECKSUM_CHECK=0
+ENV RUBY_VERSION=${RUBY_VERSION}
+ENV RUBY_DOWNLOAD_URL=${RUBY_DOWNLOAD_URL}
+ENV RUBY_DOWNLOAD_SHA256=${RUBY_DOWNLOAD_SHA256}
+ENV SKIP_CHECKSUM_CHECK=${SKIP_CHECKSUM_CHECK}
 {{ ) end -}}
 
 # some of ruby's build scripts are written in ruby
@@ -206,10 +211,13 @@ RUN set -eux; \
 {{ if env.version == "3.0" then ( -}}
 {{ if .url.xz != "https://cache.ruby-lang.org/pub/ruby/\(env.version | rtrimstr("-rc"))/ruby-\(.version).tar.xz" then error("url for \(.version) is not as expected!") else "" end -}}
 	wget -O ruby.tar.xz "https://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR%-rc}/ruby-$RUBY_VERSION.tar.xz"; \
+	echo "$RUBY_DOWNLOAD_SHA256 *ruby.tar.xz" | sha256sum --check --strict; \
 {{ ) else ( -}}
 	wget -O ruby.tar.xz "$RUBY_DOWNLOAD_URL"; \
+  if [[ "$SKIP_CHECKSUM_CHECK" -ne "1" ]]; then \
+		echo "$RUBY_DOWNLOAD_SHA256 *ruby.tar.xz" | sha256sum --check --strict; \
+  fi; \
 {{ ) end -}}
-	echo "$RUBY_DOWNLOAD_SHA256 *ruby.tar.xz" | sha256sum --check --strict; \
 	\
 	mkdir -p /usr/src/ruby; \
 	tar -xJf ruby.tar.xz -C /usr/src/ruby --strip-components=1; \
