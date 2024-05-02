@@ -6,6 +6,10 @@
 
 FROM alpine:3.20
 
+# The global SOURCE_DATE_EPOCH is consumed by commands that are not associated with a source artifact.
+# This is not propagated from --build-arg: https://github.com/moby/buildkit/issues/4576#issuecomment-2159501282
+ENV SOURCE_DATE_EPOCH 0
+
 RUN set -eux; \
 	apk add --no-cache \
 		bzip2 \
@@ -36,7 +40,7 @@ ENV RUBY_DOWNLOAD_SHA256 597bd1849f252d8a6863cb5d38014ac54152b508c36dca156f6356a
 #   we purge system ruby later to make sure our final image uses what we just built
 RUN set -eux; \
 	\
-	apk add --no-cache --virtual .ruby-builddeps \
+	apk add --no-cache --virtual .ruby-builddeps=0 \
 		autoconf \
 		bison \
 		bzip2 \
@@ -79,14 +83,19 @@ RUN set -eux; \
 # https://github.com/docker-library/ruby/issues/196
 # https://bugs.ruby-lang.org/issues/14387#note-13 (patch source)
 # https://bugs.ruby-lang.org/issues/14387#note-16 ("Therefore ncopa's patch looks good for me in general." -- only breaks glibc which doesn't matter here)
+# patch: --force is set for reproducing timestamps
 	wget -O 'thread-stack-fix.patch' 'https://bugs.ruby-lang.org/attachments/download/7081/0001-thread_pthread.c-make-get_main_stack-portable-on-lin.patch'; \
 	echo '3ab628a51d92fdf0d2b5835e93564857aea73e0c1de00313864a94a6255cb645 *thread-stack-fix.patch' | sha256sum --check --strict; \
-	patch -p1 -i thread-stack-fix.patch; \
+	patch --set-utc --force -p1 -i thread-stack-fix.patch; \
 	rm thread-stack-fix.patch; \
 	\
 # the configure script does not detect isnan/isinf as macros
 	export ac_cv_func_isnan=yes ac_cv_func_isinf=yes; \
 	\
+	SOURCE_DATE_EPOCH="$(find . -type f -exec stat -c '%Y' {} + | sort -nr | head -n1)"; \
+	export SOURCE_DATE_EPOCH; \
+# for logging validation/edification
+	date --date "@$SOURCE_DATE_EPOCH" --rfc-2822; \
 # hack in "ENABLE_PATH_CHECK" disabling to suppress:
 #   warning: Insecure world writable dir
 	{ \
@@ -112,7 +121,7 @@ RUN set -eux; \
 			| sort -u \
 			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
 	)"; \
-	apk add --no-network --virtual .ruby-rundeps $runDeps; \
+	apk add --no-network --virtual .ruby-rundeps=0 $runDeps; \
 	apk del --no-network .ruby-builddeps; \
 	\
 	cd /; \
