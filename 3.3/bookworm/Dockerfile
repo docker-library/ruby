@@ -6,6 +6,10 @@
 
 FROM buildpack-deps:bookworm
 
+# The global SOURCE_DATE_EPOCH is consumed by commands that are not associated with a source artifact.
+# This is not propagated from --build-arg: https://github.com/moby/buildkit/issues/4576#issuecomment-2159501282
+ENV SOURCE_DATE_EPOCH 0
+
 # skip installing gem documentation
 RUN set -eux; \
 	mkdir -p /usr/local/etc; \
@@ -33,6 +37,8 @@ RUN set -eux; \
 		ruby \
 	; \
 	rm -rf /var/lib/apt/lists/*; \
+# clean up for reproducibility
+	rm -rf /var/log/* /var/cache/ldconfig/aux-cache ;\
 	\
 	rustArch=; \
 	dpkgArch="$(dpkg --print-architecture)"; \
@@ -65,6 +71,10 @@ RUN set -eux; \
 	\
 	cd /usr/src/ruby; \
 	\
+	SOURCE_DATE_EPOCH="$(find . -type f -exec stat -c '%Y' {} + | sort -nr | head -n1)"; \
+	export SOURCE_DATE_EPOCH; \
+# for logging validation/edification
+	date --date "@$SOURCE_DATE_EPOCH" --rfc-2822; \
 # hack in "ENABLE_PATH_CHECK" disabling to suppress:
 #   warning: Insecure world writable dir
 	{ \
@@ -97,6 +107,8 @@ RUN set -eux; \
 		| xargs -r apt-mark manual \
 	; \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
+# clean up for reproducibility
+	rm -rf /var/log/* /var/cache/ldconfig/aux-cache ;\
 	\
 	cd /; \
 	rm -r /usr/src/ruby; \
