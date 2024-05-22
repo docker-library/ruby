@@ -83,32 +83,20 @@ for version in "${versions[@]}"; do
 	doc="$(jq <<<"$doc" -c '
 		.variants = [
 			(
-				# https://bugs.ruby-lang.org/issues/18658
-				# https://github.com/docker-library/ruby/pull/392#issuecomment-1329896174
-				if  "3.0" == env.version then
-					"bullseye",
-					"buster"
-				else
-					"bookworm",
-					"bullseye",
-					empty # trailing comma hack
-				end
+				"bookworm",
+				"bullseye",
+				empty # trailing comma hack
 			| ., "slim-" + .), # https://github.com/docker-library/ruby/pull/142#issuecomment-320012893
 			(
-				# Alpine 3.17+ defaults to OpenSSL 3 which is not supported by Ruby 3.0
-				# https://bugs.ruby-lang.org/issues/18658
-				# https://github.com/docker-library/ruby/pull/392#issuecomment-1329896174
-				if  "3.0" == env.version then "3.16" else
-					"3.19",
-					"3.18",
-					empty # trailing comma hack
-				end
+				"3.19",
+				"3.18",
+				empty # trailing comma hack
 			| "alpine" + .)
 		]
 	')"
 
 	case "$rcVersion" in
-		3.0 | 3.1) ;;
+		3.1) ;;
 		*)
 			# YJIT
 			doc="$(jq <<<"$doc" -sc '

@@ -1,41 +1,4 @@
 {
-  "3.0": {
-    "version": "3.0.7",
-    "date": "2024-04-23",
-    "post": "/en/news/2024/04/23/ruby-3-0-7-released/",
-    "url": {
-      "gz": "https://cache.ruby-lang.org/pub/ruby/3.0/ruby-3.0.7.tar.gz",
-      "xz": "https://cache.ruby-lang.org/pub/ruby/3.0/ruby-3.0.7.tar.xz",
-      "zip": "https://cache.ruby-lang.org/pub/ruby/3.0/ruby-3.0.7.zip"
-    },
-    "size": {
-      "gz": 21268288,
-      "xz": 15848768,
-      "zip": 25652209
-    },
-    "sha1": {
-      "gz": "ec95aee1364fc4d0ca0e8f83c525127016e05c86",
-      "xz": "efc97e609868a19f89653068c4915c162117b721",
-      "zip": "b258a1bfcd49fb801b83a0aec90a8bb3989e9e42"
-    },
-    "sha256": {
-      "gz": "2a3411977f2850431136b0fab8ad53af09fb74df2ee2f4fb7f11b378fe034388",
-      "xz": "1748338373c4fad80129921080d904aca326e41bd9589b498aa5ee09fd575bab",
-      "zip": "163d752070a2ba1a015f004ae75e38ac9aa44bc4ebfafb55d5ff184cc72db5be"
-    },
-    "sha512": {
-      "gz": "66e5116ddd027ab1b27d466104a5b440889318b4f2f74b5fdf3099812bf5f7ef77be62fe1df37e0dc7cd5b2f5efe7fee5b9096910ce815ca4126577cb2abfaa7",
-      "xz": "4760dc7d1345279b53cff30f3dd015b67f6a505e5028357f046dbf23b15a52d09f7d91fcfe5cb75d6c3222e7283aad12b97b36f5de0ff959f824bd42073f9c48",
-      "zip": "ed5e6d827ba981808bc4d914e400963b4443d522d52dd5d3f645db0cf38b50ab6c9baafac1b5e348e677500a16ceef1a5ac15c6a67003c2b2037cb86c1bd3654"
-    },
-    "variants": [
-      "bullseye",
-      "slim-bullseye",
-      "buster",
-      "slim-buster",
-      "alpine3.16"
-    ]
-  },
   "3.1": {
     "version": "3.1.5",
     "date": "2024-04-23",
