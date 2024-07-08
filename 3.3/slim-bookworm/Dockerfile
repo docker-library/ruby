@@ -28,12 +28,12 @@ RUN set -eux; \
 		echo 'update: --no-document'; \
 	} >> /usr/local/etc/gemrc
 
-ENV LANG C.UTF-8
+ENV LANG=C.UTF-8
 
 # https://www.ruby-lang.org/en/news/2024/06/12/ruby-3-3-3-released/
-ENV RUBY_VERSION 3.3.3
-ENV RUBY_DOWNLOAD_URL https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.3.tar.xz
-ENV RUBY_DOWNLOAD_SHA256 83c0995388399c9555bad87e70af069755b5a9d84bbaa74aa22d1e37ff70fc1e
+ENV RUBY_VERSION=3.3.3
+ENV RUBY_DOWNLOAD_URL=https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.3.tar.xz
+ENV RUBY_DOWNLOAD_SHA256=83c0995388399c9555bad87e70af069755b5a9d84bbaa74aa22d1e37ff70fc1e
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
@@ -135,10 +135,10 @@ RUN set -eux; \
 	bundle --version
 
 # don't create ".bundle" in all our apps
-ENV GEM_HOME /usr/local/bundle
+ENV GEM_HOME=/usr/local/bundle
 ENV BUNDLE_SILENCE_ROOT_WARNING=1 \
 	BUNDLE_APP_CONFIG="$GEM_HOME"
-ENV PATH $GEM_HOME/bin:$PATH
+ENV PATH=$GEM_HOME/bin:$PATH
 RUN set -eux; \
 	mkdir "$GEM_HOME"; \
 # adjust permissions of GEM_HOME for running "gem install" as an arbitrary user
