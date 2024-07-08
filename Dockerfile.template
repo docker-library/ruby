@@ -49,12 +49,12 @@ RUN set -eux; \
 		echo 'update: --no-document'; \
 	} >> /usr/local/etc/gemrc
 
-ENV LANG C.UTF-8
+ENV LANG=C.UTF-8
 
 # https://www.ruby-lang.org/{{ .post | ltrimstr("/") }}
-ENV RUBY_VERSION {{ .version }}
-ENV RUBY_DOWNLOAD_URL {{ .url.xz }}
-ENV RUBY_DOWNLOAD_SHA256 {{ .sha256.xz }}
+ENV RUBY_VERSION={{ .version }}
+ENV RUBY_DOWNLOAD_URL={{ .url.xz }}
+ENV RUBY_DOWNLOAD_SHA256={{ .sha256.xz }}
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
@@ -288,10 +288,10 @@ RUN set -eux; \
 	bundle --version
 
 # don't create ".bundle" in all our apps
-ENV GEM_HOME /usr/local/bundle
+ENV GEM_HOME=/usr/local/bundle
 ENV BUNDLE_SILENCE_ROOT_WARNING=1 \
 	BUNDLE_APP_CONFIG="$GEM_HOME"
-ENV PATH $GEM_HOME/bin:$PATH
+ENV PATH=$GEM_HOME/bin:$PATH
 RUN set -eux; \
 	mkdir "$GEM_HOME"; \
 # adjust permissions of GEM_HOME for running "gem install" as an arbitrary user
