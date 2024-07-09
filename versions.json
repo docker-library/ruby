@@ -108,33 +108,33 @@
     }
   },
   "3.3": {
-    "version": "3.3.3",
-    "date": "2024-06-12",
-    "post": "/en/news/2024/06/12/ruby-3-3-3-released/",
+    "version": "3.3.4",
+    "date": "2024-07-09",
+    "post": "/en/news/2024/07/09/ruby-3-3-4-released/",
     "url": {
-      "gz": "https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.3.tar.gz",
-      "zip": "https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.3.zip",
-      "xz": "https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.3.tar.xz"
+      "gz": "https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.4.tar.gz",
+      "zip": "https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.4.zip",
+      "xz": "https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.4.tar.xz"
     },
     "size": {
-      "gz": 22105219,
-      "zip": 26990910,
-      "xz": 16361160
+      "gz": 22110179,
+      "zip": 26995054,
+      "xz": 16366580
     },
     "sha1": {
-      "gz": "b71971b141ee2325d99046a02291940fcca9830c",
-      "zip": "15a903003fba2fa5ae760263d6aa7b951747e545",
-      "xz": "70cc5db132ea277487ede490e430e066a7c862d9"
+      "gz": "408362dfb0413122e09d35bafdcced8922b54e71",
+      "zip": "dcd35f8d428e61807b5c95b6e2e79444fb32f214",
+      "xz": "4fac2e1609535f71cbdbf9ab9dcea6f6e80a304a"
     },
     "sha256": {
-      "gz": "83c05b2177ee9c335b631b29b8c077b4770166d02fa527f3a9f6a40d13f3cce2",
-      "zip": "a9e4a6650cc40643b2b4a005541587443e373fbdec0c03164502f710cfd87a01",
-      "xz": "83c0995388399c9555bad87e70af069755b5a9d84bbaa74aa22d1e37ff70fc1e"
+      "gz": "fe6a30f97d54e029768f2ddf4923699c416cdbc3a6e96db3e2d5716c7db96a34",
+      "zip": "3cf0ee03dd4c98e78e8ab5e191af926870415770ef4995088ed069caef639b2a",
+      "xz": "1caaee9a5a6befef54bab67da68ace8d985e4fb59cd17ce23c28d9ab04f4ddad"
     },
     "sha512": {
-      "gz": "0388a96127eb6e53b836f7954af51ff62b84cdb7abeab823cb1349993d805b151204e426b9ac04ca8333fbd5e01c386d58bc37d34c4e9286b219dcda7542a150",
-      "zip": "ed5ed5bc26598ba8c39eaae45147159d742e4792d4d8478b2db04bffe25b75b8bd4131a86c010bff91e0368f906bff04e852deab415fefd25cec39bc53f70020",
-      "xz": "27dcae604e6613e1eaa20c6a75ee88b970bb0dd584d9bc0c021ad8da4340858e3c2e874ac841fcca0b0444a0c0146c4650d2d22bac3c9e12853533c37255f8f1"
+      "gz": "56a0b88954a4efd0236626e49cc90cdb15d9bfd42b27d7fc34efae61f500058e58cb32c73fdef5f1505a36602f4632d6148bf3bd1df539cb5581ae157c78c22b",
+      "zip": "c24ca2e6b1114f9c489c049c07acccb0db0916c42c68ea90eaa9acc430973de68342df19710c58130fe264a291958c89e60815c5b00f91decf5a4d1d674a0b32",
+      "xz": "b26461a13ff82a08a282f10108028bb2a2e4a28da6182a291062fc54089c6655d79c22cc69d59156f9b11cb10a17fe8c69d489343fbae123a45f03361b95c9eb"
     },
     "variants": [
       "bookworm",
