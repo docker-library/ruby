@@ -95,9 +95,11 @@ RUN set -eux; \
 		--disable-install-doc \
 		--enable-shared \
 		${rustArch:+--enable-yjit} \
+		debugflags='' \
 	; \
 	make -j "$(nproc)"; \
 	make install; \
+	find /usr/local -type f -executable  | xargs grep -IL . | xargs -r strip; \
 	\
 	rm -rf /tmp/rust; \
 	apt-mark auto '.*' > /dev/null; \
