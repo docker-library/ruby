@@ -234,12 +234,18 @@ RUN set -eux; \
 		--build="$gnuArch" \
 		--disable-install-doc \
 		--enable-shared \
+{{ if is_slim then ( -}}
+		debugflags='' \
+{{ ) else "" end -}}
 {{ if .rust.version then ( -}}
 		${rustArch:+--enable-yjit} \
 {{ ) else "" end -}}
 	; \
 	make -j "$(nproc)"; \
 	make install; \
+{{ if is_slim then ( -}}
+	find /usr/local -type f -executable  | xargs grep -IL . | xargs -r strip; \
+{{ ) else "" end -}}
 	\
 {{ if .rust.version then ( -}}
 	rm -rf /tmp/rust; \

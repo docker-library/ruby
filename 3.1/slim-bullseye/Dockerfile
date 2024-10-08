@@ -86,9 +86,11 @@ RUN set -eux; \
 		--build="$gnuArch" \
 		--disable-install-doc \
 		--enable-shared \
+		debugflags='' \
 	; \
 	make -j "$(nproc)"; \
 	make install; \
+	find /usr/local -type f -executable  | xargs grep -IL . | xargs -r strip; \
 	\
 	apt-mark auto '.*' > /dev/null; \
 	apt-mark manual $savedAptMark > /dev/null; \
