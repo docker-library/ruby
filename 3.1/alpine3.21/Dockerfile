@@ -4,7 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM alpine:3.19
+FROM alpine:3.21
 
 RUN set -eux; \
 	apk add --no-cache \
@@ -27,10 +27,10 @@ RUN set -eux; \
 
 ENV LANG C.UTF-8
 
-# https://www.ruby-lang.org/en/news/2024/11/05/ruby-3-3-6-released/
-ENV RUBY_VERSION 3.3.6
-ENV RUBY_DOWNLOAD_URL https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.6.tar.xz
-ENV RUBY_DOWNLOAD_SHA256 540975969d1af42190d26ff629bc93b1c3f4bffff4ab253e245e125085e66266
+# https://www.ruby-lang.org/en/news/2024/05/29/ruby-3-1-6-released/
+ENV RUBY_VERSION 3.1.6
+ENV RUBY_DOWNLOAD_URL https://cache.ruby-lang.org/pub/ruby/3.1/ruby-3.1.6.tar.xz
+ENV RUBY_DOWNLOAD_SHA256 597bd1849f252d8a6863cb5d38014ac54152b508c36dca156f6356a9e63c6102
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
@@ -38,6 +38,7 @@ RUN set -eux; \
 	\
 	apk add --no-cache --virtual .ruby-builddeps \
 		autoconf \
+		bison \
 		bzip2 \
 		bzip2-dev \
 		ca-certificates \
@@ -58,34 +59,13 @@ RUN set -eux; \
 		openssl-dev \
 		patch \
 		procps \
+		readline-dev \
 		ruby \
 		tar \
 		xz \
 		yaml-dev \
 		zlib-dev \
 	; \
-	\
-	rustArch=; \
-	apkArch="$(apk --print-arch)"; \
-	case "$apkArch" in \
-		'x86_64') rustArch='x86_64-unknown-linux-musl'; rustupUrl='https://static.rust-lang.org/rustup/archive/1.26.0/x86_64-unknown-linux-musl/rustup-init'; rustupSha256='7aa9e2a380a9958fc1fc426a3323209b2c86181c6816640979580f62ff7d48d4' ;; \
-		'aarch64') rustArch='aarch64-unknown-linux-musl'; rustupUrl='https://static.rust-lang.org/rustup/archive/1.26.0/aarch64-unknown-linux-musl/rustup-init'; rustupSha256='b1962dfc18e1fd47d01341e6897cace67cddfabf547ef394e8883939bd6e002e' ;; \
-	esac; \
-	\
-	if [ -n "$rustArch" ]; then \
-		mkdir -p /tmp/rust; \
-		\
-		wget -O /tmp/rust/rustup-init "$rustupUrl"; \
-		echo "$rustupSha256 */tmp/rust/rustup-init" | sha256sum --check --strict; \
-		chmod +x /tmp/rust/rustup-init; \
-		\
-		export RUSTUP_HOME='/tmp/rust/rustup' CARGO_HOME='/tmp/rust/cargo'; \
-		export PATH="$CARGO_HOME/bin:$PATH"; \
-		/tmp/rust/rustup-init -y --no-modify-path --profile minimal --default-toolchain '1.74.1' --default-host "$rustArch"; \
-		\
-		rustc --version; \
-		cargo --version; \
-	fi; \
 	\
 	wget -O ruby.tar.xz "$RUBY_DOWNLOAD_URL"; \
 	echo "$RUBY_DOWNLOAD_SHA256 *ruby.tar.xz" | sha256sum --check --strict; \
@@ -119,12 +99,10 @@ RUN set -eux; \
 		--build="$gnuArch" \
 		--disable-install-doc \
 		--enable-shared \
-		${rustArch:+--enable-yjit} \
 	; \
 	make -j "$(nproc)"; \
 	make install; \
 	\
-	rm -rf /tmp/rust; \
 	runDeps="$( \
 		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
 			| tr ',' '\n' \

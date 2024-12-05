@@ -88,8 +88,8 @@ for version in "${versions[@]}"; do
 				empty # trailing comma hack
 			| ., "slim-" + .), # https://github.com/docker-library/ruby/pull/142#issuecomment-320012893
 			(
+				"3.21",
 				"3.20",
-				"3.19",
 				empty # trailing comma hack
 			| "alpine" + .)
 		]
