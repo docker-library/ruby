@@ -104,9 +104,6 @@ RUN set -eux; \
 	patch -p1 -i thread-stack-fix.patch; \
 	rm thread-stack-fix.patch; \
 	\
-# the configure script does not detect isnan/isinf as macros
-	export ac_cv_func_isnan=yes ac_cv_func_isinf=yes; \
-	\
 # hack in "ENABLE_PATH_CHECK" disabling to suppress:
 #   warning: Insecure world writable dir
 	{ \
