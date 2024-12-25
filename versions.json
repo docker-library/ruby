@@ -177,7 +177,76 @@
       "version": "1.26.0"
     }
   },
-  "3.4": null,
+  "3.4": {
+    "version": "3.4.1",
+    "date": "2024-12-25",
+    "post": "/en/news/2024/12/25/ruby-3-4-1-released/",
+    "url": {
+      "gz": "https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.1.tar.gz",
+      "zip": "https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.1.zip",
+      "xz": "https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.1.tar.xz"
+    },
+    "size": {
+      "gz": 23152739,
+      "zip": 28310267,
+      "xz": 17222800
+    },
+    "sha1": {
+      "gz": "dc42fe22bcdfbd30f63cd93296d893c53b1dadcc",
+      "zip": "a7145041a0178f2423dbad5d1dd67ba0862b9ee7",
+      "xz": "61783f85c57da9f05201e491029889d71742a83f"
+    },
+    "sha256": {
+      "gz": "3d385e5d22d368b064c817a13ed8e3cc3f71a7705d7ed1bae78013c33aa7c87f",
+      "zip": "a0c62089fb75c47e392bc96778dd76bd7ad1baa40a7ed040372c805de20bccc8",
+      "xz": "018d59ffb52be3c0a6d847e22d3fd7a2c52d0ddfee249d3517a0c8c6dbfa70af"
+    },
+    "sha512": {
+      "gz": "93acc262e3b7cf86aeddebdad5b8938c187b9c44a73b0c252b6f873745964001459ae45ece7376745916e317c24895596a42b4544e836670fc6e90058e6f0de4",
+      "zip": "4f96c56b0a26c0d4d554cf47764f4acdc2e59545da0b85fe4d5235a17d26ac47f0c609af66099173056e3405849a9f847c32e7aaaa3a057c7d46007968aa4c73",
+      "xz": "8d2e34117696f9debf463ae1eed288fdbb5c1a12e32800e901b69218e3b7302a0066052077e2ebca851e3a635296199bd5a10437eea1d6f787f69a77bb865680"
+    },
+    "variants": [
+      "bookworm",
+      "slim-bookworm",
+      "bullseye",
+      "slim-bullseye",
+      "alpine3.21",
+      "alpine3.20"
+    ],
+    "rust": {
+      "version": "1.74.1"
+    },
+    "rustup": {
+      "arches": {
+        "amd64": {
+          "glibc": {
+            "arch": "x86_64-unknown-linux-gnu",
+            "sha256": "0b2f6c8f85a3d02fde2efc0ced4657869d73fccfce59defb4e8d29233116e6db",
+            "url": "https://static.rust-lang.org/rustup/archive/1.26.0/x86_64-unknown-linux-gnu/rustup-init"
+          },
+          "musl": {
+            "arch": "x86_64-unknown-linux-musl",
+            "sha256": "7aa9e2a380a9958fc1fc426a3323209b2c86181c6816640979580f62ff7d48d4",
+            "url": "https://static.rust-lang.org/rustup/archive/1.26.0/x86_64-unknown-linux-musl/rustup-init"
+          }
+        },
+        "arm64v8": {
+          "glibc": {
+            "arch": "aarch64-unknown-linux-gnu",
+            "sha256": "673e336c81c65e6b16dcdede33f4cc9ed0f08bde1dbe7a935f113605292dc800",
+            "url": "https://static.rust-lang.org/rustup/archive/1.26.0/aarch64-unknown-linux-gnu/rustup-init"
+          },
+          "musl": {
+            "arch": "aarch64-unknown-linux-musl",
+            "sha256": "b1962dfc18e1fd47d01341e6897cace67cddfabf547ef394e8883939bd6e002e",
+            "url": "https://static.rust-lang.org/rustup/archive/1.26.0/aarch64-unknown-linux-musl/rustup-init"
+          }
+        }
+      },
+      "version": "1.26.0"
+    }
+  },
   "3.4-rc": {
     "version": "3.4.0-rc1",
     "date": "2024-12-12",
