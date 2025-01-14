@@ -13,11 +13,30 @@ FROM debian:{{ env.variant | ltrimstr("slim-") }}-slim
 FROM buildpack-deps:{{ env.variant }}
 {{ ) end -}}
 
-{{ if is_slim then ( -}}
+{{ if is_alpine then ( -}}
+RUN set -eux; \
+	apk add --no-cache \
+		bzip2 \
+		ca-certificates \
+		gmp-dev \
+		libffi-dev \
+		procps \
+		yaml-dev \
+		zlib-dev \
+	;
+
+{{ ) elif is_slim then ( -}}
 RUN set -eux; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
+		bzip2 \
 		ca-certificates \
+		libffi-dev \
+		libgmp-dev \
+		libssl-dev \
+		libyaml-dev \
+		procps \
+		zlib1g-dev \
 	; \
 	rm -rf /var/lib/apt/lists/*
 
@@ -54,7 +73,6 @@ RUN set -eux; \
 		gcc \
 		gdbm-dev \
 		glib-dev \
-		gmp-dev \
 		libc-dev \
 		libffi-dev \
 		libxml2-dev \
@@ -66,8 +84,6 @@ RUN set -eux; \
 		openssl-dev \
 		patch \
 		procps \
-		yaml-dev \
-		zlib-dev \
 {{ if env.version | rtrimstr("-rc") | IN("3.1", "3.2") then ( -}}
 		readline-dev \
 {{ ) else "" end -}}
@@ -90,26 +106,20 @@ RUN set -eux; \
 		ruby \
 {{ if is_slim then ( -}}
 		autoconf \
-		bzip2 \
 		g++ \
 		gcc \
 		libbz2-dev \
-		libffi-dev \
 		libgdbm-compat-dev \
 		libglib2.0-dev \
-		libgmp-dev \
 		libncurses-dev \
 {{ if env.version | rtrimstr("-rc") | IN("3.1", "3.2") then ( -}}
 		libreadline-dev \
 {{ ) else "" end -}}
-		libssl-dev \
 		libxml2-dev \
 		libxslt-dev \
-		libyaml-dev \
 		make \
 		wget \
 		xz-utils \
-		zlib1g-dev \
 {{ ) else "" end -}}
 	; \
 	rm -rf /var/lib/apt/lists/*; \

@@ -6,6 +6,17 @@
 
 FROM alpine:3.20
 
+RUN set -eux; \
+	apk add --no-cache \
+		bzip2 \
+		ca-certificates \
+		gmp-dev \
+		libffi-dev \
+		procps \
+		yaml-dev \
+		zlib-dev \
+	;
+
 # skip installing gem documentation with `gem install`/`gem update`
 RUN set -eux; \
 	mkdir -p /usr/local/etc; \
@@ -34,7 +45,6 @@ RUN set -eux; \
 		gcc \
 		gdbm-dev \
 		glib-dev \
-		gmp-dev \
 		libc-dev \
 		libffi-dev \
 		libxml2-dev \
@@ -46,8 +56,6 @@ RUN set -eux; \
 		openssl-dev \
 		patch \
 		procps \
-		yaml-dev \
-		zlib-dev \
 		readline-dev \
 		ruby \
 		tar \
