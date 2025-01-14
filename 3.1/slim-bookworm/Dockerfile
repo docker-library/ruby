@@ -56,7 +56,6 @@ RUN set -eux; \
 		xz-utils \
 		zlib1g-dev \
 	; \
-	rm -rf /var/lib/apt/lists/*; \
 	\
 	wget -O ruby.tar.xz "$RUBY_DOWNLOAD_URL"; \
 	echo "$RUBY_DOWNLOAD_SHA256 *ruby.tar.xz" | sha256sum --check --strict; \
@@ -86,6 +85,20 @@ RUN set -eux; \
 	make -j "$(nproc)"; \
 	make install; \
 	\
+# temporary backwards compatibility shim (will go away in the next patch release; please update/adjust accordingly); see:
+# - https://github.com/docker-library/ruby/pull/493
+# - https://github.com/docker-library/ruby/pull/497
+	savedAptMark="$savedAptMark \
+		bzip2 \
+		libffi-dev \
+		libgmp-dev \
+		libssl-dev \
+		libyaml-dev \
+		procps \
+		zlib1g-dev \
+	"; \
+	apt-get install -y --no-install-recommends $savedAptMark; \
+	\
 	apt-mark auto '.*' > /dev/null; \
 	apt-mark manual $savedAptMark > /dev/null; \
 	find /usr/local -type f -executable -not \( -name '*tkinter*' \) -exec ldd '{}' ';' \
@@ -97,6 +110,7 @@ RUN set -eux; \
 		| xargs -r apt-mark manual \
 	; \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
+	rm -rf /var/lib/apt/lists/*; \
 	\
 	cd /; \
 	rm -r /usr/src/ruby; \

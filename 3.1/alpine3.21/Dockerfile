@@ -92,6 +92,19 @@ RUN set -eux; \
 	make -j "$(nproc)"; \
 	make install; \
 	\
+# temporary backwards compatibility shim (will go away in the next patch release; please update/adjust accordingly); see:
+# - https://github.com/docker-library/ruby/pull/493
+# - https://github.com/docker-library/ruby/pull/497
+	apk add --no-cache --virtual .ruby-493-backcompat \
+		bzip2 \
+		ca-certificates \
+		gmp-dev \
+		libffi-dev \
+		procps \
+		yaml-dev \
+		zlib-dev \
+	; \
+	\
 	runDeps="$( \
 		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
 			| tr ',' '\n' \
@@ -106,7 +119,7 @@ RUN set -eux; \
 # verify we have no "ruby" packages installed
 	if \
 		apk --no-network list --installed \
-			| grep -v '^[.]ruby-rundeps' \
+			| grep -v '^[.]ruby-' \
 			| grep -i ruby \
 	; then \
 		exit 1; \

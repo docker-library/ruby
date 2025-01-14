@@ -54,7 +54,6 @@ RUN set -eux; \
 		xz-utils \
 		zlib1g-dev \
 	; \
-	rm -rf /var/lib/apt/lists/*; \
 	\
 	rustArch=; \
 	dpkgArch="$(dpkg --print-architecture)"; \
@@ -107,6 +106,20 @@ RUN set -eux; \
 	make -j "$(nproc)"; \
 	make install; \
 	\
+# temporary backwards compatibility shim (will go away in the next patch release; please update/adjust accordingly); see:
+# - https://github.com/docker-library/ruby/pull/493
+# - https://github.com/docker-library/ruby/pull/497
+	savedAptMark="$savedAptMark \
+		bzip2 \
+		libffi-dev \
+		libgmp-dev \
+		libssl-dev \
+		libyaml-dev \
+		procps \
+		zlib1g-dev \
+	"; \
+	apt-get install -y --no-install-recommends $savedAptMark; \
+	\
 	rm -rf /tmp/rust; \
 	apt-mark auto '.*' > /dev/null; \
 	apt-mark manual $savedAptMark > /dev/null; \
@@ -119,6 +132,7 @@ RUN set -eux; \
 		| xargs -r apt-mark manual \
 	; \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
+	rm -rf /var/lib/apt/lists/*; \
 	\
 	cd /; \
 	rm -r /usr/src/ruby; \

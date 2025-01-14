@@ -30,7 +30,6 @@ RUN set -eux; \
 		libgdbm-dev \
 		ruby \
 	; \
-	rm -rf /var/lib/apt/lists/*; \
 	\
 	rustArch=; \
 	dpkgArch="$(dpkg --print-architecture)"; \
@@ -95,6 +94,7 @@ RUN set -eux; \
 		| xargs -r apt-mark manual \
 	; \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
+	rm -rf /var/lib/apt/lists/*; \
 	\
 	cd /; \
 	rm -r /usr/src/ruby; \
