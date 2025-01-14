@@ -6,17 +6,6 @@
 
 FROM alpine:3.20
 
-RUN set -eux; \
-	apk add --no-cache \
-		bzip2 \
-		ca-certificates \
-		gmp-dev \
-		libffi-dev \
-		procps \
-		yaml-dev \
-		zlib-dev \
-	;
-
 # skip installing gem documentation with `gem install`/`gem update`
 RUN set -eux; \
 	mkdir -p /usr/local/etc; \
@@ -45,6 +34,7 @@ RUN set -eux; \
 		gcc \
 		gdbm-dev \
 		glib-dev \
+		gmp-dev \
 		libc-dev \
 		libffi-dev \
 		libxml2-dev \
@@ -56,6 +46,8 @@ RUN set -eux; \
 		openssl-dev \
 		patch \
 		procps \
+		yaml-dev \
+		zlib-dev \
 		readline-dev \
 		ruby \
 		tar \
@@ -123,6 +115,19 @@ RUN set -eux; \
 	make -j "$(nproc)"; \
 	make install; \
 	\
+# temporary backwards compatibility shim (will go away in the next patch release; please update/adjust accordingly); see:
+# - https://github.com/docker-library/ruby/pull/493
+# - https://github.com/docker-library/ruby/pull/497
+	apk add --no-cache --virtual .ruby-493-backcompat \
+		bzip2 \
+		ca-certificates \
+		gmp-dev \
+		libffi-dev \
+		procps \
+		yaml-dev \
+		zlib-dev \
+	; \
+	\
 	rm -rf /tmp/rust; \
 	runDeps="$( \
 		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
@@ -138,7 +143,7 @@ RUN set -eux; \
 # verify we have no "ruby" packages installed
 	if \
 		apk --no-network list --installed \
-			| grep -v '^[.]ruby-rundeps' \
+			| grep -v '^[.]ruby-' \
 			| grep -i ruby \
 	; then \
 		exit 1; \
