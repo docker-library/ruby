@@ -20,10 +20,10 @@ RUN set -eux; \
 
 ENV LANG C.UTF-8
 
-# https://www.ruby-lang.org/en/news/2024/10/30/ruby-3-2-6-released/
-ENV RUBY_VERSION 3.2.6
-ENV RUBY_DOWNLOAD_URL https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.6.tar.xz
-ENV RUBY_DOWNLOAD_SHA256 671134022238c2c4a9d79dc7d1e58c909634197617901d25863642f735a27ecb
+# https://www.ruby-lang.org/en/news/2025/02/04/ruby-3-2-7-released/
+ENV RUBY_VERSION 3.2.7
+ENV RUBY_DOWNLOAD_URL https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.7.tar.xz
+ENV RUBY_DOWNLOAD_SHA256 fc159b0d4a8ce412948fb69e61493839a0b3e1d5c919180f27036f1c948cfbe2
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
@@ -107,20 +107,6 @@ RUN set -eux; \
 	; \
 	make -j "$(nproc)"; \
 	make install; \
-	\
-# temporary backwards compatibility shim (will go away in the next patch release; please update/adjust accordingly); see:
-# - https://github.com/docker-library/ruby/pull/493
-# - https://github.com/docker-library/ruby/pull/497
-	savedAptMark="$savedAptMark \
-		bzip2 \
-		libffi-dev \
-		libgmp-dev \
-		libssl-dev \
-		libyaml-dev \
-		procps \
-		zlib1g-dev \
-	"; \
-	apt-get install -y --no-install-recommends $savedAptMark; \
 	\
 	rm -rf /tmp/rust; \
 	apt-mark auto '.*' > /dev/null; \
