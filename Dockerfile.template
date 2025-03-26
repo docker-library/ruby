@@ -215,34 +215,6 @@ RUN set -eux; \
 	make -j "$(nproc)"; \
 	make install; \
 	\
-{{ if (is_alpine or is_slim) and (.version | IN("3.1.6", "3.2.6", "3.3.6", "3.4.1")) then ( -}}
-# temporary backwards compatibility shim (will go away in the next patch release; please update/adjust accordingly); see:
-# - https://github.com/docker-library/ruby/pull/493
-# - https://github.com/docker-library/ruby/pull/497
-{{ if is_alpine then ( -}}
-	apk add --no-cache --virtual .ruby-493-backcompat \
-		bzip2 \
-		ca-certificates \
-		gmp-dev \
-		libffi-dev \
-		procps \
-		yaml-dev \
-		zlib-dev \
-	; \
-{{ ) else ( -}}
-	savedAptMark="$savedAptMark \
-		bzip2 \
-		libffi-dev \
-		libgmp-dev \
-		libssl-dev \
-		libyaml-dev \
-		procps \
-		zlib1g-dev \
-	"; \
-	apt-get install -y --no-install-recommends $savedAptMark; \
-{{ ) end -}}
-	\
-{{ ) else "" end -}}
 {{ if .rust.version then ( -}}
 	rm -rf /tmp/rust; \
 {{ ) else "" end -}}
