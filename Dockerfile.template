@@ -207,6 +207,9 @@ RUN set -eux; \
 		--disable-install-doc \
 		--enable-shared \
 		${rustArch:+--enable-yjit} \
+{{ if env.version | IN("3.2", "3.3", "3.4") then "" else ( -}}
+	  ${rustArch:+--enable-zjit} \
+{{ ) end -}}
 	; \
 	make -j "$(nproc)"; \
 	make install; \

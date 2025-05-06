@@ -68,6 +68,7 @@ RUN set -eux; \
 		--disable-install-doc \
 		--enable-shared \
 		${rustArch:+--enable-yjit} \
+	  ${rustArch:+--enable-zjit} \
 	; \
 	make -j "$(nproc)"; \
 	make install; \
