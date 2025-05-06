@@ -113,7 +113,6 @@ RUN set -eux; \
 {{ ) else "" end -}}
 	; \
 {{ ) end -}}
-{{ if .rust.version then ( -}}
 	\
 	rustArch=; \
 {{ def archVar: if is_alpine then "apkArch" else "dpkgArch" end -}}
@@ -181,7 +180,6 @@ RUN set -eux; \
 		rustc --version; \
 		cargo --version; \
 	fi; \
-{{ ) else "" end -}}
 	\
 	wget -O ruby.tar.xz "$RUBY_DOWNLOAD_URL"; \
 	echo "$RUBY_DOWNLOAD_SHA256 *ruby.tar.xz" | sha256sum --check --strict; \
@@ -208,16 +206,12 @@ RUN set -eux; \
 		--build="$gnuArch" \
 		--disable-install-doc \
 		--enable-shared \
-{{ if .rust.version then ( -}}
 		${rustArch:+--enable-yjit} \
-{{ ) else "" end -}}
 	; \
 	make -j "$(nproc)"; \
 	make install; \
 	\
-{{ if .rust.version then ( -}}
 	rm -rf /tmp/rust; \
-{{ ) else "" end -}}
 {{ if is_alpine then ( -}}
 	runDeps="$( \
 		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
