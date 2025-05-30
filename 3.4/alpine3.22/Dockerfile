@@ -4,7 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM alpine:3.20
+FROM alpine:3.22
 
 # skip installing gem documentation with `gem install`/`gem update`
 RUN set -eux; \
