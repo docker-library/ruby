@@ -207,9 +207,15 @@ RUN set -eux; \
 		--disable-install-doc \
 		--enable-shared \
 		${rustArch:+--enable-yjit} \
+{{ if is_slim then ( -}}
+		debugflags='' \
+{{ ) else "" end -}}
 	; \
 	make -j "$(nproc)"; \
 	make install; \
+{{ if is_slim then ( -}}
+	find /usr/local -type f -executable  | xargs grep -IL . | xargs -r strip; \
+{{ ) else "" end -}}
 	\
 	rm -rf /tmp/rust; \
 {{ if is_alpine then ( -}}
