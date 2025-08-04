@@ -29,10 +29,10 @@
       "zip": "6a313a36d6e630fb795d37f18da1e908d03c05d7200ef86e2260a18b5fc71f8f3201431f255e3cf7a47e0ee25ab5b9158b9477100ad6729e1f7ebf13f9b0a840"
     },
     "variants": [
+      "trixie",
+      "slim-trixie",
       "bookworm",
       "slim-bookworm",
-      "bullseye",
-      "slim-bullseye",
       "alpine3.22",
       "alpine3.21"
     ],
@@ -99,10 +99,10 @@
       "zip": "67a6e0bdce21b237d8db62a8351fb544dc8cf15a1afcb111d0589b0384f6b977a3f779042ef49eb170256ac168e0477b8b56f343ab381422e788850c1d171382"
     },
     "variants": [
+      "trixie",
+      "slim-trixie",
       "bookworm",
       "slim-bookworm",
-      "bullseye",
-      "slim-bullseye",
       "alpine3.22",
       "alpine3.21"
     ],
@@ -169,10 +169,10 @@
       "xz": "1f5d2fd527d15bd81ca8f49767d6426533367c1018a1d275d34721a96410b51204236173224e5198a42b56162c6e7a7b0c060fc032a9fd7f250b44e05c7af560"
     },
     "variants": [
+      "trixie",
+      "slim-trixie",
       "bookworm",
       "slim-bookworm",
-      "bullseye",
-      "slim-bullseye",
       "alpine3.22",
       "alpine3.21"
     ],
@@ -246,10 +246,10 @@
       "xz": "835bd0b65d546722c83b0ab454256357b48898a0de9aa8e38966f53d2370a6e99552eeaff76a0b680aefbbe7491e701e5e7357797e50f063c53e79d9561c1dac"
     },
     "variants": [
+      "trixie",
+      "slim-trixie",
       "bookworm",
       "slim-bookworm",
-      "bullseye",
-      "slim-bullseye",
       "alpine3.22",
       "alpine3.21"
     ],
