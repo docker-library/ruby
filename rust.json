@@ -1,83 +1,83 @@
 {
   "rust": {
-    "version": "1.84.0"
+    "version": "1.88.0"
   },
   "rustup": {
     "arches": {
       "amd64": {
         "glibc": {
           "arch": "x86_64-unknown-linux-gnu",
-          "sha256": "6aeece6993e902708983b209d04c0d1dbb14ebb405ddb87def578d41f920f56d",
-          "url": "https://static.rust-lang.org/rustup/archive/1.27.1/x86_64-unknown-linux-gnu/rustup-init"
+          "sha256": "20a06e644b0d9bd2fbdbfd52d42540bdde820ea7df86e92e533c073da0cdd43c",
+          "url": "https://static.rust-lang.org/rustup/archive/1.28.2/x86_64-unknown-linux-gnu/rustup-init"
         },
         "musl": {
           "arch": "x86_64-unknown-linux-musl",
-          "sha256": "1455d1df3825c5f24ba06d9dd1c7052908272a2cae9aa749ea49d67acbe22b47",
-          "url": "https://static.rust-lang.org/rustup/archive/1.27.1/x86_64-unknown-linux-musl/rustup-init"
+          "sha256": "e6599a1c7be58a2d8eaca66a80e0dc006d87bbcf780a58b7343d6e14c1605cb2",
+          "url": "https://static.rust-lang.org/rustup/archive/1.28.2/x86_64-unknown-linux-musl/rustup-init"
         }
       },
       "arm32v5": {
         "glibc": {
           "arch": "arm-unknown-linux-gnueabi",
-          "sha256": "3e347090c436066be3d1d170f8c6743b5f9aab89c0a175e2e0dc902abea6b739",
-          "url": "https://static.rust-lang.org/rustup/archive/1.27.1/arm-unknown-linux-gnueabi/rustup-init"
+          "sha256": "3ec755aaa801bdca4caba35cfe3d1657c9c117d87e2e4dd355ab98539115ad45",
+          "url": "https://static.rust-lang.org/rustup/archive/1.28.2/arm-unknown-linux-gnueabi/rustup-init"
         }
       },
       "arm32v6": {
         "glibc": {
           "arch": "arm-unknown-linux-gnueabihf",
-          "sha256": "5568c68b02f2ca1ddc8c448badc4b0b2750bee3e50fe51a28c35f5b7792e36a2",
-          "url": "https://static.rust-lang.org/rustup/archive/1.27.1/arm-unknown-linux-gnueabihf/rustup-init"
+          "sha256": "231a2a004e6e446a1944f957d0eaed858fb9a549264db8dd00a30f491fc67eb8",
+          "url": "https://static.rust-lang.org/rustup/archive/1.28.2/arm-unknown-linux-gnueabihf/rustup-init"
         }
       },
       "arm32v7": {
         "glibc": {
           "arch": "armv7-unknown-linux-gnueabihf",
-          "sha256": "3c4114923305f1cd3b96ce3454e9e549ad4aa7c07c03aec73d1a785e98388bed",
-          "url": "https://static.rust-lang.org/rustup/archive/1.27.1/armv7-unknown-linux-gnueabihf/rustup-init"
+          "sha256": "3b8daab6cc3135f2cd4b12919559e6adaee73a2fbefb830fadf0405c20231d61",
+          "url": "https://static.rust-lang.org/rustup/archive/1.28.2/armv7-unknown-linux-gnueabihf/rustup-init"
         }
       },
       "arm64v8": {
         "glibc": {
           "arch": "aarch64-unknown-linux-gnu",
-          "sha256": "1cffbf51e63e634c746f741de50649bbbcbd9dbe1de363c9ecef64e278dba2b2",
-          "url": "https://static.rust-lang.org/rustup/archive/1.27.1/aarch64-unknown-linux-gnu/rustup-init"
+          "sha256": "e3853c5a252fca15252d07cb23a1bdd9377a8c6f3efa01531109281ae47f841c",
+          "url": "https://static.rust-lang.org/rustup/archive/1.28.2/aarch64-unknown-linux-gnu/rustup-init"
         },
         "musl": {
           "arch": "aarch64-unknown-linux-musl",
-          "sha256": "7087ada906cd27a00c8e0323401a46804a03a742bd07811da6dead016617cc64",
-          "url": "https://static.rust-lang.org/rustup/archive/1.27.1/aarch64-unknown-linux-musl/rustup-init"
+          "sha256": "a97c8f56d7462908695348dd8c71ea6740c138ce303715793a690503a94fc9a9",
+          "url": "https://static.rust-lang.org/rustup/archive/1.28.2/aarch64-unknown-linux-musl/rustup-init"
         }
       },
       "i386": {
         "glibc": {
           "arch": "i686-unknown-linux-gnu",
-          "sha256": "0a6bed6e9f21192a51f83977716466895706059afb880500ff1d0e751ada5237",
-          "url": "https://static.rust-lang.org/rustup/archive/1.27.1/i686-unknown-linux-gnu/rustup-init"
+          "sha256": "a5db2c4b29d23e9b318b955dd0337d6b52e93933608469085c924e0d05b1df1f",
+          "url": "https://static.rust-lang.org/rustup/archive/1.28.2/i686-unknown-linux-gnu/rustup-init"
         }
       },
       "mips64le": {
         "glibc": {
           "arch": "mips64el-unknown-linux-gnuabi64",
           "sha256": "644cec63e594707a6098585038cf47e28546c2abe0dde7149cde71d79a0be674",
-          "url": "https://static.rust-lang.org/rustup/archive/1.27.1/mips64el-unknown-linux-gnuabi64/rustup-init"
+          "url": "https://static.rust-lang.org/rustup/archive/1.28.2/mips64el-unknown-linux-gnuabi64/rustup-init"
         }
       },
       "ppc64le": {
         "glibc": {
           "arch": "powerpc64le-unknown-linux-gnu",
-          "sha256": "079430f58ad4da1d1f4f5f2f0bd321422373213246a93b3ddb53dad627f5aa38",
-          "url": "https://static.rust-lang.org/rustup/archive/1.27.1/powerpc64le-unknown-linux-gnu/rustup-init"
+          "sha256": "acd89c42b47c93bd4266163a7b05d3f26287d5148413c0d47b2e8a7aa67c9dc0",
+          "url": "https://static.rust-lang.org/rustup/archive/1.28.2/powerpc64le-unknown-linux-gnu/rustup-init"
         }
       },
       "s390x": {
         "glibc": {
           "arch": "s390x-unknown-linux-gnu",
-          "sha256": "e7f89da453c8ce5771c28279d1a01d5e83541d420695c74ec81a7ec5d287c51c",
-          "url": "https://static.rust-lang.org/rustup/archive/1.27.1/s390x-unknown-linux-gnu/rustup-init"
+          "sha256": "726b7fd5d8805e73eab4a024a2889f8859d5a44e36041abac0a2436a52d42572",
+          "url": "https://static.rust-lang.org/rustup/archive/1.28.2/s390x-unknown-linux-gnu/rustup-init"
         }
       }
     },
-    "version": "1.27.1"
+    "version": "1.28.2"
   }
 }
