@@ -47,7 +47,7 @@ RUN set -eux; \
 		\
 		export RUSTUP_HOME='/tmp/rust/rustup' CARGO_HOME='/tmp/rust/cargo'; \
 		export PATH="$CARGO_HOME/bin:$PATH"; \
-		/tmp/rust/rustup-init -y --no-modify-path --profile minimal --default-toolchain '1.84.0' --default-host "$rustArch"; \
+		/tmp/rust/rustup-init -y --no-modify-path --profile minimal --default-toolchain '1.91.1' --default-host "$rustArch"; \
 		\
 		rustc --version; \
 		cargo --version; \

@@ -1,6 +1,6 @@
 {
   "rust": {
-    "version": "1.84.0"
+    "version": "1.91.1"
   },
   "rustup": {
     "arches": {
