@@ -4,7 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM alpine:3.21
+FROM alpine:3.23
 
 # skip installing gem documentation with `gem install`/`gem update`
 RUN set -eux; \
@@ -13,10 +13,10 @@ RUN set -eux; \
 
 ENV LANG C.UTF-8
 
-# https://www.ruby-lang.org/en/news/2025/11/17/ruby-4-0-0-preview2-released/
-ENV RUBY_VERSION 4.0.0-preview2
-ENV RUBY_DOWNLOAD_URL https://cache.ruby-lang.org/pub/ruby/4.0/ruby-4.0.0-preview2.tar.xz
-ENV RUBY_DOWNLOAD_SHA256 0b92b15466d77a9d7e59e4a75f050d42cd50fe96c951d2b3b9f8029394cd9a43
+# https://www.ruby-lang.org/en/news/2025/10/23/ruby-3-3-10-released/
+ENV RUBY_VERSION 3.3.10
+ENV RUBY_DOWNLOAD_URL https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.10.tar.xz
+ENV RUBY_DOWNLOAD_SHA256 3a06c3a709672a4ddae4e511d7e82f74799b8b3f550c8cf2d6f32089003cb84c
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built

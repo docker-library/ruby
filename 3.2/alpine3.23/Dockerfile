@@ -4,7 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM alpine:3.21
+FROM alpine:3.23
 
 # skip installing gem documentation with `gem install`/`gem update`
 RUN set -eux; \
@@ -13,10 +13,10 @@ RUN set -eux; \
 
 ENV LANG C.UTF-8
 
-# https://www.ruby-lang.org/en/news/2025/10/07/ruby-3-4-7-released/
-ENV RUBY_VERSION 3.4.7
-ENV RUBY_DOWNLOAD_URL https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.7.tar.xz
-ENV RUBY_DOWNLOAD_SHA256 db425a86f6e07546957578f4946cc700a91e7fd51115a86c56e096f30e0530c7
+# https://www.ruby-lang.org/en/news/2025/07/24/ruby-3-2-9-released/
+ENV RUBY_VERSION 3.2.9
+ENV RUBY_DOWNLOAD_URL https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.9.tar.xz
+ENV RUBY_DOWNLOAD_SHA256 cf6699d0084c588e7944d92e1a8edda28b1cc3ee471a1f0aebb4b3d32c9753b2
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
@@ -24,6 +24,7 @@ RUN set -eux; \
 	\
 	apk add --no-cache --virtual .ruby-builddeps \
 		autoconf \
+		bison \
 		bzip2 \
 		bzip2-dev \
 		ca-certificates \
@@ -47,6 +48,7 @@ RUN set -eux; \
 		procps \
 		yaml-dev \
 		zlib-dev \
+		readline-dev \
 		ruby \
 		tar \
 		xz \
