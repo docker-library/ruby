@@ -4,14 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM debian:trixie-slim
-
-RUN set -eux; \
-	apt-get update; \
-	apt-get install -y --no-install-recommends \
-		ca-certificates \
-	; \
-	apt-get dist-clean
+FROM buildpack-deps:bookworm
 
 # skip installing gem documentation with `gem install`/`gem update`
 RUN set -eux; \
@@ -20,10 +13,10 @@ RUN set -eux; \
 
 ENV LANG C.UTF-8
 
-# https://www.ruby-lang.org/en/news/2025/12/18/ruby-4-0-0-preview3-released/
-ENV RUBY_VERSION 4.0.0-preview3
-ENV RUBY_DOWNLOAD_URL https://cache.ruby-lang.org/pub/ruby/4.0/ruby-4.0.0-preview3.tar.xz
-ENV RUBY_DOWNLOAD_SHA256 8d7a503b2c4abcfacf0fa54ac56d37f7dd6d643a3a717661729cabbe947610a6
+# https://www.ruby-lang.org/en/news/2025/12/25/ruby-4-0-0-released/
+ENV RUBY_VERSION 4.0.0
+ENV RUBY_DOWNLOAD_URL https://cache.ruby-lang.org/pub/ruby/4.0/ruby-4.0.0.tar.xz
+ENV RUBY_DOWNLOAD_SHA256 a72bacee9de07283ebc19baa4ac243b193129f21aa4e168c7186fb1fe7d07fe1
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
@@ -35,24 +28,6 @@ RUN set -eux; \
 		dpkg-dev \
 		libgdbm-dev \
 		ruby \
-		autoconf \
-		bzip2 \
-		g++ \
-		gcc \
-		libbz2-dev \
-		libffi-dev \
-		libgdbm-compat-dev \
-		libglib2.0-dev \
-		libgmp-dev \
-		libncurses-dev \
-		libssl-dev \
-		libxml2-dev \
-		libxslt-dev \
-		libyaml-dev \
-		make \
-		wget \
-		xz-utils \
-		zlib1g-dev \
 	; \
 	\
 	rustArch=; \
@@ -111,7 +86,7 @@ RUN set -eux; \
 		| xargs -r apt-mark manual \
 	; \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
-	apt-get dist-clean; \
+	rm -rf /var/lib/apt/lists/*; \
 	\
 	cd /; \
 	rm -r /usr/src/ruby; \
