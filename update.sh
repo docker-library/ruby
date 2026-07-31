@@ -51,8 +51,7 @@ for version in "${versions[@]}"; do
 	echo "$version: $fullVersion; rubygems $rubygems, bundler $bundler; $shaVal"
 
 	for v in \
-		alpine{3.4,3.6} \
-		{jessie,stretch}{/slim,/onbuild,} \
+		{bullseye}{/slim,/onbuild,} \
 	; do
 		dir="$version/$v"
 		variant="$(basename "$v")"
