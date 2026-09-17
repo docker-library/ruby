@@ -194,6 +194,10 @@ RUN set -eux; \
 {{ ) else "" end -}}
 	autoconf; \
 	gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
+# full RELRO: "-z now" disables lazy binding so the loader can map the GOT read-only at startup
+# https://github.com/docker-library/ruby/pull/529
+# https://salsa.debian.org/ruby-team/ruby/-/blob/8a55ab83e2c1783d80d0117fecbda533ac75f3e3/debian/rules#L63-67 (Debian's "hardening=+bindnow" produces the same flags)
+	export LDFLAGS='-Wl,-z,relro -Wl,-z,now'; \
 	./configure \
 		--build="$gnuArch" \
 		--disable-install-doc \
