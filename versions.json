@@ -1,32 +1,32 @@
 {
   "3.3": {
-    "version": "3.3.12",
-    "date": "2026-07-16",
-    "post": "/en/news/2026/07/16/ruby-3-3-12-released/",
+    "version": "3.3.13",
+    "date": "2026-10-23",
+    "post": "/en/news/2026/10/23/ruby-3-3-13-released/",
     "url": {
-      "gz": "https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.12.tar.gz",
-      "zip": "https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.12.zip",
-      "xz": "https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.12.tar.xz"
+      "gz": "https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.13.tar.gz",
+      "zip": "https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.13.zip",
+      "xz": "https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.13.tar.xz"
     },
     "size": {
-      "gz": 21489887,
-      "zip": 26954647,
-      "xz": 15891224
+      "gz": 21497008,
+      "zip": 26961541,
+      "xz": 15878972
     },
     "sha1": {
-      "gz": "1ecad817a7d3727db65cf898a51d9956888cee5b",
-      "zip": "8be5a3c6f4a8821ce5326a9e09d4230c9fa06faa",
-      "xz": "7df70ae8a9feb880e2ad5054dfebd712ba03d0eb"
+      "gz": "e89379c35cd61b23c7fef6cff9c5bbece4e2c391",
+      "zip": "4536403d0c1feaa6290fc7d94e65db4bc2b7f0ed",
+      "xz": "61e8a88d601ca7a4e9f9c30428fa46be0fdf690d"
     },
     "sha256": {
-      "gz": "b06d63beae271933033e27f0a389bc582a009e7845357d44365c39de525a051b",
-      "zip": "fc1aecfb45adeb7bebbf9549d45ce6e57f0c9dac8b83cdeb80680de02a83ce41",
-      "xz": "873e3297990b8cff7a5436f6e510a3a7a18c74e5f2c794e4162e605fe0a743b3"
+      "gz": "4cae72e971bd1cdb20ca87d299111182417c5276c162de8ead0ab0531426cd61",
+      "zip": "8cf1c468af6dbcaa2c48270cc4c951325dabe5fd84b609641d4bd7b89c9d5766",
+      "xz": "6bd764359992373a96556b45fb7dfe6b6170da34a0a2fd0b7e1be7932fea982b"
     },
     "sha512": {
-      "gz": "7c620438e85beb6744acc7d1e917af554238739883d592aa9839fca78514c11e91dfd8c4b5ce611d1ea507a4412ed81f3a8b5fc6eb07ba3e392a77b518de6829",
-      "zip": "ff5a0339310c464b88a444871f901f41fc735f77668b29dfc70389aae5d44fd90b55cff6c02d47a23596663525b526a86f9906c08c371d37e3fb105ea9c6b1a9",
-      "xz": "1755901f5d1e66250e4f9f4e3a0bf31ec25055f1cb86fafc68281f6d108e9cf5329a6c74c221b1a31aa7de78e9c2d8aa7b76faf39acfce44c5ed94cf7e766f3f"
+      "gz": "0536341f6f612a1eb0128f7d18eed081b09264c695e6a159a5456ba3050464849791ae26e33a7ea384406fa9e19b98bf194c89638dfe2940d3dbeed5b3126c92",
+      "zip": "622c8b60b2202aea1aa4caed00cee5984109926793ee57c86a9cc39b1628855f51a26d07258aa85aacc679c6186efc4ebf20b5a51f199de7cdd6fcc98a212d10",
+      "xz": "906e270e2629b44e469265e08d693f996b467a3fc165fbdb9b8f6f7b37effe4fdae9d4968e72a809d1381e35279cb10b6630d40fac31a634981deb4c30ff325c"
     },
     "variants": [
       "trixie",
