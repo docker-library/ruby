@@ -1,0 +1,275 @@
+name: Update
+
+# Bump an image to a freshly released Ruby version as soon as upstream releases it.
+#
+# This is triggered by Ruby's own release workflow (ruby/ruby's .github/workflows/publish.yml) via
+#   POST /repos/docker-library/ruby/actions/workflows/update.yml/dispatches
+#   {"ref": "master", "inputs": {"version": "4.0.9"}}
+# and does the same thing as the "update.sh" Jenkins job (https://doi-janky.infosiftr.net/job/update.sh/job/ruby/),
+# just sooner: run "./update.sh", commit, build + test the result on amd64, then push it to master.
+# If the Jenkins job gets there first, this finds nothing to do (and vice versa).
+#
+# Ruby usually releases several versions at once (e.g. 3.3.x, 3.4.x and 4.0.x on the same day), so each
+# version runs as its own workflow run; whichever one pushes first wins, and the others replay their
+# (already tested) commit on top of it.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Released Ruby version (e.g. "4.0.9" or "4.1.0-preview1")'
+        required: true
+        type: string
+
+defaults:
+  run:
+    shell: 'bash -Eeuo pipefail -x {0}'
+
+concurrency:
+  group: update-${{ inputs.version }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+
+  update:
+    name: Update ${{ inputs.version }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    outputs:
+      key: ${{ steps.targets.outputs.key }}
+      targets: ${{ steps.targets.outputs.targets }}
+      base: ${{ steps.commit.outputs.base }}
+      commit: ${{ steps.commit.outputs.commit }}
+      strategy: ${{ steps.generate-jobs.outputs.strategy }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Resolve versions.json keys
+        id: targets
+        env:
+          RUBY_VERSION: ${{ inputs.version }}
+        run: |
+          if [[ ! "$RUBY_VERSION" =~ ^([1-9][0-9]*)\.([0-9]+)\.([0-9]+)(-(preview|rc)[1-9][0-9]*)?$ ]]; then
+            echo "::error::Invalid Ruby version: $RUBY_VERSION"
+            exit 1
+          fi
+          majorMinor="${BASH_REMATCH[1]}.${BASH_REMATCH[2]}"
+          if [ -n "${BASH_REMATCH[4]}" ]; then
+            key="$majorMinor-rc"
+            targets=( "$key" )
+          else
+            key="$majorMinor"
+            targets=( "$key" )
+            # a GA release replaces its pre-release ("update.sh" removes "X.Y-rc" once "X.Y" exists upstream)
+            if jq -e --arg rc "$majorMinor-rc" 'has($rc)' versions.json > /dev/null; then
+              targets+=( "$majorMinor-rc" )
+            fi
+          fi
+          if ! jq -e --arg key "$key" 'has($key)' versions.json > /dev/null; then
+            echo "::error::'$key' is not in versions.json; new release series are added by hand"
+            exit 1
+          fi
+          echo "key=$key" >> "$GITHUB_OUTPUT"
+          echo "targets=${targets[*]}" >> "$GITHUB_OUTPUT"
+
+      - name: Wait for ${{ inputs.version }} in www.ruby-lang.org releases.yml
+        env:
+          RUBY_VERSION: ${{ inputs.version }}
+          KEY: ${{ steps.targets.outputs.key }}
+        run: |
+          # "versions.sh" reads https://github.com/ruby/www.ruby-lang.org/raw/master/_data/releases.yml, which can land a while after the release itself
+          for (( i = 0; i < 240; i++ )); do
+            # (transient network errors shouldn't end the wait early)
+            ./versions.sh "$KEY" || :
+            found="$(jq -r --arg key "$KEY" '.[$key].version // empty' versions.json || :)"
+            git checkout -- versions.json
+            if [ "$found" = "$RUBY_VERSION" ]; then
+              exit 0
+            fi
+            sleep 30
+          done
+          echo "::error::$RUBY_VERSION did not show up in releases.yml (latest for $KEY: ${found:-none})"
+          exit 1
+
+      - name: Update and commit
+        id: commit
+        env:
+          TARGETS: ${{ steps.targets.outputs.targets }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+          base="$(git rev-parse HEAD)"
+          echo "base=$base" >> "$GITHUB_OUTPUT"
+
+          # same commit messages as the Jenkins job ("Update 4.0 to 4.0.9", "Update 3.4 to 3.4.12, rustup 1.28.2", etc)
+          # https://github.com/docker-library/oi-janky-groovy/blob/master/update.sh/versions-pipeline.groovy
+          version_components() {
+            jq -r '
+              .[env.version] // {} | [
+                .version // empty,
+                (
+                  to_entries[]
+                  | select(.value | type == "object" and has("version"))
+                  | .key + " " + .value.version
+                )
+              ] | join("\n")
+            ' versions.json
+          }
+          for version in $TARGETS; do
+            export version
+            componentsBefore="$(version_components)"
+            ./update.sh "$version"
+            componentsAfter="$(version_components)"
+            componentsChanged="$(comm -13 --nocheck-order <(echo "$componentsBefore") <(echo "$componentsAfter"))"
+            commitMessage="Update $version"
+            if [ -n "$componentsChanged" ]; then
+              components="$(jq <<<"$componentsChanged" -rRs 'rtrimstr("\n") | split("\n") | join(", ")')"
+              commitMessage+=" to $components"
+            fi
+            git add -A .
+            git commit -m "$commitMessage" || :
+          done
+
+          commit="$(git rev-parse HEAD)"
+          if [ "$commit" = "$base" ]; then
+            echo 'Nothing to update (already up to date)'
+            exit 0
+          fi
+          git log --stat -p "$base..HEAD"
+          git bundle create "$RUNNER_TEMP/update.bundle" "$base..HEAD"
+          echo "commit=$commit" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@v4
+        if: steps.commit.outputs.commit
+        with:
+          name: update-bundle
+          path: ${{ runner.temp }}/update.bundle
+          retention-days: 7
+
+      - uses: docker-library/bashbrew@HEAD
+        if: steps.commit.outputs.commit
+      - name: Generate Jobs
+        id: generate-jobs
+        if: steps.commit.outputs.commit
+        env:
+          TARGETS: ${{ steps.targets.outputs.targets }}
+        run: |
+          # only test the versions that changed (and still exist; "X.Y-rc" goes away on GA)
+          versions=()
+          for version in $TARGETS; do
+            if jq -e --arg v "$version" '.[$v].version' versions.json > /dev/null; then
+              versions+=( "$version" )
+            fi
+          done
+          export GENERATE_STACKBREW_LIBRARY="./generate-stackbrew-library.sh ${versions[*]}"
+          strategy="$("$BASHBREW_SCRIPTS/github-actions/generate.sh")"
+
+          EOF="EOF-$RANDOM-$RANDOM-$RANDOM"
+          echo "strategy<<$EOF" >> "$GITHUB_OUTPUT"
+          jq <<<"$strategy" . | tee -a "$GITHUB_OUTPUT"
+          echo "$EOF" >> "$GITHUB_OUTPUT"
+
+  test:
+    needs: update
+    if: needs.update.outputs.commit
+    strategy: ${{ fromJson(needs.update.outputs.strategy) }}
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.update.outputs.base }}
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: update-bundle
+          path: ${{ runner.temp }}
+      - name: Check out ${{ needs.update.outputs.commit }}
+        env:
+          COMMIT: ${{ needs.update.outputs.commit }}
+        run: |
+          git fetch "$RUNNER_TEMP/update.bundle" HEAD
+          git checkout --detach "$COMMIT"
+      - name: Prepare Environment
+        run: ${{ matrix.runs.prepare }}
+      - name: Pull Dependencies
+        run: ${{ matrix.runs.pull }}
+      - name: Build ${{ matrix.name }}
+        run: ${{ matrix.runs.build }}
+      - name: History ${{ matrix.name }}
+        run: ${{ matrix.runs.history }}
+      - name: Test ${{ matrix.name }}
+        run: ${{ matrix.runs.test }}
+      - name: '"docker images"'
+        run: ${{ matrix.runs.images }}
+
+  push:
+    needs: [ update, test ]
+    if: needs.update.outputs.commit && github.ref == 'refs/heads/master'
+    name: Push to master
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.update.outputs.base }}
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: update-bundle
+          path: ${{ runner.temp }}
+      - name: Push
+        env:
+          RUBY_VERSION: ${{ inputs.version }}
+          KEY: ${{ needs.update.outputs.key }}
+          TARGETS: ${{ needs.update.outputs.targets }}
+          BASE: ${{ needs.update.outputs.base }}
+          COMMIT: ${{ needs.update.outputs.commit }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git fetch "$RUNNER_TEMP/update.bundle" HEAD
+
+          for (( attempt = 1; attempt <= 5; attempt++ )); do
+            git fetch origin master
+            master="$(git rev-parse FETCH_HEAD)"
+
+            if [ "$master" = "$BASE" ]; then
+              push="$COMMIT"
+            else
+              # master moved while we were building (another version's run of this workflow, or the Jenkins job)
+
+              # if it already has this release, there's nothing left to do
+              if [ "$(git show "$master:versions.json" | jq -r --arg key "$KEY" '.[$key].version // empty')" = "$RUBY_VERSION" ]; then
+                echo "master already has $RUBY_VERSION"
+                exit 0
+              fi
+
+              # otherwise, replay our commits on top of it, and make sure that what we're about to push is
+              # still exactly what we tested (for our versions) and exactly what "update.sh" would generate
+              git checkout --quiet --detach "$master"
+              git cherry-pick "$BASE..$COMMIT"
+              for target in $TARGETS; do
+                git diff --exit-code "$COMMIT" HEAD -- "$target/"
+                diff <(git show "$COMMIT:versions.json" | jq --arg key "$target" '.[$key]') <(jq --arg key "$target" '.[$key]' versions.json)
+              done
+              ./update.sh $TARGETS
+              git diff --exit-code
+              push="$(git rev-parse HEAD)"
+            fi
+
+            # not a force push: if master moved again in the meantime, this fails and we start over
+            if git push origin "$push:refs/heads/master"; then
+              exit 0
+            fi
+            sleep "$(( attempt * 10 ))"
+          done
+          echo "::error::Gave up pushing $RUBY_VERSION to master"
+          exit 1
