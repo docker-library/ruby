@@ -182,7 +182,7 @@ RUN set -eux; \
 	\
 	cd /usr/src/ruby; \
 	\
-{{ if is_alpine then ( -}}
+{{ if is_alpine and ((env.version | IN("3.3", "3.4", "4.0")) or .version == "4.1.0-preview1") then ( -}}
 # https://github.com/docker-library/ruby/issues/196
 # https://bugs.ruby-lang.org/issues/14387#note-13 (patch source)
 # https://bugs.ruby-lang.org/issues/14387#note-16 ("Therefore ncopa's patch looks good for me in general." -- only breaks glibc which doesn't matter here)
