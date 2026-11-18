@@ -13,6 +13,9 @@ name: Update
 # version runs as its own workflow run; whichever one pushes first wins, and the others replay their
 # (already tested) commit on top of it.
 
+# (one run per version: ruby/ruby's docker-official-images.yml finds the run for its version by this title)
+run-name: Update ${{ inputs.version }}
+
 on:
   workflow_dispatch:
     inputs:
